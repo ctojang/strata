@@ -95,7 +95,7 @@ class QualityRunnerTests(unittest.TestCase):
         self.assertFalse({"e2e-build", "e2e-shard", "e2e"} & jobs.keys())
         e2e = (REPOSITORY / ".github/workflows/e2e.yml").read_text()
         triggers = e2e.split("\non:\n", 1)[1].split("\n\n", 1)[0]
-        self.assertEqual(re.findall(r"^  (\w+):", triggers, re.M), ["workflow_dispatch"])
+        self.assertEqual(re.findall(r"^  (\w+):", triggers, re.M), ["workflow_dispatch", "pull_request"])
         e2e_jobs = dict(re.findall(r"^  ([\w-]+):\n(.*?)(?=^  [\w-]+:\n|\Z)",
                                    e2e.split("\njobs:\n", 1)[1], re.M | re.S))
         self.assertIn("needs: e2e-build", e2e_jobs["e2e-shard"])

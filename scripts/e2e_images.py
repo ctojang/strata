@@ -89,6 +89,10 @@ def discover_bases(refs, image_inputs, dependencies):
             "cache_from": f"type=registry,ref={cache}" if cache else ""}
 
 
+def image_repository():
+    return os.environ.get("STRATA_E2E_IMAGE_REPOSITORY") or os.environ["GITHUB_REPOSITORY"]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -103,13 +107,13 @@ def main():
     try:
         if args.command == "environment":
             inputs = image_key()
-            refs = references(os.environ["GITHUB_REPOSITORY"], inputs, dependency_key(), os.getuid(), os.getgid())
+            refs = references(image_repository(), inputs, dependency_key(), os.getuid(), os.getgid())
             pinned = resolve(refs["environment_image"], expected_labels={"org.strata.e2e.inputs": inputs})
             if not pinned:
                 raise ValueError("the published local-development base is unavailable anonymously")
             print(f"environment_image={pinned}")
         elif args.command in ("references", "bases"):
-            refs = references(os.environ["GITHUB_REPOSITORY"], image_key(),
+            refs = references(image_repository(), image_key(),
                               dependency_key(), os.getuid(), os.getgid())
             outputs = refs if args.command == "references" else discover_bases(refs, image_key(), dependency_key())
             missing = args.command == "bases" and (outputs["dependencies_image"] == "dependencies"

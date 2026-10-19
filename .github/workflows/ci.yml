@@ -12,6 +12,10 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
+# The fork reuses upstream's public published E2E bases.
+env:
+  STRATA_E2E_IMAGE_REPOSITORY: lgse/strata
+
 permissions:
   contents: read
 
