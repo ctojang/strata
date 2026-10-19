@@ -8,9 +8,6 @@ fn package_metadata_is_available_to_the_about_page() {
     assert_eq!(AUTHOR, "LGSE Ltd.");
 }
 
-/// The default `RELEASE_TAG` injected by `build.rs` (no `STRATA_RELEASE_TAG`
-/// override, i.e. every developer build and this test run) must be a
-/// well-formed tag the release-channel grammar accepts.
 #[test]
 fn default_release_tag_parses_to_a_version() {
     assert!(

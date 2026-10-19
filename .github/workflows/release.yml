@@ -266,51 +266,9 @@ jobs:
             dist/*.sha256
           if-no-files-found: error
 
-  sign:
-    name: Sign update manifest
-    needs: [prepare, build]
-    runs-on: ubuntu-24.04
-    environment: release-signing
-    permissions:
-      contents: read
-
-    steps:
-      - name: Check out trusted signing tools
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          # Never execute signing tools from the selected prerelease source.
-          ref: ${{ github.workflow_sha }}
-          persist-credentials: false
-
-      - name: Download release archives
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          pattern: strata-*
-          path: dist
-          merge-multiple: true
-
-      - name: Sign release identity and archive digests
-        env:
-          UPDATE_SIGNING_KEY: ${{ secrets.UPDATE_SIGNING_KEY }}
-          UPDATE_SIGNING_KEY_NEXT: ${{ secrets.UPDATE_SIGNING_KEY_NEXT }}
-          SOURCE_SHA: ${{ needs.prepare.outputs.source_sha }}
-          VERSION: ${{ needs.prepare.outputs.version }}
-        run: >-
-          python3 scripts/sign_update_manifest.py
-          --directory dist --version "$VERSION" --source-commit "$SOURCE_SHA"
-
-      - name: Upload signed manifest
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: signed-update-manifest
-          path: |
-            dist/strata-update-manifest.json
-            dist/strata-update-manifest.signatures.json
-          if-no-files-found: error
-
   release:
     name: Tag and publish release
-    needs: [prepare, build, sign]
+    needs: [prepare, build]
     runs-on: ubuntu-24.04
     environment: release
     permissions:
@@ -405,8 +363,6 @@ jobs:
           VERSION: ${{ needs.prepare.outputs.version }}
         run: |
           if [[ "$MODE" != "stable" ]]; then
-            # --prerelease keeps /releases/latest pointing at the last final
-            # release, which is the endpoint a Stable user polls.
             gh release create "v$VERSION" dist/* --verify-tag --generate-notes --prerelease --title "Strata v$VERSION"
           else
             gh release create "v$VERSION" dist/* --verify-tag --generate-notes --title "Strata v$VERSION"

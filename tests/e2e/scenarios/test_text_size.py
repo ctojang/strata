@@ -89,13 +89,6 @@ def test_settings_text_size_keeps_switches_inside_the_page(strata, request):
                 lambda: strata.environment.read_preferences().get("text_size") == "13",
                 "Reset to restore the default text size",
             )
-    updates = strata.window.find(role="button", name="Updates")
-    assert updates is not None and updates.activate()
-    _reveal_page_control(strata, "Check now")
-    if request.config.getoption("--keep-artifacts"):
-        strata.screenshot(
-            ArtifactCollector(test_name="settings-updates").directory / "check-now.png"
-        )
 
 
 def _reveal_page_control(strata, name, role="button"):

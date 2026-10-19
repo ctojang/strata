@@ -28,17 +28,15 @@ pub(crate) mod rtf;
 mod search;
 pub(crate) mod table;
 mod transfer_action;
-mod update_check;
-mod update_install;
 
 pub use actions::{
     ActionAvailability, ActionHandle, ActionLoadFailure, ActionProgram, ActionRegistry,
     ActionScript, ActionWriteRequest, MatchedAction,
 };
 pub(crate) use document::{
-    DocumentBlock, DocumentLayout, DocumentListChildKind, DocumentMedia, DocumentSpan,
-    DocumentSpanStyle, DocumentTableCellLayout, DocumentUnit, DocumentUnitKind, document_kind,
-    has_web_scheme, layout_document, parse_document, parse_markdown,
+    DocumentLayout, DocumentListChildKind, DocumentMedia, DocumentSpan, DocumentSpanStyle,
+    DocumentTableCellLayout, DocumentUnit, DocumentUnitKind, document_kind, has_web_scheme,
+    layout_document, parse_document,
 };
 pub use file_source::{
     DirectoryChange, DirectoryEvent, DirectoryRequest, FileSource, LoadHandle, LocationIdentity,
@@ -50,8 +48,8 @@ pub(crate) use file_source::{
     INVALID_NAME_REASON, error_detail, gio_error_detail, gio_error_message, io_error_detail,
     io_error_message, sanitize_failure_message,
 };
-pub use install_source::{InstallSource, ManagedInstall};
-pub(crate) use install_source::{ensure_self_managed, installed_executable};
+pub use install_source::InstallSource;
+pub(crate) use install_source::installed_executable;
 pub use jobs::{
     ActionEventSink, ActionRunEvent, ActionRunRequest, ActionRunner, CancelHandle,
     InvocationSource, JobId, JobRequest, JobService, JobSnapshot, JobStatus, ScriptProgress,
@@ -88,16 +86,7 @@ pub(crate) use preview::{
     normalize_preview_text, read_head_sample, reconcile_with_sample, split_archive_name,
     supports_remote_video,
 };
-pub(crate) use transfer_action::{
-    CrossVolumeDropStrategy, DropActionInput, DropCommit, DropOverride, TransferKind,
-    VolumeIdentity, VolumeRelation, drop_commit, transferable_drop_sources, volume_relation,
-};
-// `best_update`, `rollback_target`, and `ReleaseSummary` are deliberately not
-// re-exported here: `rollback_target` is the never-downgrade bypass, and only
-// `update_check` (which imports them directly from `release_channel`) has any
-// business calling it. Widening this re-export would make that bypass
-// reachable from UI code.
-pub(crate) use release_channel::{BuildKind, Channel, Version};
+pub(crate) use release_channel::{BuildKind, Version};
 pub(crate) use remote_download::{
     RemoteDownload, download_remote, prune_stale_downloads, remote_file_name, remote_file_url,
 };
@@ -110,10 +99,7 @@ pub(crate) use search::{
     SearchLimits, filter_name_matches, filter_query_allows_typos, fold_for_search, index_filter,
     index_folder_paths, index_paths, index_trees_with_exclusions,
 };
-pub(crate) use update_check::{
-    ReleaseMetadata, ReleaseNotes, UpdateCheck, check_for_updates, fetch_release_notes,
-};
-pub(crate) use update_install::{
-    InstallCancel, InstallRequest, UpdateInstall, UpdateMethod, install_update, rollback_path,
-    update_method,
+pub(crate) use transfer_action::{
+    CrossVolumeDropStrategy, DropActionInput, DropCommit, DropOverride, TransferKind,
+    VolumeIdentity, VolumeRelation, drop_commit, transferable_drop_sources, volume_relation,
 };

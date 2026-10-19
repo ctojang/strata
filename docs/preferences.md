@@ -27,14 +27,13 @@ It filters the existing bound controls rather than creating copies. Register new
 settings in `settings/search.rs`; `settings_option` tags ordinary rows, while
 custom sections use `search::tag`. Keep installation-specific availability
 separate with `search::set_available`, so clearing a query cannot reveal an
-unsupported release-channel selector. Lazy pages apply the latest query when
+unavailable control. Lazy pages apply the latest query when
 they finish loading. Give each new target a `settings_keywords.<id>` entry in
 every catalog (see [Internationalization](internationalization.md)). Search
 routes to pages through the `NAVIGATION` table in `settings.rs`.
 `ui::settings::search::tests::every_page_row_is_registered_for_search` builds
 every page and fails on a row or section without a target. Register the row, or
-tag status-only content with its section's target (the managed-install row uses
-"Check for updates"), rather than exempting it.
+tag status-only content with its section's target, rather than exempting it.
 
 ## One initialization and update path
 
@@ -112,7 +111,6 @@ control that might be midway through synchronization.
 | Preview autoplay | Read when a video, audio, or GIF preview is first shown. Off by default: playback waits for an explicit play action; the generic player shows its center play affordance, and the audio and video views their transport play button. When on, playback starts silent and fades in on a slow-in, slow-out curve, over 1 s from the first frame for video and over 0.5 s from the first sample for audio, unless the saved audio state is muted or the file is shorter than 10 s, which plays at full volume at once; any play, pause, seek, volume or mute input brings the sound in at once, and the saved volume is never changed. Continuing playback into the next file with `<` / `>` keeps its sound. Does not affect resuming playback that was already active before a preview pane was temporarily hidden by a resize. |
 | Render documents by default | A newly loaded Markdown or HTML preview reads the current choice for its initial Rendered or Source view. Switching the view of an open document does not change the saved default. |
 | Preview mute/volume | Every player's controls and media stream bind to the saved audio state. Slider changes publish/persist together, without a delayed stale save overwriting another window or being discarded when closing a preview. |
-| Automatic updates, release channel | Eligibility checks read current preferences. Controls synchronize, and all windows clear outdated notices when these preferences change, even without opening Settings. A package-managed installation's tracked channel is enforced when read, not by constructing Settings. On by default. The switch controls the automatic check, which runs at every start once the first window paints and again when a window or **Settings → Updates** opens if no check has completed in the last 24 hours. Turning it off also locks the channel, hides shown update notices, and discards an in-flight check's result; turning it back on or changing the channel checks immediately. **Check now** and the release-notes card (fetched when the Updates page opens, unless cached) ignore the switch. |
 | Sidebar order | Existing sidebars bind to the shared order. |
 | Sidebar default-place visibility | Existing sidebars bind to the shared Home, Trash, Network, Recent, and standard-folder visibility (Desktop, Documents, Downloads, Music, Pictures, and Videos) and rebuild. Enabled by default; hiding removes that place from the sidebar without changing pins or devices. Recent is also omitted when GTK recent-file tracking or the runtime Recent VFS backend is unavailable, and from local-only sidebars. Toggle the location chips under General → Sidebar; existing default-place Unpin context actions remain available where supported. Re-enable a hidden place’s chip to restore it. |
 | Sidebar expanded | Browser windows bind their header toggle at construction: a saved collapsed state starts closed without animation. The header toggle, `Ctrl+B`, or `Ctrl+N` in 10xer mode steps the sidebar from full to compact to hidden and back to full; each step persists and updates all open browser windows live. Expanded by default; not exposed in Settings. The portal chooser keeps its own unsaved sidebar state. |

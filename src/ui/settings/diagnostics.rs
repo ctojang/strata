@@ -388,7 +388,6 @@ fn title(id: CheckId) -> &'static str {
         CheckId::Cameras => "Cameras",
         CheckId::Drives => "Removable drives",
         CheckId::FolderMonitoring => "Folder change monitoring",
-        CheckId::UpdateServer => "Update server",
         CheckId::Terminal => "Terminal",
         CheckId::Portal => "Desktop portal",
         CheckId::SecretService => "Password storage",
@@ -481,10 +480,6 @@ fn message(check: &Check) -> String {
         Finding::MonitoringFailed => {
             tr("Folder changes can't be detected, so folders won't refresh automatically.")
         }
-        Finding::Connected => tr("Connected to GitHub."),
-        Finding::ConnectionFailed(_) => {
-            tr("Couldn't connect to GitHub, so update checks and release notes are unavailable.")
-        }
         Finding::TerminalMissing => crate::ui::terminal::no_terminal_message(),
         Finding::ServiceAvailable => tr("The service is available."),
         Finding::PortalMissing => tr(
@@ -519,11 +514,7 @@ fn message(check: &Check) -> String {
 }
 
 fn detail(check: &Check) -> Option<String> {
-    match (&check.finding, &check.detail) {
-        (Finding::ConnectionFailed(error), _) => Some(error.message()),
-        (_, Some(detail)) => Some(crate::i18n::tr(detail)),
-        (_, None) => None,
-    }
+    check.detail.as_deref().map(crate::i18n::tr)
 }
 
 fn copy_report(button: &gtk::Button, environment: &[(String, String)], results: &[Check]) {

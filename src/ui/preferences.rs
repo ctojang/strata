@@ -16,7 +16,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     model::{FolderColorValue, SortDirection, SortKey, ViewPreferences},
     sandbox::MediaPreviewBackend,
-    services::{Channel, CrossVolumeDropStrategy, SearchLimits},
+    services::{CrossVolumeDropStrategy, SearchLimits},
 };
 
 use super::icons_cell::{MAX_ICONS_THUMBNAIL_SIZE, MIN_ICONS_THUMBNAIL_SIZE};
@@ -179,8 +179,6 @@ pub(in crate::ui) struct Preferences {
     sort_key: String,
     #[serde(default = "default_sort_direction")]
     sort_direction: String,
-    #[serde(default = "default_enabled")]
-    check_for_updates: bool,
     #[serde(default)]
     preview_muted: bool,
     #[serde(default = "default_full_volume")]
@@ -207,8 +205,6 @@ pub(in crate::ui) struct Preferences {
     open_folder_after_drop: bool,
     #[serde(default = "default_date_format")]
     date_format: String,
-    #[serde(default = "default_release_channel")]
-    release_channel: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     default_directory: Option<PathBuf>,
     #[serde(default = "default_enabled")]
@@ -402,7 +398,6 @@ impl Default for Preferences {
             folders_first: true,
             sort_key: default_sort_key(),
             sort_direction: default_sort_direction(),
-            check_for_updates: true,
             preview_muted: false,
             preview_volume: default_full_volume(),
             preview_text_wrap: false,
@@ -416,7 +411,6 @@ impl Default for Preferences {
             cross_volume_drop_strategy: default_cross_volume_drop_strategy(),
             open_folder_after_drop: false,
             date_format: default_date_format(),
-            release_channel: default_release_channel(),
             default_directory: None,
             restore_tabs: true,
             remember_folder_views: true,
@@ -434,10 +428,6 @@ impl Default for Preferences {
 
 fn default_enabled() -> bool {
     true
-}
-
-fn default_release_channel() -> String {
-    "stable".to_owned()
 }
 
 fn default_browser_mode() -> String {
@@ -1109,15 +1099,6 @@ impl PreferenceManager {
         self.save_preferences();
     }
 
-    pub fn checks_for_updates(&self) -> bool {
-        self.preferences.borrow().check_for_updates
-    }
-
-    pub fn set_checks_for_updates(&self, enabled: bool) {
-        self.preferences.borrow_mut().check_for_updates = enabled;
-        self.save_preferences();
-    }
-
     pub fn preview_muted(&self) -> bool {
         self.preferences.borrow().preview_muted
     }
@@ -1425,37 +1406,6 @@ impl PreferenceManager {
         self.save_preferences();
     }
 
-    pub fn release_channel(&self) -> Channel {
-        crate::services::InstallSource::detect()
-            .managed()
-            .and_then(crate::services::ManagedInstall::tracked_channel)
-            .unwrap_or_else(|| Channel::parse(&self.preferences.borrow().release_channel))
-    }
-
-    pub fn set_release_channel(&self, channel: Channel) {
-        if crate::services::InstallSource::detect()
-            .managed()
-            .and_then(crate::services::ManagedInstall::tracked_channel)
-            .is_some()
-        {
-            return;
-        }
-        self.preferences.borrow_mut().release_channel = channel.as_str().to_owned();
-        self.save_preferences();
-    }
-
-    pub fn on_release_channel_changed(
-        &self,
-        anchor: &impl IsA<gtk::Widget>,
-        refresh: Rc<dyn Fn()>,
-    ) {
-        let initial = Cell::new(true);
-        self.bind_preference(anchor, Self::release_channel, move |_, _| {
-            if !initial.replace(false) {
-                refresh();
-            }
-        });
-    }
     pub fn browser_mode(&self) -> super::browser_modes::BrowserMode {
         browser_mode_from_stored(&self.preferences.borrow().browser_mode)
     }

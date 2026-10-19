@@ -25,8 +25,6 @@ fn settings_launcher_refuses_to_open_over_another_modal() {
                 blurred_root,
                 overlay: overlay.clone(),
                 preferences: PreferenceManager::shared(),
-                notice: Rc::new(|_| {}),
-                guard: settings::install_guard(),
                 shortcuts: crate::ui::shortcut_footer::ShortcutFooter::new(
                     crate::ui::browser_modes::BrowserMode::Columns,
                 ),

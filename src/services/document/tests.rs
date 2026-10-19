@@ -5,15 +5,20 @@ use std::time::Duration;
 use super::{
     Document, DocumentBlock, DocumentKind, DocumentListChildKind, DocumentSpan, DocumentSpanStyle,
     DocumentTableCell, DocumentUnitKind, LayoutBudget, ParseLimits, append_styled_text,
-    document_kind, layout_document, parse_document, parse_document_with_limits, parse_markdown,
+    document_kind, layout_document, parse_document, parse_document_with_limits,
 };
 use crate::sandbox::Cancellation;
+
+fn markdown(source: &str) -> Document {
+    parse_document(DocumentKind::Markdown, source, &Cancellation::default())
+        .expect("Markdown preview")
+        .document
+}
 
 #[test]
 fn markdown_renders_supported_formatting_as_blocks() {
     assert_eq!(
-        parse_markdown("## Changes\n\n- **Fast** and `safe`\n- [Details](https://example.test)")
-            .blocks,
+        markdown("## Changes\n\n- **Fast** and `safe`\n- [Details](https://example.test)").blocks,
         vec![
             DocumentBlock::Heading {
                 level: 2,
@@ -36,7 +41,7 @@ fn markdown_renders_supported_formatting_as_blocks() {
 #[test]
 fn multiline_formatting_and_code_stay_in_balanced_blocks() {
     assert_eq!(
-        parse_markdown("**first\nsecond**\n\n```text\none < two\n```").blocks,
+        markdown("**first\nsecond**\n\n```text\none < two\n```").blocks,
         vec![
             DocumentBlock::Paragraph("<b>first\nsecond</b>".to_owned()),
             DocumentBlock::Code {
@@ -50,7 +55,7 @@ fn multiline_formatting_and_code_stay_in_balanced_blocks() {
 #[test]
 fn nested_and_ordered_lists_keep_markers_and_depth() {
     assert_eq!(
-        parse_markdown("3. outer\n   - inner\n4. next").blocks,
+        markdown("3. outer\n   - inner\n4. next").blocks,
         vec![
             DocumentBlock::ListItem {
                 marker: "3.".to_owned(),
@@ -73,10 +78,9 @@ fn nested_and_ordered_lists_keep_markers_and_depth() {
 
 #[test]
 fn markdown_keeps_html_inert_and_does_not_retain_image_urls() {
-    let blocks = parse_markdown(
-        "<script>alert('no')</script>\n\n![tracking](https://example.test/pixel.png)",
-    )
-    .blocks;
+    let blocks =
+        markdown("<script>alert('no')</script>\n\n![tracking](https://example.test/pixel.png)")
+            .blocks;
     let debug = format!("{blocks:?}");
     assert!(!debug.contains("<script>"));
     assert!(debug.contains("&lt;script&gt;"));
@@ -87,78 +91,17 @@ fn markdown_keeps_html_inert_and_does_not_retain_image_urls() {
 #[test]
 fn markdown_does_not_activate_non_web_links() {
     assert_eq!(
-        parse_markdown("[Run](javascript:alert('no'))").blocks,
+        markdown("[Run](javascript:alert('no'))").blocks,
         vec![DocumentBlock::Paragraph("<u>Run</u>".to_owned())]
     );
 }
 
 #[test]
 fn malformed_markdown_and_entities_remain_inert() {
-    let blocks = parse_markdown("<broken & **unfinished").blocks;
+    let blocks = markdown("<broken & **unfinished").blocks;
     let debug = format!("{blocks:?}");
     assert!(debug.contains("&lt;broken &amp;"));
     assert!(!debug.contains("<broken"));
-}
-
-#[test]
-fn empty_markdown_has_no_blocks() {
-    assert!(parse_markdown("  \n").blocks.is_empty());
-}
-
-#[test]
-fn release_notes_hide_html_comments_but_keep_other_html_inert() {
-    let paragraph = |markup: &str| DocumentBlock::Paragraph(markup.to_owned());
-    let item = |markup: &str| DocumentBlock::ListItem {
-        marker: "•".to_owned(),
-        depth: 0,
-        markup: markup.to_owned(),
-    };
-    let heading = |markup: &str| DocumentBlock::Heading {
-        level: 2,
-        markup: markup.to_owned(),
-    };
-    for (input, expected) in [
-        (
-            "<!-- Release notes generated using configuration in .github/release.yml at v0.21.0 -->\n\n## What's Changed\n* fix(a): b by @x in https://example.test/pull/1\n",
-            vec![
-                heading("What&apos;s Changed"),
-                item("fix(a): b by @x in https://example.test/pull/1"),
-            ],
-        ),
-        ("<!--\nmulti\nline\n-->\n\nAfter", vec![paragraph("After")]),
-        // Indented HTML blocks also emit synthesised whitespace text events.
-        (
-            "  <!-- indented\n  comment -->\n\nAfter",
-            vec![paragraph("After")],
-        ),
-        // CommonMark ends a comment block at the end of the line holding
-        // `-->`, so trailing text on that line belongs to the hidden block.
-        ("<!-- a --> tail\n\nAfter", vec![paragraph("After")]),
-        ("<!-- only a comment -->\n", Vec::new()),
-        // An unterminated comment runs to the end of the input.
-        ("<!-- never closed\n## Hidden", Vec::new()),
-        (
-            "Before <!-- inline --> after",
-            vec![paragraph("Before  after")],
-        ),
-        (
-            "## Title <!-- c -->\n\ntext",
-            vec![heading("Title "), paragraph("text")],
-        ),
-        (
-            "- item\n  <!-- c -->\n- next",
-            vec![item("item"), item("next")],
-        ),
-        (
-            "<b>x</b>\n\n<div>\nraw\n</div>",
-            vec![
-                paragraph("&lt;b&gt;x&lt;/b&gt;"),
-                paragraph("&lt;div&gt;\nraw\n&lt;/div&gt;"),
-            ],
-        ),
-    ] {
-        assert_eq!(parse_markdown(input).blocks, expected, "{input:?}");
-    }
 }
 
 #[test]
@@ -1176,11 +1119,6 @@ fn document_parsers_reject_nul_bytes_without_panicking() {
                 .contains("NUL")
         );
     }
-
-    assert_eq!(
-        parse_markdown("before\0after").blocks,
-        vec![DocumentBlock::Paragraph("before�after".to_owned())]
-    );
 }
 
 #[test]

@@ -440,11 +440,6 @@ pub(crate) fn status() -> Result<PortalStatus, String> {
     status_at(&SetupContext::from_environment()?)
 }
 
-pub(crate) fn refresh_after_in_place_update() -> Result<(), String> {
-    let context = SetupContext::from_environment()?;
-    refresh_configured_portal_at(&context, refresh_portals)
-}
-
 pub(crate) fn refresh_stale_portal() -> Result<(), String> {
     let context = SetupContext::from_environment()?;
     let executable = crate::services::installed_executable().map_err(|error| {

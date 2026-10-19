@@ -12,7 +12,7 @@ body:
     id: version
     attributes:
       label: Strata version
-      description: Find this under Settings → Updates, or provide the commit SHA for a source build.
+      description: Find this under Settings → About, or provide the commit SHA for a source build.
       placeholder: e.g. 0.5.0 or commit abc1234
     validations:
       required: true
