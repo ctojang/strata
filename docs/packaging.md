@@ -9,7 +9,7 @@ Strata's proposed AUR packages are generated from the same template and both ins
 
 They declare `provides=("strata=${pkgver}")` and conflict with each other, reserving the `strata` name for a future source-built package.
 
-Strata's third channel, nightly, is deliberately not packaged. Every nightly has its own release tag in the download URL, and `makepkg` fetches `source` before `pkgver()` runs, so no package can discover the newest nightly and download it in one build. Pinning each nightly instead would mean an AUR push per nightly. Nightly users install manually and update in-app, which already supports the channel. Both install the prebuilt release archive rather than compiling: `options=('!strip')` keeps the binary byte-identical to the published artifact, so `gh attestation verify` still matches the file pacman installed.
+Strata's third channel, nightly, is deliberately not packaged. Every nightly has its own release tag in the download URL, and `makepkg` fetches `source` before `pkgver()` runs, so no package can discover the newest nightly and download it in one build. Pinning each nightly instead would mean an AUR push per nightly. Nightly users install manually. Both install the prebuilt release archive rather than compiling: `options=('!strip')` keeps the binary byte-identical to the published artifact, so `gh attestation verify` still matches the file pacman installed.
 
 ## Layout
 
@@ -25,11 +25,9 @@ scripts/
 
 The AUR requires a self-contained `PKGBUILD`, so the rendered files are committed here and copied to the AUR git remotes. This repository is the source of truth; never edit an AUR checkout directly.
 
-## Why a package suppresses the in-app updater
+## Install-source marker
 
-Pacman owns `/usr/bin/strata`. If the in-app updater replaced it, `pacman -Qkk strata-bin` would report the package as modified and the next system update would silently overwrite the downloaded binary.
-
-`package()` therefore installs `/usr/share/strata/install-source.toml`:
+`package()` installs `/usr/share/strata/install-source.toml`:
 
 ```toml
 manager = "pacman"
@@ -39,13 +37,9 @@ aur_helpers = ["yay", "paru", "pikaur", "trizen"]
 alternate_package = "strata-rc-bin"
 ```
 
-There is no `update_command`. pacman cannot update an AUR package -- no configured repository carries `strata-bin`, so `pacman -Syu strata-bin` fails with `target not found` -- and which helper to name depends on what the user has installed. The marker lists candidates and Strata names the first one on `PATH`, falling back to generic AUR-helper wording when none is.
+Strata reads it relative to its own install prefix (`<prefix>/share/strata/install-source.toml`) and reports the owning package in **Settings → Diagnostics**. It reads only `manager` and `package`; every field is optional and unknown keys are ignored, so markers written for older binaries still parse. A marker that exists but cannot be parsed still counts as packaged.
 
-`channel` is the packaging channel, named after the package (`stable`, `rc`). Strata maps it onto its own persisted channel -- `rc` becomes `preview`, the in-app channel that accepts alpha, beta, and RC builds -- and then locks the **Settings -> Updates** channel selector to it. The channel is a property of the installed package, not a preference: switching channels means installing the other package.
-
-Strata reads it relative to its own install prefix (`<prefix>/share/strata/install-source.toml`). When it is present, Strata checks the AUR first and reports a release only after that package version is available. **Settings → Updates** opens the installed AUR helper in a terminal with a full-system update command, or opens the package’s AUR page when no supported helper is available. `services::install_update` still refuses to replace the package-owned binary outright. Every field is optional and unknown keys are ignored, so the parser can evolve without breaking an older binary. A marker that exists but cannot be parsed still counts as packaged, which fails safe.
-
-This is currently an official Strata metadata format for these two AUR packages, not a public cross-distribution packaging API. Supporting Debian, RPM, Flatpak, or other providers requires an explicit design for ownership, availability checks, channels, and update actions rather than assuming AUR semantics.
+This is currently an official Strata metadata format for these two AUR packages, not a public cross-distribution packaging API. Supporting Debian, RPM, Flatpak, or other providers requires an explicit design for ownership rather than assuming AUR semantics.
 
 ## Updating the packages for a release
 

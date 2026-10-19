@@ -798,7 +798,7 @@ GPU access still expands the helper's attack surface into driver code.
 GStreamer app/base development libraries are now direct build dependencies;
 installed systems need their runtime libraries and raw-audio/output plugins.
 In particular, the core and app/base libraries are now required to **launch**
-Strata, even when no preview is open. Minimal installations that self-update only
+Strata, even when no preview is open. Minimal installations that replace only
 the executable must install these packages before updating. Installer/AUR metadata
 retains the legacy codec-plugin recommendation for currently published binaries;
 the new player does not use those decoders.

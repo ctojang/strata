@@ -234,14 +234,13 @@ Strata executable. The next shipping implementation needs to:
 4. Ship license notices, corresponding patched source and build instructions;
    preserve dynamic relinking rights and source provenance for LGPL components.
 5. Validate the **installed release artifact** on supported distributions, including
-   real media, sandbox helpers, portal/file-manager integration, updates and rollback.
+   real media, sandbox helpers, portal/file-manager integration, and package upgrades.
    Run the full pinned repository checks when changing release/build infrastructure.
 6. Wire the verified runtime build into `.github/workflows/release.yml` before
    archive creation, failing the build on source/checksum/patch mismatches or failed
-   regressions. Teach `install.sh`, `src/services/update_install.rs`, and relevant
-   distribution packages about a versioned runtime directory and atomic bundle
-   updates. Copying only the executable (the current updater behavior) must not
-   produce a partially updated or unpatched installation. Include runtime provenance
+   regressions. Teach `install.sh` and relevant distribution packages about a
+   versioned runtime directory and atomic bundle updates. Copying only the
+   executable must not produce a partially updated or unpatched installation. Include runtime provenance
    in the artifact and check loaded library identity in package-level tests.
 7. Publish a prerelease before promoting it. Describe the measured crash/GL-resource
    fixes separately from unresolved RAM growth. Remove/backport patches deliberately

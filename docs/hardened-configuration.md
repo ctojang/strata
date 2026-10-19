@@ -2,8 +2,7 @@
 
 Strata's defaults already isolate the riskiest work: previews and thumbnails are
 parsed inside a [bubblewrap sandbox](preview-sandbox.md) with no network, no
-session bus, and resource limits, and in-app updates are
-[signature-checked](signed-updates.md). This page lists the further choices
+session bus, and resource limits. This page lists the further choices
 available to users who prefer a smaller attack surface over convenience or
 hardware acceleration. None of them are required.
 
@@ -15,22 +14,6 @@ hardware acceleration. None of them are required.
   alone. A [manual installation](../README.md#manual-installation) can run the
   same `gh attestation verify` check before extracting the archive.
 - Package-managed installations are updated only by the system package manager.
-
-## Updates
-
-| Setting | Location | Hardened value |
-|---|---|---|
-| **Release channel** | Settings → Updates | **Stable** |
-| **Check for updates automatically** | Settings → Updates | On, or off if startup requests to GitHub are unwanted |
-
-Preview and Nightly builds receive less testing than Stable releases. Every
-channel uses the same signed-manifest verification, and an update is installed
-only when you choose to install it. Unsigned, oversized, or mismatched updates
-are refused without touching the installed binary; there is no checksum-only
-fallback.
-
-Automatic checks only read release metadata from `api.github.com`. Turning them
-off does not weaken update verification; it only means you check manually.
 
 ## Previews and thumbnails
 
