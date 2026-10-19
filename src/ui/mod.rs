@@ -28,6 +28,7 @@ mod marquee;
 mod media;
 mod missing_tools;
 mod modal;
+mod modified_date;
 mod motion;
 mod notice;
 mod open_with;
