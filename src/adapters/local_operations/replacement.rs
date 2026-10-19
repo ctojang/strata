@@ -9,7 +9,7 @@ use crate::{
     model::Location,
     services::{PlacedSnapshot, ReplacedOriginal, TransferReport, TrashedOriginal},
 };
-use gtk::{gio, glib, prelude::*};
+use gio::prelude::*;
 
 use super::{
     owed::{Deletion, Owed},

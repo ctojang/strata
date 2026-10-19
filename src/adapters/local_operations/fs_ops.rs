@@ -11,8 +11,6 @@ use std::{
     },
 };
 
-use gtk::{gio, glib};
-
 use rustix::{
     fs::{
         AtFlags, FileType, FsWord, Mode, OFlags, RenameFlags, ResolveFlags, SeekFrom, StatxFlags,

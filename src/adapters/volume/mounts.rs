@@ -11,8 +11,6 @@ use std::{
     time::Duration,
 };
 
-use gtk::gio;
-
 use super::names::{NameEncoding, NameProfile, NameRules, PrivateUse, Reserved, Strip, byte_limit};
 
 /// Parsed without touching mounted filesystems, including unresponsive mounts.

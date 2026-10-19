@@ -203,7 +203,7 @@ pub(crate) fn system_error_text(error: &std::io::Error) -> String {
 
 /// Localized text for common GIO failures; other errors keep GIO's description.
 pub(crate) fn gio_error_message(error: &glib::Error) -> String {
-    use gtk::gio::IOErrorEnum;
+    use gio::IOErrorEnum;
     let message = match error.kind::<IOErrorEnum>() {
         Some(IOErrorEnum::NotFound) => "No such file or folder",
         Some(IOErrorEnum::PermissionDenied) => "Permission denied",

@@ -16,7 +16,7 @@ use crate::{
         RenameCause, RenamedItem, TransferReport, TrashedOriginal,
     },
 };
-use gtk::{gio, glib, prelude::*};
+use gio::prelude::*;
 use std::{
     collections::{HashMap, HashSet},
     ffi::{OsStr, OsString},

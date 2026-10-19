@@ -15,7 +15,6 @@ use crate::{
     services::{ArchiveFormat, ReplacedOriginal, TransferConflict, TrashedOriginal},
     test_support::ASYNC_MAIN_CONTEXT_DEFAULT,
 };
-use gtk::glib;
 use policy::assert_seven_z_methods;
 use rustix::io::Errno;
 use std::{

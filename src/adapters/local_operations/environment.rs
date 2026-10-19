@@ -5,7 +5,7 @@ use super::{
     native_fs::opened_path,
 };
 use crate::adapters::volume::{MountSite, MountTable, MountType};
-use gtk::{gio, glib, prelude::*};
+use gio::prelude::*;
 use rustix::{
     fs::{AtFlags, StatxFlags},
     io::Errno,

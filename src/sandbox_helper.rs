@@ -12,7 +12,6 @@ use std::{
 };
 
 use gdk_pixbuf::prelude::*;
-use gtk::gio;
 
 use crate::{
     adapters::{encode_archive_result, list_archive_entries_direct},

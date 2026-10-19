@@ -10,7 +10,7 @@ use std::{
 mod remote;
 
 use futures_channel::oneshot;
-use gtk::{gio, glib, prelude::*};
+use gio::prelude::*;
 
 use crate::{
     adapters::{

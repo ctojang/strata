@@ -10,7 +10,6 @@ use std::{
 
 use super::*;
 use crate::{model::Location, services::VolumeRelation};
-use gtk::{gio, glib};
 
 mod lookup_regressions;
 
@@ -574,7 +573,7 @@ fn capabilities_follow_mount_changes_once_watched_by(
     start: impl FnOnce(&Path) -> Box<dyn FnOnce()>,
 ) {
     crate::test_support::gtk_test(name, || {
-        use gtk::prelude::*;
+        use gio::prelude::*;
 
         let root = tempfile::tempdir().expect("fixture");
         let finish = start(root.path());

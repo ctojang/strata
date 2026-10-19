@@ -17,7 +17,7 @@ use std::{
     sync::{LazyLock, Mutex, MutexGuard, PoisonError},
 };
 
-use gtk::{gio, glib, prelude::*};
+use gio::prelude::*;
 
 use super::volume::{MountTable, TrashMountKey as MountKey, is_fuse_fs_type};
 use crate::services::TrashedOriginal;

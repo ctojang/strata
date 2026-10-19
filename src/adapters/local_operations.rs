@@ -170,7 +170,7 @@ use std::{
     thread,
 };
 
-use gtk::{gio, glib, prelude::*};
+use gio::prelude::*;
 
 use fs_ops::{Entry, fs};
 use mount_profile::{FolderNames, NamePolicy};

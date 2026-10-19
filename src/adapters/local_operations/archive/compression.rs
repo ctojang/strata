@@ -32,7 +32,6 @@ use super::{
 use crate::services::{
     PlacedSnapshot, ReplacedOriginal, TransferConflict, TrashedOriginal, error_detail,
 };
-use gtk::{gio, glib};
 use rustix::fs::AtFlags;
 use std::{
     ffi::{OsStr, OsString},
