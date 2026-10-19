@@ -404,7 +404,7 @@ workers, remote coalescing, and operation callbacks are separate responsibilitie
 
 `ui/window.rs::present_target` owns the startup sequence: prepare theme/styles, compose
 and bind the window, arm first-paint work and destruction cleanup, present, then schedule
-initial navigation, portal integration, and the due update check. Reveal selection is
+initial navigation and the due update check. Reveal selection is
 queued before navigation. Sidebar discovery remains deferred until after the first paint.
 
 `ui/window/composition.rs` coordinates the window's components. Its private `layout`

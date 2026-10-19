@@ -6,7 +6,7 @@
 Close/filter/refresh/sort chrome, and the List and Icons pane header (back,
 forward, and up buttons with the folder title) in interactive browsers, disables
 type-to-search, and uses the footer as the typed-command surface. List column
-headings stay clickable. The portal file chooser follows the same preference:
+headings stay clickable. The in-app destination chooser follows the same preference:
 it hides the same pane chrome, uses this keymap and the footer
 prompt, and keeps Accept, Cancel, and the header close control. **Enter** / **o**
 confirm a file. **Esc** is the way out: it cancels the dialog after dismissing
@@ -670,7 +670,7 @@ round trips.
 
 ## File chooser
 
-The portal file chooser follows the saved preference, and live changes to it,
+The in-app destination chooser follows the saved preference, and live changes to it,
 without opening Settings. While the mode is on, a footer under the files carries
 the same prompts, chords, and feedback, and the pane chrome hides as in a window.
 Accept, Cancel, the header close control, and List headings stay. Turning the mode

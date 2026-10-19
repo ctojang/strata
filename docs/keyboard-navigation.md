@@ -106,8 +106,8 @@ selected instead; hidden files stay hidden. Icons and List do the same when they
 have no remembered position for the ancestor.
 
 A navigation that names a target — a typed file path, a Ctrl+K result opened with
-Enter or Alt+Enter, Open file location, or an `org.freedesktop.FileManager1`
-request — selects that target instead of restoring the remembered position.
+Enter or Alt+Enter, or Open file location — selects that target instead of
+restoring the remembered position.
 
 ## Refreshing a directory
 
@@ -273,7 +273,7 @@ separate order described in [Escape precedence](10xer-mode.md#escape-precedence)
 
 The F1 / `~` reference panel lists the active map and live-updates when the mode
 changes. Its navigation section is specific to the current view, and in the
-portal file chooser it lists only the keys that request allows.
+in-app destination chooser it lists only the keys that request allows.
 Context-menu hints use `x`, `y`, `p`, `d` / `D`, `r`, `i`, and `M` / `C` / `R`
 (Move to, Copy to, Restore) only when those commands perform the action. `i` toggles a file's preview without taking focus, or is the next column or folder peek for a directory.
 Until those verbs run, the menu keeps the shortcuts that still work and hides

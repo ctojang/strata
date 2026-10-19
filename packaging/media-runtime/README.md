@@ -229,12 +229,12 @@ Strata executable. The next shipping implementation needs to:
    GtkSourceView/Poppler compatibility rather than copying arbitrary host libraries.
 3. Make runtime selection private to Strata, with no global loader configuration.
    A launcher's `LD_LIBRARY_PATH` is inherited by children: account for file-open
-   commands, D-Bus activation, portal execution, sandbox helper loading, and the
+   commands, D-Bus activation, sandbox helper loading, and the
    installer's current single-executable assumptions before choosing that design.
 4. Ship license notices, corresponding patched source and build instructions;
    preserve dynamic relinking rights and source provenance for LGPL components.
 5. Validate the **installed release artifact** on supported distributions, including
-   real media, sandbox helpers, portal/file-manager integration, and package upgrades.
+   real media, sandbox helpers, and package upgrades.
    Run the full pinned repository checks when changing release/build infrastructure.
 6. Wire the verified runtime build into `.github/workflows/release.yml` before
    archive creation, failing the build on source/checksum/patch mismatches or failed
