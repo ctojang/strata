@@ -236,7 +236,9 @@ fn main_thread_checks() -> [Check; 4] {
         .map(|failure| failure.directory.clone())
         .collect();
     [
-        diagnostics::syntax_highlighting(),
+        diagnostics::syntax_highlighting(
+            sourceview5::LanguageManager::default().language_ids().len(),
+        ),
         diagnostics::folder_monitoring(),
         diagnostics::terminal(
             Terminal::resolve().map(|terminal| terminal.program().to_string_lossy().into_owned()),
