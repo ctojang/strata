@@ -77,7 +77,7 @@ pub fn store(path: &Path, mtime: i64, png: &[u8]) {
 
 /// The digest is only a file name, where MD5's weakness is irrelevant; GLib keeps keys matching other spec-following applications.
 fn cache_key(path: &Path) -> Option<(String, String)> {
-    let uri = gtk_glib_filename_to_uri(path)?;
+    let uri = filename_uri(path)?;
     Some((
         uri.clone(),
         format!("{}.png", glib_md5_hex(uri.as_bytes())?),
@@ -85,13 +85,13 @@ fn cache_key(path: &Path) -> Option<(String, String)> {
 }
 
 fn glib_md5_hex(data: &[u8]) -> Option<String> {
-    let mut checksum = gtk::glib::Checksum::new(gtk::glib::ChecksumType::Md5)?;
+    let mut checksum = glib::Checksum::new(glib::ChecksumType::Md5)?;
     checksum.update(data);
     checksum.string()
 }
 
-fn gtk_glib_filename_to_uri(path: &Path) -> Option<String> {
-    gtk::glib::filename_to_uri(path, None)
+fn filename_uri(path: &Path) -> Option<String> {
+    glib::filename_to_uri(path, None)
         .ok()
         .map(|uri| uri.to_string())
 }
@@ -174,8 +174,8 @@ fn read_bounded(path: &Path) -> Option<Vec<u8>> {
 
 /// The output always has a maximum edge of 256 px, so a tiny view can never poison the shared bucket.
 fn normalize_to_canonical(png: &[u8], uri: &str, mtime: i64, raw: bool) -> Result<Vec<u8>, String> {
-    use gtk::gdk_pixbuf::prelude::PixbufLoaderExt;
-    let loader = gtk::gdk_pixbuf::PixbufLoader::new();
+    use gdk_pixbuf::prelude::PixbufLoaderExt;
+    let loader = gdk_pixbuf::PixbufLoader::new();
     loader.write(png).map_err(|error| error.to_string())?;
     loader.close().map_err(|error| error.to_string())?;
     let pixbuf = loader
@@ -196,7 +196,7 @@ fn normalize_to_canonical(png: &[u8], uri: &str, mtime: i64, raw: bool) -> Resul
             .scale_simple(
                 scaled_width,
                 scaled_height,
-                gtk::gdk_pixbuf::InterpType::Bilinear,
+                gdk_pixbuf::InterpType::Bilinear,
             )
             .ok_or_else(|| "thumbnail scaling failed".to_owned())?
     };

@@ -51,7 +51,6 @@ mod tenxer_mode;
 mod terminal;
 mod theme;
 mod thumbnail;
-pub(crate) mod thumbnail_cache;
 mod top_bar_navigation;
 mod virtual_preview;
 mod window;

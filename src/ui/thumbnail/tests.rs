@@ -34,7 +34,7 @@ fn show_thumbnails_saved_setting_bypasses_cached_and_uncached_media() {
                         path: cached.clone(),
                         modified: None,
                         file_size: None,
-                        thumbnail_size: super::super::thumbnail_cache::CANONICAL_MAX_EDGE,
+                        thumbnail_size: crate::adapters::thumbnail_cache::CANONICAL_MAX_EDGE,
                     },
                     preview,
                 );
@@ -94,7 +94,7 @@ fn show_thumbnails_cancels_late_results_and_forgets_recycled_targets() {
                         path: new_path.clone(),
                         modified: None,
                         file_size: None,
-                        thumbnail_size: super::super::thumbnail_cache::CANONICAL_MAX_EDGE,
+                        thumbnail_size: crate::adapters::thumbnail_cache::CANONICAL_MAX_EDGE,
                     },
                     new_texture.clone(),
                 );
