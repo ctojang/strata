@@ -7,6 +7,12 @@ on:
         description: Bypass the fast dependency cache and require verified published base images
         type: boolean
         default: false
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# The fork reuses upstream's public published E2E bases.
+env:
+  STRATA_E2E_IMAGE_REPOSITORY: lgse/strata
 
 permissions:
   contents: read
@@ -18,7 +24,7 @@ concurrency:
 jobs:
   e2e-build:
     name: E2E build and plan
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     env:
       DOCKER_BUILD_RECORD_UPLOAD: 'false'
     # Bound hung bootstrap jobs independently of informational timing reports.
@@ -171,8 +177,8 @@ jobs:
   e2e-shard:
     name: E2E shard ${{ matrix.shard }}
     needs: e2e-build
-    runs-on: blacksmith-4vcpu-ubuntu-2404
-    timeout-minutes: 20
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.e2e-build.outputs.matrix) }}
