@@ -2,6 +2,8 @@
 
 mod download;
 mod image_conversion;
+pub(crate) mod placement;
+pub(crate) mod request;
 
 #[cfg(test)]
 mod tests;
@@ -30,10 +32,6 @@ use crate::{
     adapters::{LocalFileSource, LocalOperationProvider, LocalPreviewProvider},
     app::BrowserEvent,
     model::{EntryKind, FileEntry, Location, MetadataValue},
-    portal::{
-        ChooserKind, ChooserRequest, check_destinations, local_uri, open_selection, safe_filename,
-        writable_from_read_only,
-    },
     services::{
         DirectoryChange, DirectoryEvent, DirectoryRequest, FileSource, LoadHandle,
         LocationIdentity, LocationValidationError, MetadataRequest, RemoteDownload,
@@ -66,6 +64,10 @@ use super::{
         FOCUS_MODIFIERS, arrow_direction, plain_tab_direction, vim_focus_direction,
     },
     keys::{self, KeyPress, SHORTCUT_MODIFIERS, bindings::*},
+};
+use request::{
+    CHOOSER_APPLICATION_ID, ChooserKind, ChooserRequest, check_destinations, local_uri,
+    open_selection, safe_filename, writable_from_read_only,
 };
 
 type Completion = Box<dyn FnOnce(ashpd::backend::Result<SelectedFiles>)>;
@@ -1394,7 +1396,7 @@ pub(crate) fn present_destination_chooser(
         confined: destination.root_limit.is_some(),
     };
     glib::MainContext::default().spawn_local(async move {
-        crate::portal::prepare_chooser_placement().await;
+        placement::prepare_chooser_placement().await;
         if !host.parent.is_visible() {
             return;
         }
@@ -1938,7 +1940,7 @@ fn build_chooser_hosted(
             .surface()
             .and_downcast::<gdk4_wayland::WaylandToplevel>()
     {
-        surface.set_application_id(crate::portal::CHOOSER_APPLICATION_ID);
+        surface.set_application_id(CHOOSER_APPLICATION_ID);
     }
     apply_external_parent(&window, state.request.parent.as_ref());
     let dimensions = chooser_initial_dimensions(

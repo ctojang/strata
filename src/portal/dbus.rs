@@ -97,7 +97,7 @@ impl FileChooserInterface {
     ) -> ashpd::backend::Result<Response<SelectedFiles>> {
         let tracked = self.begin(connection, &handle).await?;
         let size_hint =
-            super::window_geometry::parent_size_hint(app_id.as_ref(), parent.as_ref()).await;
+            crate::ui::chooser::placement::parent_size_hint(app_id.as_ref(), parent.as_ref()).await;
         let request = super::open_request(handle.to_string(), parent.into(), &title, options).await;
         let request = request.map(|mut request| {
             request.parent_size_hint = size_hint;
@@ -118,7 +118,7 @@ impl FileChooserInterface {
     ) -> ashpd::backend::Result<Response<SelectedFiles>> {
         let tracked = self.begin(connection, &handle).await?;
         let size_hint =
-            super::window_geometry::parent_size_hint(app_id.as_ref(), parent.as_ref()).await;
+            crate::ui::chooser::placement::parent_size_hint(app_id.as_ref(), parent.as_ref()).await;
         let request =
             super::save_file_request(handle.to_string(), parent.into(), &title, options).await;
         let request = request.map(|mut request| {
@@ -140,7 +140,7 @@ impl FileChooserInterface {
     ) -> ashpd::backend::Result<Response<SelectedFiles>> {
         let tracked = self.begin(connection, &handle).await?;
         let size_hint =
-            super::window_geometry::parent_size_hint(app_id.as_ref(), parent.as_ref()).await;
+            crate::ui::chooser::placement::parent_size_hint(app_id.as_ref(), parent.as_ref()).await;
         let request =
             super::save_files_request(handle.to_string(), parent.into(), &title, options).await;
         let request = request.map(|mut request| {

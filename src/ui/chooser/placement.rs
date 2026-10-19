@@ -19,7 +19,7 @@ const MAX_REPLY_BYTES: u64 = 1024 * 1024;
 
 // xdg-foreign exports transiency, not geometry. Only use a compositor sizing
 // hint when the requesting application has a single identifiable window.
-pub(super) async fn parent_size_hint(
+pub(crate) async fn parent_size_hint(
     app_id: Option<&MaybeAppID>,
     parent: Option<&WindowIdentifierType>,
 ) -> Option<(i32, i32)> {
@@ -49,7 +49,10 @@ fn hyprland_socket() -> Option<PathBuf> {
 }
 
 fn centering_commands() -> [String; 3] {
-    let class = format!("^{}$", super::CHOOSER_APPLICATION_ID.replace('.', "[.]"));
+    let class = format!(
+        "^{}$",
+        super::request::CHOOSER_APPLICATION_ID.replace('.', "[.]")
+    );
     let legacy_match =
         format!("keyword windowrule[strata-file-chooser-center]:match:class {class}");
     [
