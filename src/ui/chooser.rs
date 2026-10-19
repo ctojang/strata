@@ -2,8 +2,8 @@
 
 mod download;
 mod image_conversion;
-pub(crate) mod placement;
-pub(crate) mod request;
+mod placement;
+mod request;
 
 #[cfg(test)]
 mod tests;
@@ -105,6 +105,7 @@ struct ChooserFileSource {
 }
 
 impl ChooserFileSource {
+    #[cfg(test)]
     fn new() -> Rc<Self> {
         Rc::new(Self {
             source: Rc::new(LocalFileSource),
@@ -1420,14 +1421,7 @@ pub(crate) fn present_destination_chooser(
     });
 }
 
-pub(crate) fn present_chooser(
-    request: ChooserRequest,
-    cancelled: Arc<AtomicBool>,
-    completion: impl FnOnce(ashpd::backend::Result<SelectedFiles>) + 'static,
-) {
-    let _ = build_chooser(request, cancelled, completion);
-}
-
+#[cfg(test)]
 fn build_chooser(
     request: ChooserRequest,
     cancelled: Arc<AtomicBool>,
@@ -1436,6 +1430,7 @@ fn build_chooser(
     build_chooser_with_source(request, cancelled, completion, ChooserFileSource::new())
 }
 
+#[cfg(test)]
 fn build_chooser_with_source(
     request: ChooserRequest,
     cancelled: Arc<AtomicBool>,
@@ -1971,20 +1966,6 @@ fn build_chooser_hosted(
         }
     });
     Some(state)
-}
-
-pub(crate) fn cancel_chooser(token: &str) {
-    CHOOSERS.with(|choosers| {
-        let window = {
-            choosers
-                .borrow()
-                .get(token)
-                .and_then(glib::WeakRef::upgrade)
-        };
-        if let Some(window) = window {
-            window.close();
-        }
-    });
 }
 
 fn portal_filters(

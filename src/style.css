@@ -1253,11 +1253,6 @@ colorchooser button.circular:disabled {
   font-size: 0.82em;
 }
 
-.portal-setup-dialog .form-message:not(.error) {
-  padding: 0;
-  color: @strata_text;
-}
-
 .form-error {
   color: @strata_danger;
 }

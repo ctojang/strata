@@ -37,7 +37,6 @@ use super::{
 
 struct ResponsiveContent {
     flows: Vec<(gtk::FlowBox, u32)>,
-    setting_rows: Vec<gtk::Box>,
     activation_rows: Vec<ResponsiveActivationRow>,
 }
 
@@ -74,7 +73,6 @@ mod responsive_bin {
         pub navigation_labels: RefCell<Vec<gtk::Label>>,
         pub navigation_contents: RefCell<Vec<gtk::Box>>,
         pub responsive_flows: RefCell<Vec<(gtk::FlowBox, u32)>>,
-        pub responsive_setting_rows: RefCell<Vec<gtk::Box>>,
         pub responsive_activation_rows: RefCell<Vec<ResponsiveActivationRow>>,
     }
 
@@ -140,14 +138,6 @@ mod responsive_bin {
                 let compact = compact_content;
                 for (flow, expanded_columns) in self.responsive_flows.borrow().iter() {
                     flow.set_max_children_per_line(if compact { 1 } else { *expanded_columns });
-                }
-                for row in self.responsive_setting_rows.borrow().iter() {
-                    row.set_orientation(if compact {
-                        gtk::Orientation::Vertical
-                    } else {
-                        gtk::Orientation::Horizontal
-                    });
-                    row.set_spacing(if compact { 8 } else { 16 });
                 }
             }
             let available_activation_width = child_width - if compact { 100 } else { 330 };
@@ -259,7 +249,6 @@ impl ResponsiveBin {
         imp.navigation_labels.replace(navigation_labels);
         imp.navigation_contents.replace(navigation_contents);
         imp.responsive_flows.replace(responsive.flows);
-        imp.responsive_setting_rows.replace(responsive.setting_rows);
         imp.responsive_activation_rows
             .replace(responsive.activation_rows);
         child.set_parent(&bin);
@@ -587,8 +576,7 @@ pub fn build_layer(
         .hexpand(true)
         .vexpand(true)
         .build();
-    let (general, responsive_setting_rows, responsive_activation_rows) =
-        general_page(preferences.clone());
+    let (general, responsive_activation_rows) = general_page(preferences.clone());
     stack.add_named(&general, Some("general"));
     stack.add_named(&diagnostics::diagnostics_page(), Some("diagnostics"));
     stack.add_named(&about_page(), Some("about"));
@@ -604,7 +592,6 @@ pub fn build_layer(
         Vec::new(),
         ResponsiveContent {
             flows: Vec::new(),
-            setting_rows: responsive_setting_rows,
             activation_rows: responsive_activation_rows,
         },
     );

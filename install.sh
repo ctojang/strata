@@ -17,16 +17,12 @@ WITH_SMB=ask
 WITH_RAW=ask
 WITH_DESKTOP_ENTRY=ask
 WITH_FOLDER_ASSOCIATION=ask
-WITH_FILE_MANAGER=ask
-WITH_FILE_CHOOSER=ask
 WITH_OMARCHY_KEYBINDS=ask
-WITH_UDISKIE_UNLOCK=ask
 COLOR_RESET="" COLOR_BOLD="" COLOR_DIM="" COLOR_ACCENT="" COLOR_SUCCESS="" COLOR_WARNING="" COLOR_ERROR=""
 COLOR_LAYER_ONE="" COLOR_LAYER_TWO=""
 RICH_TERMINAL=no
 WARNING_COUNT=0
 CORE_INSTALLED=no
-SETUP_NOTICES=no
 ACTIVE_PID=""
 LOG_FILE=""
 TEMP_DIR=""
@@ -85,22 +81,14 @@ case "$(installer_locale)" in
     [setup_title]='Choose your setup'
     [launcher]='Application launcher'
     [folders]='Default file manager'
-    [reveal]='Open file location'
-    [chooser]='Open and Save dialogs'
     [launcher_hint]='Add Strata to your application menu.'
-    [folders_hint]='Use Strata for folders and Open file location. Includes the launcher.'
-    [reveal_hint]='Reveal files from other apps without changing folder defaults.'
-    [reveal_ready]='Strata now handles "Open file location" requests.'
-    [reveal_relogin]='Installed the FileManager1 service, but could not reload the session bus. Log out and back in to use Strata for "Open file location" requests.'
-    [chooser_hint]='Use Strata for portal dialogs. Restarts the portal service; close file dialogs first.'
+    [folders_hint]='Use Strata for folders. Includes the launcher.'
     [smb]='Windows network shares'
     [smb_hint]='Install optional SMB support for browsing network shares.'
     [raw]='Camera RAW support'
     [raw_hint]='Install optional image decoders for broader preview support.'
     [omarchy]='Omarchy file-manager shortcuts'
     [omarchy_hint]='Replace the file-manager shortcuts. A backup is kept.'
-    [udiskie]='Encrypted-drive unlock'
-    [udiskie_hint]='Edit udiskie settings, disable LUKS automount, and restart udiskie. Restore with strata --uninstall-udiskie-unlock.'
     [custom_title]='Make Strata yours'
     [plan]='Installation plan'
     [destination]='Install to %{path}'
@@ -116,13 +104,11 @@ case "$(installer_locale)" in
     [unpack]='Unpack the verified release'
     [application]='Install the application'
     [ready]='Ready to explore'
-    [installed_notices]='Installed — review setup details'
     [installed_warnings]='Installed with warnings'
     [installed]='Strata %{version} is installed.'
     [launch]='Run %{command} to get started.'
     [usage_intro]='Without options, choose a recommended install or customize desktop integration.'
     [verbose_help]='Show detailed download and verification output'
-    [udiskie_requires]='--with-udiskie-unlock requires an Arch-based system with udiskie on PATH.'
     [progress]='%{percent}%'
   ) ;;
   fr) INSTALLER_MESSAGES=(
@@ -147,22 +133,14 @@ case "$(installer_locale)" in
     [setup_title]='Choisissez votre installation'
     [launcher]='Lanceur d’application'
     [folders]='Gestionnaire de fichiers par défaut'
-    [reveal]='Ouvrir l’emplacement du fichier'
-    [chooser]='Boîtes de dialogue Ouvrir et Enregistrer'
     [launcher_hint]='Ajoutez Strata au menu des applications.'
-    [folders_hint]='Utilisez Strata pour les dossiers et leur ouverture depuis d’autres applications. Lanceur inclus.'
-    [reveal_hint]='Affichez les fichiers depuis d’autres applications sans changer le gestionnaire de dossiers.'
-    [reveal_ready]='Strata gère désormais les demandes « Ouvrir l’emplacement du fichier ».'
-    [reveal_relogin]='Le service FileManager1 est installé, mais le bus de session n’a pas pu être rechargé. Déconnectez-vous puis reconnectez-vous pour utiliser Strata pour les demandes « Ouvrir l’emplacement du fichier ».'
-    [chooser_hint]='Utilisez Strata pour les dialogues de portail. Redémarre le service ; fermez d’abord les dialogues de fichiers.'
+    [folders_hint]='Utilisez Strata pour les dossiers. Lanceur inclus.'
     [smb]='Partages réseau Windows'
     [smb_hint]='Installez la prise en charge SMB pour parcourir les partages réseau.'
     [raw]='Prise en charge des photos RAW'
     [raw_hint]='Installez des décodeurs d’images pour élargir la prise en charge des aperçus.'
     [omarchy]='Raccourcis du gestionnaire de fichiers Omarchy'
     [omarchy_hint]='Remplacez les raccourcis du gestionnaire de fichiers. Une sauvegarde est conservée.'
-    [udiskie]='Déverrouillage des disques chiffrés'
-    [udiskie_hint]='Modifiez udiskie, désactivez le montage automatique LUKS et redémarrez udiskie. Restaurez avec strata --uninstall-udiskie-unlock.'
     [custom_title]='Adaptez Strata à vos besoins'
     [plan]='Plan d’installation'
     [destination]='Installer dans %{path}'
@@ -178,13 +156,11 @@ case "$(installer_locale)" in
     [unpack]='Décompresser la version vérifiée'
     [application]='Installer l’application'
     [ready]='Tout est prêt pour explorer'
-    [installed_notices]='Installé — consultez les détails de configuration'
     [installed_warnings]='Installation terminée avec avertissements'
     [installed]='Strata %{version} est installé.'
     [launch]='Exécutez %{command} pour commencer.'
     [usage_intro]='Sans option, choisissez l’installation recommandée ou personnalisez l’intégration au bureau.'
     [verbose_help]='Afficher les détails du téléchargement et de la vérification'
-    [udiskie_requires]='--with-udiskie-unlock nécessite un système basé sur Arch avec udiskie dans PATH.'
     [progress]='%{percent} %'
   ) ;;
   de) INSTALLER_MESSAGES=(
@@ -209,22 +185,14 @@ case "$(installer_locale)" in
     [setup_title]='Einrichtung auswählen'
     [launcher]=Anwendungsstarter
     [folders]=Standard-Dateimanager
-    [reveal]='Dateispeicherort öffnen'
-    [chooser]='Öffnen- und Speichern-Dialoge'
     [launcher_hint]='Strata zum Anwendungsmenü hinzufügen.'
-    [folders_hint]='Strata für Ordner und das Öffnen von Dateispeicherorten verwenden. Starter inklusive.'
-    [reveal_hint]='Dateien aus anderen Anwendungen anzeigen, ohne den Standard für Ordner zu ändern.'
-    [reveal_ready]='Strata verarbeitet jetzt Anfragen für „Dateispeicherort öffnen“.'
-    [reveal_relogin]='Der FileManager1-Dienst wurde installiert, aber der Sitzungsbus konnte nicht neu geladen werden. Melden Sie sich ab und wieder an, um Strata für „Dateispeicherort öffnen“ zu verwenden.'
-    [chooser_hint]='Strata für Portal-Dialoge verwenden. Startet den Portal-Dienst neu; Dateidialoge vorher schließen.'
+    [folders_hint]='Strata für Ordner verwenden. Starter inklusive.'
     [smb]=Windows-Netzwerkfreigaben
     [smb_hint]='Optionale SMB-Unterstützung zum Durchsuchen von Netzwerkfreigaben installieren.'
     [raw]='Kamera-RAW-Unterstützung'
     [raw_hint]='Optionale Bilddecoder für zusätzliche Vorschauformate installieren.'
     [omarchy]='Omarchy-Dateimanager-Tastenkürzel'
     [omarchy_hint]='Dateimanager-Tastenkürzel ersetzen. Eine Sicherung wird erstellt.'
-    [udiskie]='Verschlüsselte Laufwerke entsperren'
-    [udiskie_hint]='udiskie konfigurieren, LUKS-Automount deaktivieren und udiskie neu starten. Mit strata --uninstall-udiskie-unlock wiederherstellen.'
     [custom_title]='Strata nach Ihren Wünschen'
     [plan]='Installationsübersicht'
     [destination]='Installation nach %{path}'
@@ -240,13 +208,11 @@ case "$(installer_locale)" in
     [unpack]='Überprüfte Version entpacken'
     [application]='Anwendung installieren'
     [ready]='Bereit zum Erkunden'
-    [installed_notices]='Installiert — Einrichtungshinweise prüfen'
     [installed_warnings]='Mit Warnungen installiert'
     [installed]='Strata %{version} ist installiert.'
     [launch]='Starten Sie mit %{command}.'
     [usage_intro]='Ohne Optionen können Sie die empfohlene Installation wählen oder die Desktop-Integration anpassen.'
     [verbose_help]='Ausführliche Download- und Prüfausgabe anzeigen'
-    [udiskie_requires]='--with-udiskie-unlock erfordert ein Arch-basiertes System mit udiskie im PATH.'
     [progress]='%{percent} %'
   ) ;;
   es) INSTALLER_MESSAGES=(
@@ -271,22 +237,14 @@ case "$(installer_locale)" in
     [setup_title]='Elige tu instalación'
     [launcher]='Lanzador de aplicaciones'
     [folders]='Gestor de archivos predeterminado'
-    [reveal]='Abrir ubicación del archivo'
-    [chooser]='Diálogos de abrir y guardar'
     [launcher_hint]='Añade Strata al menú de aplicaciones.'
-    [folders_hint]='Usa Strata para carpetas y para abrir la ubicación de archivos. Incluye el lanzador.'
-    [reveal_hint]='Muestra archivos desde otras aplicaciones sin cambiar el gestor de carpetas predeterminado.'
-    [reveal_ready]='Strata ahora gestiona las solicitudes de «Abrir ubicación del archivo».'
-    [reveal_relogin]='Se instaló el servicio FileManager1, pero no se pudo recargar el bus de sesión. Cierra sesión y vuelve a iniciarla para usar Strata en las solicitudes de «Abrir ubicación del archivo».'
-    [chooser_hint]='Usa Strata para los diálogos del portal. Reinicia el servicio; cierra antes los diálogos de archivos.'
+    [folders_hint]='Usa Strata para carpetas. Incluye el lanzador.'
     [smb]='Recursos compartidos de Windows'
     [smb_hint]='Instala el soporte SMB opcional para explorar recursos compartidos de red.'
     [raw]='Soporte para fotos RAW'
     [raw_hint]='Instala decodificadores de imágenes opcionales para ampliar las vistas previas.'
     [omarchy]='Atajos del gestor de archivos de Omarchy'
     [omarchy_hint]='Reemplaza los atajos del gestor de archivos. Se conserva una copia de seguridad.'
-    [udiskie]='Desbloqueo de unidades cifradas'
-    [udiskie_hint]='Configura udiskie, desactiva el montaje automático LUKS y reinicia udiskie. Restaura con strata --uninstall-udiskie-unlock.'
     [custom_title]='Haz Strata a tu medida'
     [plan]='Plan de instalación'
     [destination]='Instalar en %{path}'
@@ -302,13 +260,11 @@ case "$(installer_locale)" in
     [unpack]='Extraer la versión verificada'
     [application]='Instalar la aplicación'
     [ready]='Todo listo para explorar'
-    [installed_notices]='Instalado — revisa los detalles de configuración'
     [installed_warnings]='Instalado con advertencias'
     [installed]='Strata %{version} está instalado.'
     [launch]='Ejecuta %{command} para comenzar.'
     [usage_intro]='Sin opciones, elige la instalación recomendada o personaliza la integración con el escritorio.'
     [verbose_help]='Mostrar detalles de descarga y verificación'
-    [udiskie_requires]='--with-udiskie-unlock requiere un sistema basado en Arch con udiskie en PATH.'
     [progress]='%{percent} %'
   ) ;;
   ja) INSTALLER_MESSAGES=(
@@ -333,22 +289,14 @@ case "$(installer_locale)" in
     [setup_title]='インストール方法を選択'
     [launcher]='アプリランチャー'
     [folders]='既定のファイルマネージャー'
-    [reveal]='ファイルの場所を開く'
-    [chooser]='開く・保存ダイアログ'
     [launcher_hint]='アプリケーションメニューに Strata を追加します。'
-    [folders_hint]='フォルダーやファイルの場所を Strata で開きます。ランチャーも追加します。'
-    [reveal_hint]='フォルダーの既定設定を変えずに、他のアプリからファイルの場所を表示します。'
-    [reveal_ready]='Strata が「ファイルの場所を開く」要求を処理するようになりました。'
-    [reveal_relogin]='FileManager1 サービスをインストールしましたが、セッションバスを再読み込みできませんでした。「ファイルの場所を開く」要求に Strata を使うには、ログアウトして再度ログインしてください。'
-    [chooser_hint]='ポータルのダイアログに Strata を使用します。サービスを再起動するため、先にファイルダイアログを閉じてください。'
+    [folders_hint]='フォルダーを Strata で開きます。ランチャーも追加します。'
     [smb]='Windows ネットワーク共有'
     [smb_hint]='ネットワーク共有を参照するための SMB サポートを追加します。'
     [raw]='カメラ RAW サポート'
     [raw_hint]='より多くの画像をプレビューできるよう、追加のデコーダーをインストールします。'
     [omarchy]='Omarchy のファイルマネージャーショートカット'
     [omarchy_hint]='ファイルマネージャーのショートカットを置き換えます。バックアップを保存します。'
-    [udiskie]='暗号化ドライブのロック解除'
-    [udiskie_hint]='udiskie の設定を変更し、LUKS の自動マウントを無効にして再起動します。strata --uninstall-udiskie-unlock で元に戻せます。'
     [custom_title]='Strata を自分好みに'
     [plan]='インストール内容'
     [destination]='インストール先: %{path}'
@@ -364,13 +312,11 @@ case "$(installer_locale)" in
     [unpack]='検証済みリリースを展開'
     [application]='アプリをインストール'
     [ready]='準備ができました'
-    [installed_notices]='インストール済み — 設定の詳細を確認してください'
     [installed_warnings]='警告付きでインストールしました'
     [installed]='Strata %{version} をインストールしました。'
     [launch]='%{command} を実行して使い始めましょう。'
     [usage_intro]='オプションなしでは、推奨インストールかデスクトップ連携のカスタマイズを選べます。'
     [verbose_help]='ダウンロードと検証の詳細を表示'
-    [udiskie_requires]='--with-udiskie-unlock には、PATH 上に udiskie がある Arch 系システムが必要です。'
     [progress]='%{percent}%'
   ) ;;
   pt-BR) INSTALLER_MESSAGES=(
@@ -395,22 +341,14 @@ case "$(installer_locale)" in
     [setup_title]='Escolha sua instalação'
     [launcher]='Lançador de aplicativos'
     [folders]='Gerenciador de arquivos padrão'
-    [reveal]='Abrir local do arquivo'
-    [chooser]='Diálogos de abrir e salvar'
     [launcher_hint]='Adicione o Strata ao menu de aplicativos.'
-    [folders_hint]='Use o Strata para pastas e para abrir locais de arquivos. Inclui o lançador.'
-    [reveal_hint]='Mostre arquivos de outros aplicativos sem mudar o padrão para pastas.'
-    [reveal_ready]='O Strata agora atende às solicitações de “Abrir local do arquivo”.'
-    [reveal_relogin]='O serviço FileManager1 foi instalado, mas não foi possível recarregar o barramento de sessão. Saia e entre novamente para usar o Strata nas solicitações de “Abrir local do arquivo”.'
-    [chooser_hint]='Use o Strata nos diálogos do portal. Reinicia o serviço; feche os diálogos de arquivos antes.'
+    [folders_hint]='Use o Strata para pastas. Inclui o lançador.'
     [smb]='Compartilhamentos de rede Windows'
     [smb_hint]='Instale o suporte SMB opcional para navegar em compartilhamentos de rede.'
     [raw]='Suporte a fotos RAW'
     [raw_hint]='Instale decodificadores de imagem opcionais para ampliar as prévias.'
     [omarchy]='Atalhos do gerenciador de arquivos do Omarchy'
     [omarchy_hint]='Substitua os atalhos do gerenciador de arquivos. Um backup é mantido.'
-    [udiskie]='Desbloqueio de unidades criptografadas'
-    [udiskie_hint]='Configure o udiskie, desative a montagem automática LUKS e reinicie o udiskie. Restaure com strata --uninstall-udiskie-unlock.'
     [custom_title]='Deixe o Strata do seu jeito'
     [plan]='Plano de instalação'
     [destination]='Instalar em %{path}'
@@ -426,13 +364,11 @@ case "$(installer_locale)" in
     [unpack]='Extrair a versão verificada'
     [application]='Instalar o aplicativo'
     [ready]='Tudo pronto para explorar'
-    [installed_notices]='Instalado — confira os detalhes da configuração'
     [installed_warnings]='Instalado com avisos'
     [installed]='O Strata %{version} está instalado.'
     [launch]='Execute %{command} para começar.'
     [usage_intro]='Sem opções, escolha a instalação recomendada ou personalize a integração com a área de trabalho.'
     [verbose_help]='Mostrar detalhes do download e da verificação'
-    [udiskie_requires]='--with-udiskie-unlock requer um sistema baseado em Arch com udiskie no PATH.'
     [progress]='%{percent}%'
   ) ;;
   ko) INSTALLER_MESSAGES=(
@@ -457,22 +393,14 @@ case "$(installer_locale)" in
     [setup_title]='설치 방식 선택'
     [launcher]='앱 실행 아이콘'
     [folders]='기본 파일 관리자'
-    [reveal]='파일 위치 열기'
-    [chooser]='열기 및 저장 대화상자'
     [launcher_hint]='앱 메뉴에 Strata를 추가합니다.'
-    [folders_hint]='폴더와 파일 위치를 Strata로 엽니다. 실행 아이콘도 추가합니다.'
-    [reveal_hint]='폴더 기본 설정을 바꾸지 않고 다른 앱에서 파일 위치를 표시합니다.'
-    [reveal_ready]='이제 Strata가 "파일 위치 열기" 요청을 처리합니다.'
-    [reveal_relogin]='FileManager1 서비스를 설치했지만 세션 버스를 다시 불러오지 못했습니다. "파일 위치 열기" 요청에 Strata를 사용하려면 로그아웃한 후 다시 로그인하세요.'
-    [chooser_hint]='포털 대화상자에 Strata를 사용합니다. 포털 서비스가 재시작되므로 파일 대화상자를 먼저 닫으세요.'
+    [folders_hint]='폴더를 Strata로 엽니다. 실행 아이콘도 추가합니다.'
     [smb]='Windows 네트워크 공유'
     [smb_hint]='네트워크 공유 탐색을 위한 SMB 지원을 추가합니다.'
     [raw]='카메라 RAW 지원'
     [raw_hint]='더 많은 이미지 미리보기를 위해 추가 디코더를 설치합니다.'
     [omarchy]='Omarchy 파일 관리자 단축키'
     [omarchy_hint]='파일 관리자 단축키를 바꿉니다. 백업은 보관됩니다.'
-    [udiskie]='암호화 드라이브 잠금 해제'
-    [udiskie_hint]='udiskie 설정을 바꾸고 LUKS 자동 마운트를 끈 뒤 재시작합니다. strata --uninstall-udiskie-unlock으로 복원합니다.'
     [custom_title]='나만의 Strata 설정'
     [plan]='설치 계획'
     [destination]='설치 위치: %{path}'
@@ -488,13 +416,11 @@ case "$(installer_locale)" in
     [unpack]='검증된 릴리스 압축 풀기'
     [application]='앱 설치'
     [ready]='탐색할 준비가 되었습니다'
-    [installed_notices]='설치됨 — 설정 세부 정보를 확인하세요'
     [installed_warnings]='경고와 함께 설치됨'
     [installed]='Strata %{version} 설치가 완료되었습니다.'
     [launch]='%{command} 명령으로 시작하세요.'
     [usage_intro]='옵션 없이 실행하면 권장 설치 또는 데스크톱 통합 사용자 지정을 선택합니다.'
     [verbose_help]='다운로드 및 검증 상세 출력 표시'
-    [udiskie_requires]='--with-udiskie-unlock에는 PATH에 udiskie가 있는 Arch 기반 시스템이 필요합니다.'
     [progress]='%{percent}%'
   ) ;;
   vi) INSTALLER_MESSAGES=(
@@ -519,22 +445,14 @@ case "$(installer_locale)" in
     [setup_title]='Chọn cách cài đặt'
     [launcher]='Biểu tượng khởi chạy'
     [folders]='Trình quản lý tệp mặc định'
-    [reveal]='Mở vị trí tệp'
-    [chooser]='Hộp thoại mở và lưu'
     [launcher_hint]='Thêm Strata vào menu ứng dụng.'
-    [folders_hint]='Dùng Strata để mở thư mục và vị trí tệp. Bao gồm biểu tượng khởi chạy.'
-    [reveal_hint]='Hiện tệp từ ứng dụng khác mà không đổi ứng dụng mở thư mục mặc định.'
-    [reveal_ready]='Strata giờ xử lý các yêu cầu “Mở vị trí tệp”.'
-    [reveal_relogin]='Đã cài dịch vụ FileManager1 nhưng không thể tải lại bus phiên. Hãy đăng xuất rồi đăng nhập lại để dùng Strata cho các yêu cầu “Mở vị trí tệp”.'
-    [chooser_hint]='Dùng Strata cho hộp thoại portal. Sẽ khởi động lại dịch vụ; hãy đóng các hộp thoại tệp trước.'
+    [folders_hint]='Dùng Strata để mở thư mục. Bao gồm biểu tượng khởi chạy.'
     [smb]='Chia sẻ mạng Windows'
     [smb_hint]='Cài hỗ trợ SMB tùy chọn để duyệt các thư mục chia sẻ mạng.'
     [raw]='Hỗ trợ ảnh RAW'
     [raw_hint]='Cài thêm bộ giải mã hình ảnh để xem trước nhiều định dạng hơn.'
     [omarchy]='Phím tắt trình quản lý tệp Omarchy'
     [omarchy_hint]='Thay phím tắt trình quản lý tệp. Giữ lại bản sao lưu.'
-    [udiskie]='Mở khóa ổ đĩa mã hóa'
-    [udiskie_hint]='Đổi thiết lập udiskie, tắt tự động gắn LUKS rồi khởi động lại udiskie. Khôi phục bằng strata --uninstall-udiskie-unlock.'
     [custom_title]='Thiết lập Strata theo ý bạn'
     [plan]='Kế hoạch cài đặt'
     [destination]='Cài đặt vào %{path}'
@@ -550,13 +468,11 @@ case "$(installer_locale)" in
     [unpack]='Giải nén bản phát hành đã xác minh'
     [application]='Cài đặt ứng dụng'
     [ready]='Sẵn sàng khám phá'
-    [installed_notices]='Đã cài đặt — hãy xem chi tiết thiết lập'
     [installed_warnings]='Đã cài đặt với cảnh báo'
     [installed]='Đã cài đặt Strata %{version}.'
     [launch]='Chạy %{command} để bắt đầu.'
     [usage_intro]='Khi không có tùy chọn, chọn cài đặt đề xuất hoặc tùy chỉnh tích hợp môi trường làm việc.'
     [verbose_help]='Hiện chi tiết tải xuống và xác minh'
-    [udiskie_requires]='--with-udiskie-unlock yêu cầu hệ thống dựa trên Arch có udiskie trong PATH.'
     [progress]='%{percent}%'
   ) ;;
   it) INSTALLER_MESSAGES=(
@@ -581,22 +497,14 @@ case "$(installer_locale)" in
     [setup_title]='Scegli la configurazione'
     [launcher]='Lanciatore dell’applicazione'
     [folders]='Gestore di file predefinito'
-    [reveal]='Apri percorso del file'
-    [chooser]='Finestre Apri e Salva'
     [launcher_hint]='Aggiungi Strata al menu delle applicazioni.'
-    [folders_hint]='Usa Strata per cartelle e percorsi dei file. Include il lanciatore.'
-    [reveal_hint]='Mostra file da altre applicazioni senza cambiare il gestore predefinito delle cartelle.'
-    [reveal_ready]='Strata ora gestisce le richieste «Apri percorso del file».'
-    [reveal_relogin]='Il servizio FileManager1 è stato installato, ma non è stato possibile ricaricare il bus di sessione. Esci e accedi di nuovo per usare Strata con le richieste «Apri percorso del file».'
-    [chooser_hint]='Usa Strata per le finestre del portale. Riavvia il servizio; chiudi prima le finestre dei file.'
+    [folders_hint]='Usa Strata per le cartelle. Include il lanciatore.'
     [smb]='Condivisioni di rete Windows'
     [smb_hint]='Installa il supporto SMB opzionale per esplorare le condivisioni di rete.'
     [raw]='Supporto foto RAW'
     [raw_hint]='Installa decodificatori opzionali per visualizzare più formati di immagini.'
     [omarchy]='Scorciatoie del gestore di file Omarchy'
     [omarchy_hint]='Sostituisci le scorciatoie del gestore di file. Viene conservata una copia di backup.'
-    [udiskie]='Sblocco delle unità cifrate'
-    [udiskie_hint]='Configura udiskie, disattiva il montaggio automatico LUKS e riavvia udiskie. Ripristina con strata --uninstall-udiskie-unlock.'
     [custom_title]='Configura Strata a modo tuo'
     [plan]='Piano di installazione'
     [destination]='Installa in %{path}'
@@ -612,13 +520,11 @@ case "$(installer_locale)" in
     [unpack]='Estrai la versione verificata'
     [application]='Installa l’applicazione'
     [ready]='Pronto per esplorare'
-    [installed_notices]='Installato — controlla i dettagli della configurazione'
     [installed_warnings]='Installazione completata con avvisi'
     [installed]='Strata %{version} è installato.'
     [launch]='Esegui %{command} per iniziare.'
     [usage_intro]='Senza opzioni, scegli l’installazione consigliata o personalizza l’integrazione desktop.'
     [verbose_help]='Mostra i dettagli di download e verifica'
-    [udiskie_requires]='--with-udiskie-unlock richiede un sistema basato su Arch con udiskie nel PATH.'
     [progress]='%{percent}%'
   ) ;;
   ru) INSTALLER_MESSAGES=(
@@ -643,22 +549,14 @@ case "$(installer_locale)" in
     [setup_title]='Выберите вариант установки'
     [launcher]='Ярлык запуска'
     [folders]='Файловый менеджер по умолчанию'
-    [reveal]='Открытие расположения файла'
-    [chooser]='Диалоги открытия и сохранения'
     [launcher_hint]='Добавить Strata в меню приложений.'
-    [folders_hint]='Открывать папки и расположение файлов в Strata. Включает ярлык запуска.'
-    [reveal_hint]='Показывать файлы из других приложений, не меняя обработчик папок.'
-    [reveal_ready]='Теперь Strata обрабатывает запросы «Открытие расположения файла».'
-    [reveal_relogin]='Служба FileManager1 установлена, но перезагрузить сеансовую шину не удалось. Выйдите из системы и войдите снова, чтобы Strata обрабатывала запросы «Открытие расположения файла».'
-    [chooser_hint]='Использовать Strata для диалогов портала. Служба будет перезапущена; сначала закройте файловые диалоги.'
+    [folders_hint]='Открывать папки в Strata. Включает ярлык запуска.'
     [smb]='Сетевые ресурсы Windows'
     [smb_hint]='Установить поддержку SMB для просмотра сетевых ресурсов.'
     [raw]='Поддержка фотографий RAW'
     [raw_hint]='Установить дополнительные декодеры для предпросмотра изображений.'
     [omarchy]='Горячие клавиши файлового менеджера Omarchy'
     [omarchy_hint]='Заменить горячие клавиши файлового менеджера. Резервная копия сохранится.'
-    [udiskie]='Разблокировка зашифрованных дисков'
-    [udiskie_hint]='Изменить настройки udiskie, отключить автомонтирование LUKS и перезапустить udiskie. Восстановление: strata --uninstall-udiskie-unlock.'
     [custom_title]='Настройте Strata под себя'
     [plan]='План установки'
     [destination]='Установить в %{path}'
@@ -674,13 +572,11 @@ case "$(installer_locale)" in
     [unpack]='Распаковка проверенного выпуска'
     [application]='Установка приложения'
     [ready]='Всё готово к работе'
-    [installed_notices]='Установлено — проверьте сведения о настройке'
     [installed_warnings]='Установлено с предупреждениями'
     [installed]='Strata %{version} установлена.'
     [launch]='Для начала работы выполните %{command}.'
     [usage_intro]='Без параметров выберите рекомендуемую установку или настройте интеграцию с рабочим столом.'
     [verbose_help]='Показать подробности загрузки и проверки'
-    [udiskie_requires]='--with-udiskie-unlock требует систему на базе Arch с udiskie в PATH.'
     [progress]='%{percent} %'
   ) ;;
   zh-CN) INSTALLER_MESSAGES=(
@@ -705,22 +601,14 @@ case "$(installer_locale)" in
     [setup_title]='选择安装方式'
     [launcher]='应用启动图标'
     [folders]='默认文件管理器'
-    [reveal]='打开文件位置'
-    [chooser]='打开和保存对话框'
     [launcher_hint]='将 Strata 添加到应用菜单。'
-    [folders_hint]='使用 Strata 打开文件夹和文件位置，并添加启动图标。'
-    [reveal_hint]='显示其他应用中的文件位置，不更改默认文件夹处理程序。'
-    [reveal_ready]='Strata 现在会处理“打开文件位置”请求。'
-    [reveal_relogin]='已安装 FileManager1 服务，但无法重新加载会话总线。请注销并重新登录，以便使用 Strata 处理“打开文件位置”请求。'
-    [chooser_hint]='使用 Strata 的门户对话框。此操作会重启门户服务，请先关闭文件对话框。'
+    [folders_hint]='使用 Strata 打开文件夹，并添加启动图标。'
     [smb]='Windows 网络共享'
     [smb_hint]='安装可选的 SMB 支持，以浏览网络共享。'
     [raw]='相机 RAW 格式支持'
     [raw_hint]='安装可选的图像解码器，以预览更多格式。'
     [omarchy]='Omarchy 文件管理器快捷键'
     [omarchy_hint]='替换文件管理器快捷键，并保留备份。'
-    [udiskie]='加密驱动器解锁'
-    [udiskie_hint]='修改 udiskie 设置、关闭 LUKS 自动挂载并重启 udiskie。可运行 strata --uninstall-udiskie-unlock 恢复。'
     [custom_title]='按你的需要设置 Strata'
     [plan]='安装计划'
     [destination]='安装到 %{path}'
@@ -736,13 +624,11 @@ case "$(installer_locale)" in
     [unpack]='解压已验证的发行版'
     [application]='安装应用'
     [ready]='开始探索吧'
-    [installed_notices]='已安装，请查看设置详情'
     [installed_warnings]='已安装，但有警告'
     [installed]='已安装 Strata %{version}。'
     [launch]='运行 %{command} 开始使用。'
     [usage_intro]='不带选项运行时，可选择推荐安装或自定义桌面集成。'
     [verbose_help]='显示下载和验证的详细输出'
-    [udiskie_requires]='--with-udiskie-unlock 需要基于 Arch 的系统，且 PATH 中包含 udiskie。'
     [progress]='%{percent}%'
   ) ;;
   zh-TW) INSTALLER_MESSAGES=(
@@ -767,22 +653,14 @@ case "$(installer_locale)" in
     [setup_title]='選擇安裝方式'
     [launcher]='應用程式啟動器'
     [folders]='預設檔案管理員'
-    [reveal]='開啟檔案位置'
-    [chooser]='開啟與儲存對話框'
     [launcher_hint]='將 Strata 加入應用程式選單。'
-    [folders_hint]='使用 Strata 開啟資料夾與檔案位置，並包含啟動器。'
-    [reveal_hint]='從其他應用程式顯示檔案位置，不變更資料夾的預設應用程式。'
-    [reveal_ready]='Strata 現在會處理“開啟檔案位置”要求。'
-    [reveal_relogin]='已安裝 FileManager1 服務，但無法重新載入工作階段匯流排。請登出並重新登入，以便使用 Strata 處理“開啟檔案位置”要求。'
-    [chooser_hint]='使用 Strata 作為入口對話框。這會重新啟動入口服務，請先關閉檔案對話框。'
+    [folders_hint]='使用 Strata 開啟資料夾，並包含啟動器。'
     [smb]='Windows 網路共享'
     [smb_hint]='安裝選用的 SMB 支援，以瀏覽網路共享。'
     [raw]='相機 RAW 支援'
     [raw_hint]='安裝選用的影像解碼器，以預覽更多格式。'
     [omarchy]='Omarchy 檔案管理員快捷鍵'
     [omarchy_hint]='取代檔案管理員快捷鍵，並保留備份。'
-    [udiskie]='加密磁碟機解鎖'
-    [udiskie_hint]='編輯 udiskie 設定、停用 LUKS 自動掛載並重新啟動 udiskie。可執行 strata --uninstall-udiskie-unlock 還原。'
     [custom_title]='打造你的 Strata'
     [plan]='安裝計畫'
     [destination]='安裝到 %{path}'
@@ -798,13 +676,11 @@ case "$(installer_locale)" in
     [unpack]='解壓縮已驗證的發行版本'
     [application]='安裝應用程式'
     [ready]='開始探索吧'
-    [installed_notices]='已安裝，請查看設定詳細資訊'
     [installed_warnings]='已安裝，但有警告'
     [installed]='已安裝 Strata %{version}。'
     [launch]='執行 %{command} 開始使用。'
     [usage_intro]='不帶選項執行時，可選擇建議的安裝方式或自訂桌面整合。'
     [verbose_help]='顯示詳細的下載與驗證輸出'
-    [udiskie_requires]='--with-udiskie-unlock 需要以 Arch 為基礎、且 PATH 中有 udiskie 的系統。'
     [progress]='%{percent}%'
   ) ;;
 esac
@@ -883,7 +759,7 @@ installer_cleanup() {
       warn "$(text failed)"
     fi
     printf '  %s\n' "$(text details "path=$LOG_FILE")" >&2
-  elif [[ -n $LOG_FILE && $WARNING_COUNT == 0 && $SETUP_NOTICES == no ]]; then
+  elif [[ -n $LOG_FILE && $WARNING_COUNT == 0 ]]; then
     rm -f -- "$LOG_FILE"
   fi
 }
@@ -972,11 +848,6 @@ run_task() {
   if ((result != 0)); then
     printf '  %s×%s  %s\n' "$COLOR_ERROR" "$COLOR_RESET" "$(text task_failed "task=$label")" >&2
     return "$result"
-  fi
-  # Integration commands can succeed while reporting service-restart warnings.
-  if [[ $output_mode == notices && -s $TEMP_DIR/task-output ]]; then
-    SETUP_NOTICES=yes
-    [[ $VERBOSE == yes ]] || cat "$TEMP_DIR/task-output"
   fi
   if [[ $RICH_TERMINAL == yes && $VERBOSE == no && ${TASK_PROGRESS:-no} == yes ]]; then
     progress_bar 100 '✓'
@@ -1152,19 +1023,17 @@ packages_installed() {
 
 integration_dependencies() {
   local -n choices=$1
-  local changed=$2 i folder=-1 launcher=-1 reveal=-1
+  local changed=$2 i folder=-1 launcher=-1
   for i in "${!option_flags[@]}"; do
     case ${option_flags[i]} in
       WITH_FOLDER_ASSOCIATION) folder=$i ;;
       WITH_DESKTOP_ENTRY) launcher=$i ;;
-      WITH_FILE_MANAGER) reveal=$i ;;
     esac
   done
-  if ((folder >= 0 && (changed == launcher || changed == reveal))) && [[ ${choices[changed]} == no ]]; then
+  if ((folder >= 0 && changed == launcher)) && [[ ${choices[changed]} == no ]]; then
     choices[folder]=no
   elif ((folder >= 0)) && [[ ${choices[folder]} == yes ]]; then
     choices[launcher]=yes
-    choices[reveal]=yes
   fi
 }
 
@@ -1176,9 +1045,9 @@ choose_installation() {
   [[ $NON_INTERACTIVE == no ]] || return 0
   select_menu "$(text setup_title)" no setup_labels setup_hints setup_choices >"$PROMPT_DEVICE"
 
-  local -a option_flags=(WITH_DESKTOP_ENTRY WITH_FOLDER_ASSOCIATION WITH_FILE_MANAGER WITH_FILE_CHOOSER)
-  local -a option_labels=("$(text launcher)" "$(text folders)" "$(text reveal)" "$(text chooser)")
-  local -a option_hints=("$(text launcher_hint)" "$(text folders_hint)" "$(text reveal_hint)" "$(text chooser_hint)")
+  local -a option_flags=(WITH_DESKTOP_ENTRY WITH_FOLDER_ASSOCIATION)
+  local -a option_labels=("$(text launcher)" "$(text folders)")
+  local -a option_hints=("$(text launcher_hint)" "$(text folders_hint)")
   if [[ $arch_based == yes ]]; then
     if ! packages_installed gvfs-smb; then
       option_flags+=(WITH_SMB)
@@ -1196,18 +1065,12 @@ choose_installation() {
     option_labels+=("$(text omarchy)")
     option_hints+=("$(text omarchy_hint)")
   fi
-  if [[ $arch_based == yes || -n $omarchy_major ]] && udiskie_on_path; then
-    option_flags+=(WITH_UDISKIE_UNLOCK)
-    option_labels+=("$(text udiskie)")
-    option_hints+=("$(text udiskie_hint)")
-  fi
   local -a option_choices=(yes)
   for ((i = 1; i < ${#option_flags[@]}; i++)); do option_choices+=(no); done
   if [[ ${setup_choices[1]} == yes ]]; then
     select_menu "$(text custom_title)" yes option_labels option_hints option_choices integration_dependencies >"$PROMPT_DEVICE"
   fi
-  for i in WITH_SMB WITH_RAW WITH_DESKTOP_ENTRY WITH_FOLDER_ASSOCIATION WITH_FILE_MANAGER \
-    WITH_FILE_CHOOSER WITH_OMARCHY_KEYBINDS WITH_UDISKIE_UNLOCK; do
+  for i in WITH_SMB WITH_RAW WITH_DESKTOP_ENTRY WITH_FOLDER_ASSOCIATION WITH_OMARCHY_KEYBINDS; do
     printf -v "$i" '%s' no
   done
   for i in "${!option_flags[@]}"; do
@@ -1219,13 +1082,12 @@ show_installation_plan() {
   local i
   section "$(text plan)"
   printf '  %s\n' "$(text destination "path=$BIN_PATH")"
-  local -a flags=(WITH_DESKTOP_ENTRY WITH_FOLDER_ASSOCIATION WITH_FILE_MANAGER WITH_FILE_CHOOSER WITH_SMB WITH_RAW WITH_OMARCHY_KEYBINDS WITH_UDISKIE_UNLOCK)
-  local -a labels=(launcher folders reveal chooser smb raw omarchy udiskie)
+  local -a flags=(WITH_DESKTOP_ENTRY WITH_FOLDER_ASSOCIATION WITH_SMB WITH_RAW WITH_OMARCHY_KEYBINDS)
+  local -a labels=(launcher folders smb raw omarchy)
   for i in "${!flags[@]}"; do
     [[ ${!flags[i]} != yes ]] || printf '  %s+%s  %s\n' "$COLOR_ACCENT" "$COLOR_RESET" "$(text "${labels[i]}")"
   done
-  if [[ $WITH_FOLDER_ASSOCIATION != yes && $WITH_FILE_MANAGER != yes && $WITH_FILE_CHOOSER != yes \
-    && $WITH_OMARCHY_KEYBINDS != yes && $WITH_UDISKIE_UNLOCK != yes ]]; then
+  if [[ $WITH_FOLDER_ASSOCIATION != yes && $WITH_OMARCHY_KEYBINDS != yes ]]; then
     printf '\n  %s%s%s\n' "$COLOR_DIM" "$(text defaults_unchanged)" "$COLOR_RESET"
   fi
 }
@@ -1257,15 +1119,11 @@ Options:
   --with-raw                    Install broader image and camera RAW support
   --with-desktop-entry          Add Strata to the desktop application menu
   --with-folder-association     Make Strata the default folder handler
-  --with-file-manager           Handle "Open file location" requests
-  --with-file-chooser           Use Strata for portal Open and Save dialogs
-  --without-file-chooser        Keep the current chooser; suppress the app offer
   --with-omarchy-keybinds       Replace Omarchy's file-manager keybinds
-  --with-udiskie-unlock         Use Strata for udiskie encrypted-volume unlock
   -h, --help                    Show this help
 
 Integration flags imply --non-interactive. Folder association also installs the
-required desktop entry and enables "Open file location" integration.
+required desktop entry.
 EOF
 }
 
@@ -1281,13 +1139,8 @@ parse_args() {
         NON_INTERACTIVE=yes
         WITH_DESKTOP_ENTRY=yes
         WITH_FOLDER_ASSOCIATION=yes
-        WITH_FILE_MANAGER=yes
         ;;
-      --with-file-manager) NON_INTERACTIVE=yes; WITH_FILE_MANAGER=yes ;;
-      --with-file-chooser) NON_INTERACTIVE=yes; WITH_FILE_CHOOSER=yes ;;
-      --without-file-chooser) NON_INTERACTIVE=yes; WITH_FILE_CHOOSER=no ;;
       --with-omarchy-keybinds) NON_INTERACTIVE=yes; WITH_OMARCHY_KEYBINDS=yes ;;
-      --with-udiskie-unlock) NON_INTERACTIVE=yes; WITH_UDISKIE_UNLOCK=yes ;;
       -h | --help) usage; exit 0 ;;
       *) die "Unknown option: $1 (run with --help for usage)." ;;
     esac
@@ -1360,7 +1213,6 @@ install_arch_dependencies() {
   local missing=() requested=("${REQUIRED_PACKAGES[@]}") package
   [[ $WITH_SMB != yes ]] || requested+=(gvfs-smb)
   [[ $WITH_RAW != yes ]] || requested+=("${RAW_PREVIEW_PACKAGES[@]}")
-  [[ $WITH_FILE_CHOOSER != yes ]] || requested+=(xdg-desktop-portal)
   for package in "${requested[@]}"; do
     [[ $package == github-cli ]] && command -v gh >/dev/null 2>&1 && continue
     pacman -Q "$package" >/dev/null 2>&1 || missing+=("$package")
@@ -1403,35 +1255,6 @@ install_desktop_entry() {
     [[ $current == "$APP_ID.desktop" ]] \
       || die "The folder association did not change (current value: $current)."
     info "Strata is now the default application for folders."
-  fi
-}
-
-install_file_manager_service() {
-  local extracted=$1 service_dir target conflict escaped_bin staged
-  service_dir=${XDG_DATA_HOME:-$HOME/.local/share}/dbus-1/services
-  target=$service_dir/$APP_ID.FileManager1.service
-
-  [[ -r $extracted/$APP_ID.FileManager1.service ]] \
-    || die "The verified archive is missing FileManager1 integration."
-  install -d "$service_dir"
-  conflict=$(grep -l '^Name=org\.freedesktop\.FileManager1$' \
-    "$service_dir"/*.service 2>/dev/null \
-    | grep -v "/$APP_ID.FileManager1.service$" | head -n 1 || true)
-  [[ -z $conflict ]] \
-    || die "Another per-user FileManager1 provider is already installed: $conflict"
-
-  staged=$TEMP_DIR/$APP_ID.FileManager1.service
-  escaped_bin=${BIN_PATH//&/\\&}
-  sed "s|^Exec=/usr/bin/strata |Exec=$escaped_bin |" \
-    "$extracted/$APP_ID.FileManager1.service" >"$staged"
-  install -Dm644 "$staged" "$target"
-  if gdbus call --session --timeout 5 \
-    --dest org.freedesktop.DBus \
-    --object-path /org/freedesktop/DBus \
-    --method org.freedesktop.DBus.ReloadConfig >/dev/null 2>&1; then
-    info "$(text reveal_ready)"
-  else
-    warn "$(text reveal_relogin)"
   fi
 }
 
@@ -1501,21 +1324,6 @@ EOF
   return 0
 }
 
-udiskie_on_path() {
-  command -v udiskie >/dev/null 2>&1
-}
-
-configure_file_chooser() {
-  local extracted=$1
-  if [[ $WITH_FILE_CHOOSER == yes ]]; then
-    TASK_OUTPUT=notices run_task "$(text chooser)" "$BIN_PATH" --install-portal \
-      || die "File chooser setup failed. Strata is installed; retry in Settings → General → System file chooser."
-  elif [[ -r $extracted/portal/strata.portal && ( $NON_INTERACTIVE == no || $WITH_FILE_CHOOSER == no ) ]]; then
-    "$BIN_PATH" --dismiss-portal-prompt >>"${LOG_FILE:-/dev/null}" 2>&1 \
-      || warn "Could not save your choice. Strata may offer file chooser integration on first launch."
-  fi
-}
-
 main() {
   local target glibc distro_id distro_name distro_like omarchy_major version archive extracted url
   local local_bin_on_path=no arch_based=no command
@@ -1558,10 +1366,6 @@ main() {
     arch_based=yes
   elif [[ $NON_INTERACTIVE == yes ]]; then
     die "Non-interactive dependency installation currently supports Arch-based systems only."
-  fi
-  if [[ $WITH_UDISKIE_UNLOCK == yes ]]; then
-    [[ $arch_based == yes ]] && udiskie_on_path \
-      || die "$(text udiskie_requires)"
   fi
   for command in curl tar sha256sum install sed; do
     command -v "$command" >/dev/null 2>&1 || die "Required command not found: $command"
@@ -1606,12 +1410,6 @@ main() {
   [[ -x $extracted/strata ]] || die "The verified archive does not contain the Strata binary."
   [[ -r $extracted/$APP_ID.desktop && -r $extracted/$APP_ID.svg ]] \
     || die "The verified archive is missing desktop integration files."
-  if [[ $WITH_FILE_CHOOSER == yes && ! -r $extracted/portal/strata.portal ]]; then
-    die "This release does not include file chooser integration. Install a newer release."
-  fi
-  if [[ $WITH_UDISKIE_UNLOCK == yes && ! -r $extracted/udiskie/unlock ]]; then
-    die "This release does not include encrypted-volume integration. Install a newer release."
-  fi
   if [[ $arch_based == yes ]]; then
     install_arch_dependencies
   fi
@@ -1622,16 +1420,8 @@ main() {
   if [[ $WITH_DESKTOP_ENTRY == yes ]]; then
     install_desktop_entry "$extracted" "$WITH_FOLDER_ASSOCIATION"
   fi
-  if [[ $WITH_FILE_MANAGER == yes ]]; then
-    install_file_manager_service "$extracted"
-  fi
-  configure_file_chooser "$extracted"
   if [[ $WITH_OMARCHY_KEYBINDS == yes ]]; then
     configure_omarchy_bindings "$omarchy_major"
-  fi
-  if [[ $WITH_UDISKIE_UNLOCK == yes ]]; then
-    TASK_OUTPUT=notices run_task "$(text udiskie)" "$BIN_PATH" --install-udiskie-unlock \
-      || die "Encrypted-volume unlock setup failed. Strata is installed; retry with: $BIN_PATH --install-udiskie-unlock"
   fi
 
   if [[ $local_bin_on_path == no ]]; then
@@ -1639,14 +1429,12 @@ main() {
   fi
   if ((WARNING_COUNT > 0)); then
     COLOR_ACCENT=$COLOR_WARNING section "$(text installed_warnings)"
-  elif [[ $SETUP_NOTICES == yes ]]; then
-    COLOR_ACCENT=$COLOR_WARNING section "$(text installed_notices)"
   else
     COLOR_ACCENT=$COLOR_SUCCESS section "$(text ready)"
   fi
   info "$(text installed "version=$version")"
   printf '\n  %s\n' "$(text launch "command=$BIN_PATH")"
-  if ((WARNING_COUNT > 0)) || [[ $SETUP_NOTICES == yes ]]; then
+  if ((WARNING_COUNT > 0)); then
     printf '\n  %s%s%s\n' "$COLOR_DIM" "$(text details "path=$LOG_FILE")" "$COLOR_RESET"
   fi
   printf '\n'

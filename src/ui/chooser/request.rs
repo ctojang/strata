@@ -19,12 +19,19 @@ use gtk::{gio, gio::prelude::*, glib};
 use crate::model::{FileEntry, Location};
 
 pub(crate) const CHOOSER_APPLICATION_ID: &str = "io.github.lgse.Strata.FileChooser";
-pub(crate) const MAX_SAVE_FILES: usize = 256;
-pub(crate) const MAX_STRING_BYTES: usize = 4_096;
-pub(crate) const MAX_FILENAME_BYTES: usize = 255;
-pub(crate) const PATH_IO_TIMEOUT: Duration = Duration::from_secs(3);
+const MAX_SAVE_FILES: usize = 256;
+const MAX_STRING_BYTES: usize = 4_096;
+const MAX_FILENAME_BYTES: usize = 255;
+const PATH_IO_TIMEOUT: Duration = Duration::from_secs(3);
 
 #[derive(Debug)]
+#[cfg_attr(
+    not(test),
+    expect(
+        dead_code,
+        reason = "only the removed portal backend opened Save choosers"
+    )
+)]
 pub(crate) enum ChooserKind {
     Open { directory: bool, multiple: bool },
     SaveFile { current_name: Option<OsString> },
@@ -46,7 +53,7 @@ pub(crate) struct ChooserRequest {
     pub choices: Vec<Choice>,
 }
 
-pub(crate) async fn directory_is_accessible(path: &Path) -> bool {
+async fn directory_is_accessible(path: &Path) -> bool {
     gio::File::for_path(path)
         .enumerate_children_future(
             gio::FILE_ATTRIBUTE_STANDARD_TYPE,

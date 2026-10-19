@@ -5,9 +5,9 @@ use std::{ffi::OsString, os::unix::ffi::OsStringExt, path::Path};
 use gtk::gio;
 
 use super::{
-    CommandLineAction, LaunchMode, classify_command_line, classify_udiskie_hook,
-    encode_daemon_pids, gvfs_daemon_pids, gvfs_probe_marker_is_fresh_at, gvfs_probe_marker_path_in,
-    launch_mode, run_preview_helper, should_select_cairo, version_line,
+    CommandLineAction, LaunchMode, classify_command_line, encode_daemon_pids, gvfs_daemon_pids,
+    gvfs_probe_marker_is_fresh_at, gvfs_probe_marker_path_in, launch_mode, run_preview_helper,
+    should_select_cairo, version_line,
 };
 use crate::ui::preferences::InterfaceRenderer;
 
@@ -33,8 +33,8 @@ fn launch_mode_treats_non_utf8_arguments_as_an_ordinary_launch() {
         LaunchMode::Application
     );
     assert_eq!(
-        launch_mode(&[program.clone(), OsString::from("--portal")]),
-        LaunchMode::Portal
+        launch_mode(&[program.clone(), OsString::from("--version")]),
+        LaunchMode::Version
     );
     assert_eq!(launch_mode(&[program]), LaunchMode::Application);
 }
@@ -44,15 +44,9 @@ fn launch_mode_recognizes_only_the_first_argument_as_a_mode() {
     for (flag, mode) in [
         ("--preview-helper", LaunchMode::PreviewHelper),
         ("--gvfs-probe", LaunchMode::GvfsProbe),
-        ("--portal", LaunchMode::Portal),
-        ("--install-portal", LaunchMode::InstallPortal),
-        ("--dismiss-portal-prompt", LaunchMode::DismissPortalPrompt),
-        ("--uninstall-portal", LaunchMode::UninstallPortal),
         ("--version", LaunchMode::Version),
-        ("--udiskie-hook", LaunchMode::UdiskieHook),
-        ("--install-udiskie-unlock", LaunchMode::InstallUdiskie),
-        ("--uninstall-udiskie-unlock", LaunchMode::UninstallUdiskie),
         ("--unlock-volume", LaunchMode::Application),
+        ("--portal", LaunchMode::Application),
     ] {
         assert_eq!(launch_mode(&["strata".into(), flag.into()]), mode);
         assert_eq!(
@@ -60,42 +54,6 @@ fn launch_mode_recognizes_only_the_first_argument_as_a_mode() {
             LaunchMode::Application
         );
     }
-}
-
-#[test]
-fn classify_udiskie_hook_encrypted_device_added() {
-    let uuid = "6e5d75a7-e4e2-4c7d-9c1c-8e5a5e5d75a7";
-    let cases: &[(&[&str], Option<&str>)] = &[
-        (
-            &["device_added", "crypto", "/dev/sdb1", uuid],
-            Some("/dev/sdb1"),
-        ),
-        (&["device_added", "crypto", "", uuid], Some(uuid)),
-        (&["device_added", "filesystem", "/dev/sdb1", uuid], None),
-    ];
-    for (arguments, expected) in cases {
-        let arguments: Vec<OsString> = arguments.iter().copied().map(OsString::from).collect();
-        assert_eq!(
-            classify_udiskie_hook(&arguments),
-            *expected,
-            "hook arguments {arguments:?} should classify as {expected:?}"
-        );
-    }
-}
-
-#[test]
-fn classify_udiskie_hook_non_utf8_fields() {
-    let non_utf8 = OsString::from_vec(b"\xff".to_vec());
-    assert_eq!(
-        classify_udiskie_hook(&[
-            "device_added".into(),
-            "crypto".into(),
-            non_utf8,
-            "6e5d75a7-e4e2-4c7d-9c1c-8e5a5e5d75a7".into(),
-        ]),
-        None,
-        "a non-UTF-8 device_file should reject rather than panic"
-    );
 }
 
 #[test]

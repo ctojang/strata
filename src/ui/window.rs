@@ -18,8 +18,8 @@ use gtk::{
 
 use crate::{
     adapters::{
-        LocalFileSource, LocalOperationProvider, RevealRequest, location_for_file,
-        mount_can_unplug, volume_can_unplug,
+        LocalFileSource, LocalOperationProvider, location_for_file, mount_can_unplug,
+        volume_can_unplug,
     },
     app::{Browser, BrowserEvent},
     model::Location,
@@ -250,18 +250,6 @@ fn mouse_history_action(button: u32) -> Option<MouseHistoryAction> {
 
 pub fn present(application: &gtk::Application) {
     present_target(application, None, Vec::new(), false, true, true);
-}
-
-/// Opens the requested directory with the named items selected.
-pub fn present_reveal(application: &gtk::Application, request: RevealRequest) {
-    present_target(
-        application,
-        Some(request.directory),
-        request.selection,
-        request.properties,
-        true,
-        false,
-    );
 }
 
 fn browser_for_window() -> BrowserView {
@@ -4416,10 +4404,6 @@ pub(crate) fn home_directory() -> PathBuf {
     env::var_os("HOME")
         .map(PathBuf::from)
         .unwrap_or_else(|| PathBuf::from("/"))
-}
-
-pub(crate) fn default_save_folder() -> PathBuf {
-    glib::user_special_dir(glib::UserDirectory::Downloads).unwrap_or_else(home_directory)
 }
 
 fn startup_location(manager: &PreferenceManager) -> Location {

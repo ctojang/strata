@@ -26,8 +26,8 @@ fn language_choices_and_restart_notice_synchronize_without_changing_running_ui()
             let manager = PreferenceManager::shared();
             let startup = manager.language();
             let running = rust_i18n::locale().to_string();
-            let (first, _, _) = general_page(manager.clone());
-            let (second, _, _) = general_page(manager.clone());
+            let (first, _) = general_page(manager.clone());
+            let (second, _) = general_page(manager.clone());
             let alternate = if running == "ja" {
                 crate::i18n::Language::French
             } else {
@@ -53,7 +53,7 @@ fn language_choices_and_restart_notice_synchronize_without_changing_running_ui()
                         .is_visible()
                 );
             }
-            let (rebuilt, _, _) = general_page(manager.clone());
+            let (rebuilt, _) = general_page(manager.clone());
             assert!(
                 named_widget(&rebuilt, "settings-language-restart")
                     .expect("rebuilt restart button")
@@ -118,8 +118,8 @@ fn tenxer_experimental_label_follows_the_mode_across_windows() {
         || {
             let manager = PreferenceManager::shared();
             manager.set_tenxer_mode(false);
-            let (first, _, _) = general_page(manager.clone());
-            let (second, _, _) = general_page(manager.clone());
+            let (first, _) = general_page(manager.clone());
+            let (second, _) = general_page(manager.clone());
             let phrase = crate::ui::shortcut_reference::EXPERIMENTAL_LABEL;
             for page in [&first, &second] {
                 assert!(!page_text(page).contains(phrase));
@@ -188,7 +188,7 @@ fn auto_refresh_choice_never_says_off_while_a_refresh_interval_runs() {
             .expect("hand-edited interval");
 
             let manager = PreferenceManager::shared();
-            let (page, _, _) = general_page(manager.clone());
+            let (page, _) = general_page(manager.clone());
             let choice = auto_refresh_choice(&page);
             let mut mismatches = Vec::new();
             mismatches.extend(auto_refresh_label_mismatch(&manager, &choice, "loaded 1"));

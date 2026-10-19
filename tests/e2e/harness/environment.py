@@ -9,10 +9,6 @@ import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
-# Strata records that it has already offered to become the file-chooser
-# portal by creating this file in its config directory.
-PORTAL_OFFER_MARKER = "portal-opt-in-v1"
-
 GTK_SETTINGS = """[Settings]
 gtk-enable-animations=false
 gtk-theme-name=Adwaita
@@ -105,7 +101,6 @@ class TestEnvironment:
         gtk.mkdir(parents=True)
         (gtk / "settings.ini").write_text(GTK_SETTINGS)
         self.write_preferences({})
-        self._dismiss_portal_offer()
 
     @property
     def home(self) -> Path:
@@ -134,17 +129,6 @@ class TestEnvironment:
     @property
     def trash_files(self) -> Path:
         return self.data_home / "Trash" / "files"
-
-    def _dismiss_portal_offer(self) -> None:
-        """Pre-answer the first-run file-chooser portal offer.
-
-        Strata shows it once per config home; leaving it armed would put a
-        modal dialog over every scenario.
-        """
-
-        marker = self.config_home / "strata" / PORTAL_OFFER_MARKER
-        marker.parent.mkdir(parents=True, exist_ok=True)
-        marker.write_text("1\n")
 
     def write_preferences(self, overrides: dict[str, object]) -> None:
         """Seed `settings.toml`. Must run before the application starts."""

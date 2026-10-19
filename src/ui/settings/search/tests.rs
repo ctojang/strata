@@ -110,32 +110,6 @@ fn ranks_exact_labels_aliases_and_small_typing_errors() {
     assert!(find_matches("unfindablequantumsetting").ids.is_empty());
 }
 
-#[test]
-fn luks_and_udiskie_queries_hit_unlock_target() {
-    let luks = find_matches(&normalized("luks"));
-    assert!(
-        luks.ids.contains("udiskie-unlock"),
-        "luks should match Unlock encrypted volumes, got {:?}",
-        luks.ids
-    );
-    assert!(
-        !luks.ids.contains("desktop"),
-        "luks should not match System file manager, got {:?}",
-        luks.ids
-    );
-    let udiskie = find_matches(&normalized("udiskie"));
-    assert!(
-        udiskie.ids.contains("udiskie-unlock"),
-        "udiskie should match Unlock encrypted volumes, got {:?}",
-        udiskie.ids
-    );
-    assert!(
-        udiskie.ids.contains("desktop"),
-        "udiskie should still surface Desktop integration, got {:?}",
-        udiskie.ids
-    );
-}
-
 fn descendants(widget: &gtk::Widget) -> Vec<gtk::Widget> {
     let mut widgets = vec![widget.clone()];
     for child in children(widget) {
@@ -258,23 +232,22 @@ fn search_field_selects_all_with_ctrl_a_on_any_layout() {
 }
 
 #[test]
-fn luks_keeps_desktop_heading_and_hides_portal_row() {
+fn search_keeps_a_matching_rows_heading_and_hides_its_siblings() {
     crate::test_support::gtk_test(
-        "ui::settings::search::tests::luks_keeps_desktop_heading_and_hides_portal_row",
+        "ui::settings::search::tests::search_keeps_a_matching_rows_heading_and_hides_its_siblings",
         || {
             let preferences = gtk::Box::new(gtk::Orientation::Vertical, 0);
             preferences.add_css_class("settings-preferences");
-            let heading = gtk::Label::new(Some("DESKTOP INTEGRATION"));
+            let heading = gtk::Label::new(Some("LINKS"));
             heading.add_css_class("menu-heading");
             let group = gtk::Box::new(gtk::Orientation::Vertical, 0);
             group.add_css_class("settings-group");
-            let portal = gtk::Box::new(gtk::Orientation::Vertical, 0);
-            tag(&portal, "Desktop integration");
-            let udiskie = gtk::Box::new(gtk::Orientation::Vertical, 0);
-            tag(&udiskie, "Unlock encrypted volumes");
-            set_available(&udiskie, true);
-            group.append(&portal);
-            group.append(&udiskie);
+            let issue = gtk::Box::new(gtk::Orientation::Vertical, 0);
+            tag(&issue, "Report an issue");
+            let license = gtk::Box::new(gtk::Orientation::Vertical, 0);
+            tag(&license, "License");
+            group.append(&issue);
+            group.append(&license);
             preferences.append(&heading);
             preferences.append(&group);
             let later = gtk::Label::new(Some("STARTUP"));
@@ -283,28 +256,22 @@ fn luks_keeps_desktop_heading_and_hides_portal_row() {
             tag(&directory, "Default directory");
             preferences.append(&later);
             preferences.append(&directory);
-            let state = Rc::new(RefCell::new(Some(find_matches(&normalized("luks")))));
+            let state = Rc::new(RefCell::new(Some(find_matches(&normalized("copyright")))));
             apply(&preferences, &state);
-            assert!(
-                udiskie.is_visible(),
-                "luks should show Unlock encrypted volumes"
-            );
-            assert!(!portal.is_visible(), "luks should hide System file manager");
-            assert!(
-                group.is_visible(),
-                "luks should keep the Desktop integration group"
-            );
+            assert!(license.is_visible(), "copyright should show License");
+            assert!(!issue.is_visible(), "copyright should hide Report an issue");
+            assert!(group.is_visible(), "copyright should keep the links group");
             assert!(
                 heading.is_visible(),
-                "luks should keep the DESKTOP INTEGRATION heading"
+                "copyright should keep the LINKS heading"
             );
             assert!(
                 !later.is_visible(),
-                "luks should not keep a later section heading"
+                "copyright should not keep a later section heading"
             );
             assert!(
                 !directory.is_visible(),
-                "luks should hide Default directory"
+                "copyright should hide Default directory"
             );
         },
     );

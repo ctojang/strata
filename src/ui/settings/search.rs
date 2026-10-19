@@ -218,18 +218,6 @@ const TARGETS: &[Target] = &[
         aliases: "window buttons header top bar titlebar controls hide",
     },
     Target {
-        id: "desktop",
-        page: "general",
-        title: "Desktop integration",
-        aliases: "configure portal file chooser open save dialog default file manager encrypted udiskie",
-    },
-    Target {
-        id: "udiskie-unlock",
-        page: "general",
-        title: "Unlock encrypted volumes",
-        aliases: "encrypted luks password udiskie automount usb volume desktop integration omarchy",
-    },
-    Target {
         id: "omarchy",
         page: "theme",
         title: "Follow Omarchy",
@@ -358,7 +346,12 @@ pub(super) fn tag(widget: &impl IsA<gtk::Widget>, title: &str) {
 }
 
 pub(super) fn set_available(widget: &impl IsA<gtk::Widget>, available: bool) {
-    crate::ui::desktop_integration::set_search_available(widget, available);
+    if available {
+        widget.remove_css_class("settings-search-unavailable");
+    } else {
+        widget.add_css_class("settings-search-unavailable");
+    }
+    widget.set_visible(available);
 }
 
 fn normalized(text: &str) -> String {

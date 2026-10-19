@@ -24,7 +24,7 @@ use super::{
 
 pub(super) fn general_page(
     manager: Rc<PreferenceManager>,
-) -> (gtk::Widget, Vec<gtk::Box>, Vec<ResponsiveActivationRow>) {
+) -> (gtk::Widget, Vec<ResponsiveActivationRow>) {
     let preferences = page_content();
 
     append_language_option(&preferences, &manager);
@@ -85,14 +85,6 @@ pub(super) fn general_page(
         append_preference_switch(&window_buttons, &manager, switch);
     }
 
-    let desktop = super::settings_group(&preferences, "DESKTOP INTEGRATION");
-    let portal_row = crate::ui::portal_preferences::settings_row();
-    super::search::tag(&portal_row, "Desktop integration");
-    desktop.append(&portal_row);
-    let udiskie_row = crate::ui::udiskie_preferences::settings_row();
-    super::search::tag(&udiskie_row, "Unlock encrypted volumes");
-    desktop.append(&udiskie_row);
-
     let startup = super::settings_group(&preferences, "STARTUP");
     append_default_directory_option(&startup, &manager);
     append_preference_switch(
@@ -108,7 +100,6 @@ pub(super) fn general_page(
 
     (
         scrollable_page(&preferences, None),
-        vec![portal_row, udiskie_row],
         responsive_activation_rows,
     )
 }

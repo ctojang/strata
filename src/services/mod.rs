@@ -88,7 +88,7 @@ pub(crate) use preview::{
 };
 pub(crate) use release_channel::{BuildKind, Version};
 pub(crate) use remote_download::{
-    RemoteDownload, download_remote, prune_stale_downloads, remote_file_name, remote_file_url,
+    RemoteDownload, download_remote, remote_file_name, remote_file_url,
 };
 pub(crate) use search::{
     RESULT_LIMIT as SEARCH_RESULT_LIMIT, RenameScope, rebase_search_indexes,

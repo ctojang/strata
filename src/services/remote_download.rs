@@ -282,7 +282,7 @@ fn truncate_name(name: &str) -> String {
 }
 
 // Completed downloads must survive long enough for the requesting app to open them.
-pub(crate) fn prune_stale_downloads() {
+fn prune_stale_downloads() {
     prune_stale_downloads_in(&std::env::temp_dir());
 }
 

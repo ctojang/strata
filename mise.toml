@@ -56,10 +56,6 @@ run = "./scripts/start-dev.sh"
 description = "Build and launch the main app once"
 run = "cargo run"
 
-[tasks.chooser-dev]
-description = "Build and open an isolated file chooser"
-run = "./scripts/chooser-dev.sh"
-
 [tasks.build]
 description = "Build the release binary"
 run = "cargo build --release"
@@ -82,39 +78,8 @@ update-desktop-database "$data_home/applications" 2>/dev/null || true
 gtk-update-icon-cache -qtf "$data_home/icons/hicolor" 2>/dev/null || true
 '''
 
-[tasks.install-file-manager]
-description = "Install the per-user FileManager1 D-Bus service"
-depends = ["build"]
-run = '''
-#!/usr/bin/env bash
-set -euo pipefail
-data_home="${DATA_HOME:-$HOME/.local/share}"
-bin_dir="${BIN_DIR:-$HOME/.local/bin}"
-install -d "$data_home/dbus-1/services"
-conflict="$(grep -l '^Name=org\.freedesktop\.FileManager1$' \
-  "$data_home"/dbus-1/services/*.service 2>/dev/null | \
-  grep -v '/io.github.lgse.Strata.FileManager1.service$' | head -n 1 || true)"
-if [[ -n "$conflict" ]]; then
-  echo "Refusing to override the per-user FileManager1 provider: $conflict" >&2
-  exit 1
-fi
-sed "s|^Exec=/usr/bin/strata |Exec=$bin_dir/strata |" \
-  data/io.github.lgse.Strata.FileManager1.service \
-  > "$data_home/dbus-1/services/io.github.lgse.Strata.FileManager1.service"
-'''
-
-[tasks.uninstall-file-manager]
-description = "Remove the per-user FileManager1 D-Bus service"
-run = '''
-#!/usr/bin/env bash
-set -euo pipefail
-data_home="${DATA_HOME:-$HOME/.local/share}"
-rm -f "$data_home/dbus-1/services/io.github.lgse.Strata.FileManager1.service"
-'''
-
 [tasks.uninstall-local]
 description = "Remove the per-user binary, icon, and desktop entry"
-depends = ["uninstall-file-manager"]
 run = '''
 #!/usr/bin/env bash
 set -euo pipefail
