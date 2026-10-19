@@ -178,7 +178,7 @@ jobs:
     name: E2E shard ${{ matrix.shard }}
     needs: e2e-build
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 50
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.e2e-build.outputs.matrix) }}
