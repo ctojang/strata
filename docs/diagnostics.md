@@ -26,8 +26,8 @@ binary:
 - **GVfs** checks that GIO's default VFS is GVfs, and each backend looks for
   its URI scheme among the schemes GVfs supports. `GIO_USE_VFS=local` means
   the startup probe found GVfs unresponsive and restarted Strata without it.
-- **Removable drives**, the **desktop portal**, and **password storage** look
-  for owned or activatable names on the session and system D-Bus buses.
+- **Removable drives** and **password storage** look for owned or activatable
+  names on the session and system D-Bus buses.
 - The **update server** check requests `https://api.github.com/rate_limit`,
   which GitHub does not count against the API rate limit.
 - Syntax highlighting, folder change monitoring, the terminal, and custom

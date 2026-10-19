@@ -225,7 +225,7 @@ fn remote_backends_follow_gvfs_state() {
 #[test]
 fn drives_and_session_services_read_bus_names() {
     let system = names(&[UDISKS_NAME]);
-    let session = names(&[VOLUME_MONITOR_NAME, PORTAL_NAME]);
+    let session = names(&[VOLUME_MONITOR_NAME, SECRETS_NAME]);
     assert_eq!(
         drives(Some(&session), Some(&system)).finding,
         Finding::DrivesReady
@@ -237,18 +237,15 @@ fn drives_and_session_services_read_bus_names() {
         (Finding::VolumeMonitorMissing, packages::GVFS_DAEMONS)
     );
     assert_eq!(
-        session_service(CheckId::Portal, Some(&session)).finding,
+        secret_service(Some(&session)).finding,
         Finding::ServiceAvailable
     );
-    let check = session_service(CheckId::SecretService, Some(&session));
+    let check = secret_service(Some(&names(&[])));
     assert_eq!(
         (check.finding, check.packages),
         (Finding::SecretServiceMissing, packages::KEYRING)
     );
-    assert_eq!(
-        session_service(CheckId::Portal, None).finding,
-        Finding::SessionBusUnavailable
-    );
+    assert_eq!(secret_service(None).finding, Finding::SessionBusUnavailable);
 }
 
 #[test]

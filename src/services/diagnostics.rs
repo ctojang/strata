@@ -42,7 +42,6 @@ pub(crate) enum CheckId {
     Drives,
     FolderMonitoring,
     Terminal,
-    Portal,
     SecretService,
     CustomActions,
 }
@@ -91,7 +90,6 @@ pub(crate) const GROUPS: [(Group, &[CheckId]); 4] = [
         Group::Desktop,
         &[
             CheckId::Terminal,
-            CheckId::Portal,
             CheckId::SecretService,
             CheckId::CustomActions,
         ],
@@ -150,7 +148,6 @@ pub(crate) enum Finding {
     MonitoringFailed,
     TerminalMissing,
     ServiceAvailable,
-    PortalMissing,
     SecretServiceMissing,
     NoActions,
     ActionsReady,
@@ -323,7 +320,6 @@ mod packages {
         (Zypper, "gvfs-backends"),
     ];
     pub(super) const UDISKS: Packages = &everywhere("udisks2");
-    pub(super) const PORTAL: Packages = &everywhere("xdg-desktop-portal");
     pub(super) const KEYRING: Packages = &everywhere("gnome-keyring");
 }
 
@@ -419,8 +415,7 @@ fn system_checks(sender: &Sender<Check>) {
     let session = bus_names(gio::BusType::Session);
     let system = bus_names(gio::BusType::System);
     send(drives(session.as_ref(), system.as_ref()));
-    send(session_service(CheckId::Portal, session.as_ref()));
-    send(session_service(CheckId::SecretService, session.as_ref()));
+    send(secret_service(session.as_ref()));
 }
 
 const RAW_TOOLS: [&str; 4] = ["magick", "convert", "dcraw", "simple_dcraw"];
@@ -721,7 +716,6 @@ fn bus_names(bus: gio::BusType) -> Option<HashSet<String>> {
 
 const UDISKS_NAME: &str = "org.freedesktop.UDisks2";
 const VOLUME_MONITOR_NAME: &str = "org.gtk.vfs.UDisks2VolumeMonitor";
-const PORTAL_NAME: &str = "org.freedesktop.portal.Desktop";
 const SECRETS_NAME: &str = "org.freedesktop.secrets";
 
 fn drives(session: Option<&HashSet<String>>, system: Option<&HashSet<String>>) -> Check {
@@ -738,20 +732,12 @@ fn drives(session: Option<&HashSet<String>>, system: Option<&HashSet<String>>) -
     Check::passed(id, Finding::DrivesReady)
 }
 
-fn session_service(id: CheckId, session: Option<&HashSet<String>>) -> Check {
-    let (name, missing, packages) = match id {
-        CheckId::Portal => (PORTAL_NAME, Finding::PortalMissing, packages::PORTAL),
-        CheckId::SecretService => (
-            SECRETS_NAME,
-            Finding::SecretServiceMissing,
-            packages::KEYRING,
-        ),
-        _ => unreachable!("{id:?} is not a session service"),
-    };
+fn secret_service(session: Option<&HashSet<String>>) -> Check {
+    let id = CheckId::SecretService;
     match session {
         None => Check::warning(id, Finding::SessionBusUnavailable),
-        Some(names) if names.contains(name) => Check::passed(id, Finding::ServiceAvailable),
-        Some(_) => Check::warning(id, missing).fixed_by(packages),
+        Some(names) if names.contains(SECRETS_NAME) => Check::passed(id, Finding::ServiceAvailable),
+        Some(_) => Check::warning(id, Finding::SecretServiceMissing).fixed_by(packages::KEYRING),
     }
 }
 
