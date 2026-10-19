@@ -60,7 +60,6 @@ mod virtual_preview;
 mod window;
 
 pub(crate) use chooser::{cancel_chooser, present_chooser};
-pub(crate) use settings::schedule_rollback_cleanup;
 pub(crate) use window::default_save_folder;
 pub(in crate::ui) use window::{
     RemovableDestination, removable_destinations, resolve_removable_destination,

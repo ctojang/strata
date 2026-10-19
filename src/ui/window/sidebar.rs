@@ -24,13 +24,7 @@ pub(in crate::ui) fn build_sidebar(
     local_only: bool,
 ) -> SidebarView {
     let shell = SidebarShell::new();
-    let state = SidebarState::new(
-        shell.places,
-        view,
-        preferences,
-        local_only,
-        shell.update_label.clone(),
-    );
+    let state = SidebarState::new(shell.places, view, preferences, local_only);
     state.bind_order();
     let bookmark_watch = super::bookmarks::watch_sidebar(&state);
     state.observe_navigation_and_trash();
@@ -51,10 +45,6 @@ pub(in crate::ui) fn build_sidebar(
     SidebarView {
         widget: shell.widget.upcast(),
         state,
-        update_notice: shell.update_notice,
-        update_area: shell.update_area,
-        update_label: shell.update_label,
-        update_version: shell.update_version,
         handlers: RefCell::new(handlers),
         mount_handler: RefCell::new(Some(mount_handler)),
         recent_setting_handler: RefCell::new(recent_setting_handler),
@@ -104,10 +94,6 @@ fn connect_recent_setting_changes(
 struct SidebarShell {
     widget: gtk::Box,
     places: gtk::Box,
-    update_notice: gtk::Button,
-    update_area: gtk::Box,
-    update_label: gtk::Label,
-    update_version: gtk::Label,
 }
 
 impl SidebarShell {
@@ -122,58 +108,11 @@ impl SidebarShell {
             .vexpand(true)
             .build();
         scroller.add_css_class("sidebar-scroll");
-        let (update_area, update_notice, update_label, update_version) = update_notice();
         let widget = gtk::Box::new(gtk::Orientation::Vertical, 0);
         widget.add_css_class("sidebar-shell");
         widget.append(&scroller);
-        widget.append(&update_area);
-        Self {
-            widget,
-            places,
-            update_notice,
-            update_area,
-            update_label,
-            update_version,
-        }
+        Self { widget, places }
     }
-}
-
-fn update_notice() -> (gtk::Box, gtk::Button, gtk::Label, gtk::Label) {
-    let content = gtk::Box::new(gtk::Orientation::Horizontal, 8);
-    let dot = gtk::Label::new(Some("●"));
-    dot.add_css_class("sidebar-update-dot");
-    let text = gtk::Box::new(gtk::Orientation::Vertical, 0);
-    text.set_hexpand(true);
-    text.set_valign(gtk::Align::Center);
-    let label = gtk::Label::new(None);
-    label.add_css_class("sidebar-update-label");
-    let version = gtk::Label::new(None);
-    version.add_css_class("sidebar-update-version");
-    for line in [&label, &version] {
-        line.set_xalign(0.0);
-        line.set_single_line_mode(true);
-        line.set_max_width_chars(1);
-        line.set_ellipsize(gtk::pango::EllipsizeMode::End);
-        text.append(line);
-    }
-    crate::ui::controls::keep_words_whole(&label);
-    content.append(&dot);
-    content.append(&text);
-    content.append(&crate::assets::primary_icon(
-        crate::assets::icons::DOWNLOADS,
-        17,
-    ));
-    let notice = gtk::Button::builder().child(&content).build();
-    notice.add_css_class("sidebar-update");
-    notice.set_cursor_from_name(Some("pointer"));
-    let separator = gtk::Separator::new(gtk::Orientation::Horizontal);
-    separator.add_css_class("sidebar-separator");
-    separator.add_css_class("sidebar-update-separator");
-    let area = gtk::Box::new(gtk::Orientation::Vertical, 0);
-    area.set_visible(false);
-    area.append(&separator);
-    area.append(&notice);
-    (area, notice, label, version)
 }
 
 impl SidebarState {
@@ -182,7 +121,6 @@ impl SidebarState {
         view: BrowserView,
         preference_manager: Rc<PreferenceManager>,
         local_only: bool,
-        update_label: gtk::Label,
     ) -> Rc<Self> {
         let volume_monitor = gio::VolumeMonitor::get();
         let place_order = resolve_place_order(&preference_manager.sidebar_order());
@@ -214,7 +152,6 @@ impl SidebarState {
             rail: Cell::new(false),
             policy: RailPolicy::default(),
             saved_width: Cell::new(None),
-            update_label,
             rail_changed: RefCell::new(None),
             keycaps: RefCell::new(Vec::new()),
             keycaps_shown: Cell::new(false),

@@ -1582,96 +1582,6 @@ menubutton.form-control:disabled > button {
   color: @strata_dim_text;
 }
 
-.update-dialog {
-  color: @strata_text;
-  min-width: 500px;
-}
-
-
-.update-dialog-status {
-  color: @strata_dim_text;
-}
-
-
-.update-dialog-notes {
-  background: alpha(@strata_bg, 0.55);
-  border: 1px solid alpha(@strata_border, 0.3);
-  border-radius: 5px;
-  color: @strata_text;
-  padding: 10px;
-}
-
-.update-dialog-progress trough {
-  background: alpha(@strata_bg, 0.72);
-  border: 1px solid alpha(@strata_border, 0.42);
-  border-radius: 5px;
-  min-height: 9px;
-}
-
-.update-dialog-progress progress {
-  background: @strata_accent;
-  border: none;
-  border-radius: 4px;
-  min-height: 9px;
-  min-width: 1px;
-}
-
-.update-dialog-progress.error progress {
-  background: @strata_danger;
-}
-
-.update-dialog-details {
-  background: alpha(@strata_bg, 0.3);
-  border: 1px solid alpha(@strata_border, 0.24);
-  border-radius: 6px;
-  padding: 10px 12px;
-}
-
-.update-dialog-detail-row {
-  padding: 3px 0;
-}
-
-.update-dialog-detail-label {
-  color: @strata_dim_text;
-  font-size: 0.88em;
-}
-
-.update-dialog-detail-value {
-  color: @strata_text;
-  font-weight: 700;
-}
-
-.update-dialog-actions {
-  border-top: 1px solid alpha(@strata_border, 0.28);
-  padding: 12px 20px;
-}
-
-.update-dialog-action {
-  background: alpha(@strata_accent, 0.12);
-  border: 1px solid alpha(@strata_accent, 0.6);
-  border-radius: 5px;
-  box-shadow: none;
-  color: @strata_accent;
-  min-height: 30px;
-  padding: 4px 14px;
-}
-
-.update-dialog-action:hover {
-  background: alpha(@strata_accent, 0.22);
-  border-color: @strata_accent;
-  color: @strata_accent;
-}
-
-.update-dialog-action:active {
-  background: alpha(@strata_accent, 0.32);
-  color: @strata_accent;
-}
-
-.update-dialog-action:focus-visible {
-  outline: 2px solid alpha(@strata_accent, 0.5);
-  outline-offset: 1px;
-}
-
 .settings-dialog {
   background: @strata_surface;
   border: 1px solid alpha(@strata_border, 0.6);
@@ -1793,28 +1703,6 @@ menubutton.form-control:disabled > button {
   padding-top: 4px;
 }
 
-.release-notes-card {
-  background: alpha(@strata_bg, 0.55);
-  border: 1px solid alpha(@strata_border, 0.24);
-  border-radius: 6px;
-  color: @strata_text;
-  padding: 14px;
-}
-
-.release-notes-card.inline {
-  background: transparent;
-  border: none;
-  border-top: 1px solid alpha(@strata_border, 0.24);
-  border-radius: 0;
-  margin-top: 10px;
-  padding: 12px 0 2px;
-}
-
-.release-notes-title {
-  color: @strata_text;
-  font-weight: 700;
-}
-
 .prerelease-badge {
   background: alpha(@strata_danger, 0.14);
   border: 1px solid @strata_danger;
@@ -1823,96 +1711,6 @@ menubutton.form-control:disabled > button {
   font-size: 0.78em;
   font-weight: 700;
   padding: 2px 9px;
-}
-
-.release-notes-content {
-  color: @strata_dim_text;
-  line-height: 1.3;
-}
-
-.release-notes-heading {
-  color: @strata_dim_text;
-  font-size: 1.08em;
-  font-weight: 700;
-  margin-top: 2px;
-}
-
-.release-notes-heading.level-1 {
-  font-size: 1.18em;
-}
-
-.release-notes-bullet {
-  color: @strata_accent;
-  font-weight: 700;
-  margin-top: 3px;
-}
-
-.release-notes-code {
-  background: alpha(@strata_bg, 0.58);
-  border: 1px solid alpha(@strata_border, 0.24);
-  border-radius: 4px;
-  color: @strata_dim_text;
-  padding: 8px;
-}
-
-.release-notes-rule {
-  background: alpha(@strata_border, 0.4);
-  color: @strata_border;
-  margin: 4px 0;
-}
-
-.release-notes-content link,
-.release-notes-content link:visited,
-.release-notes-content link:hover,
-.release-notes-content link:active {
-  color: @strata_accent;
-}
-
-.release-notes-fallback {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  color: @strata_accent;
-  padding: 2px 0;
-  transition: transform 160ms ease-out, color 160ms ease-out;
-}
-
-.release-notes-fallback:hover,
-.release-notes-fallback:visited {
-  color: @strata_accent;
-}
-
-.release-notes-fallback:active {
-  color: @strata_accent;
-  transform: scale(0.97);
-}
-
-.release-notes-fallback:focus-visible {
-  outline: 2px solid alpha(@strata_accent, 0.5);
-  outline-offset: 1px;
-}
-
-.settings-update-progress {
-  margin-top: 7px;
-}
-
-.settings-update-progress trough {
-  background: alpha(@strata_bg, 0.72);
-  border: 1px solid alpha(@strata_border, 0.42);
-  border-radius: 4px;
-  min-height: 7px;
-}
-
-.settings-update-progress progress {
-  background: @strata_accent;
-  border: none;
-  border-radius: 3px;
-  min-height: 7px;
-  min-width: 1px;
-}
-
-.settings-update-progress.error progress {
-  background: @strata_danger;
 }
 
 .settings-update-check {
@@ -2193,51 +1991,6 @@ scrollbar.horizontal > range > trough > slider {
   padding: 5px;
 }
 
-.sidebar-update {
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  color: @strata_accent;
-  min-height: 38px;
-  padding: 4px 13px;
-  transition: transform 160ms ease-out, background 160ms ease-out;
-}
-
-.sidebar-update:hover {
-  background: alpha(@strata_accent, 0.15);
-  color: @strata_accent;
-}
-
-.sidebar-update:active {
-  background: alpha(@strata_accent, 0.22);
-  color: @strata_accent;
-  transform: scale(0.97);
-}
-
-.sidebar-update:focus-visible {
-  outline: 2px solid alpha(@strata_accent, 0.58);
-  outline-offset: -2px;
-}
-
-.sidebar-update-dot {
-  color: @strata_accent;
-  font-size: 0.8em;
-}
-
-.sidebar-update-label {
-  color: @strata_accent;
-  font-size: 0.88em;
-  font-weight: 650;
-}
-
-.sidebar-update-version {
-  color: @strata_accent;
-  font-size: 0.8em;
-  font-weight: 500;
-  opacity: 0.85;
-}
-
 .sidebar-row {
   background: transparent;
   border: none;
@@ -2423,10 +2176,6 @@ scrollbar.horizontal > range > trough > slider {
   min-width: 14px;
 }
 
-.sidebar-update-separator {
-  margin: 0;
-}
-
 .sidebar-rail .sidebar {
   padding: 5px;
 }
@@ -2444,9 +2193,7 @@ scrollbar.horizontal > range > trough > slider {
 
 .sidebar-rail .sidebar-row > box > label,
 .sidebar-rail .sidebar-heading,
-.sidebar-rail .sidebar-device-actions,
-.sidebar-rail .sidebar-update-label,
-.sidebar-rail .sidebar-update-version {
+.sidebar-rail .sidebar-device-actions {
   opacity: 0;
   min-width: 0;
   min-height: 0;
@@ -2455,17 +2202,6 @@ scrollbar.horizontal > range > trough > slider {
 
 .sidebar-rail .sidebar-separator {
   margin: 6px 2px;
-}
-
-.sidebar-rail .sidebar-update-separator {
-  margin: 0;
-}
-
-.sidebar-rail .sidebar-update {
-  margin: 0;
-  min-height: 0;
-  min-width: 0;
-  padding: 0;
 }
 
 .sidebar-heading {
@@ -6572,20 +6308,6 @@ two-column presentation. */
   font-size: 0.875em;
 }
 
-.settings-release-expander {
-  background: mix(@strata_bg, @strata_muted, 0.25);
-  border: 1px solid alpha(@strata_border, 0.55);
-  border-radius: 10px;
-  padding: 18px;
-  color: @strata_text;
-}
-
-.settings-release-expander .release-notes-card {
-  background: transparent;
-  border: none;
-  padding: 16px 0 0;
-}
-
 .about-identity {
   background: mix(@strata_bg, @strata_muted, 0.25);
   border: 1px solid alpha(@strata_border, 0.55);
@@ -6655,8 +6377,6 @@ two-column presentation. */
 .settings-dialog.compact .about-repository,
 .settings-dialog.compact .theme-card,
 .settings-dialog.compact .theme-library-footer,
-.settings-dialog.compact .release-notes-toggle,
-.settings-dialog.compact .release-notes-card,
 .settings-dialog.compact .settings-actions-empty,
 .settings-dialog.compact .integration-card-body,
 .settings-dialog.compact .integration-requirements,
@@ -6703,14 +6423,9 @@ two-column presentation. */
   margin-top: 36px;
 }
 
-.settings-updates-page,
 .about-page {
   padding-left: 80px;
   padding-right: 80px;
-}
-
-.settings-update-status {
-  min-height: 52px;
 }
 
 .settings-dialog .settings-navigation {
@@ -6737,40 +6452,13 @@ two-column presentation. */
   border: 1px solid transparent;
 }
 
-.settings-release-expander {
-  padding: 0;
-}
-
-.release-notes-toggle {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  border-radius: 10px;
-  padding: 18px;
-  color: @strata_text;
-}
-
-.release-notes-toggle:hover {
-  background: alpha(@strata_accent, 0.08);
-}
-
-.release-notes-toggle:active {
-  background: @strata_highlight;
-}
-
-.release-notes-toggle image,
 .integration-requirements-toggle .integration-chevron {
   transform: rotate(90deg);
   -gtk-icon-filter: opacity(0.65);
 }
 
-.release-notes-toggle.expanded image,
 .integration-requirements-toggle.expanded .integration-chevron {
   transform: rotate(270deg);
-}
-
-.settings-release-expander .release-notes-card {
-  padding: 18px;
 }
 
 .settings-backdrop {

@@ -209,6 +209,30 @@ fn a_malformed_preference_does_not_discard_the_others() {
 }
 
 #[test]
+fn removed_update_preferences_in_a_saved_file_keep_the_other_values() {
+    gtk_test(
+        "ui::preferences::tests::preferences::removed_update_preferences_in_a_saved_file_keep_the_other_values",
+        || {
+            seed_saved_preferences_for_test();
+            let mut saved =
+                toml::Table::try_from(non_default_preferences()).expect("saved preferences");
+            saved.insert("check_for_updates".into(), false.into());
+            saved.insert("release_channel".into(), "nightly".into());
+            fs::write(
+                settings_path(),
+                toml::to_string(&saved).expect("syntactically valid TOML"),
+            )
+            .expect("persist settings from an older release");
+
+            assert_eq!(
+                *PreferenceManager::shared().preferences.borrow(),
+                non_default_preferences()
+            );
+        },
+    );
+}
+
+#[test]
 fn a_missing_required_preference_does_not_discard_the_others() {
     let mut saved = toml::Table::try_from(non_default_preferences()).expect("saved preferences");
     saved.remove("theme");
@@ -889,8 +913,6 @@ fn every_saved_preference_loads_before_any_settings_page_exists() {
                 }
             );
             assert!(!manager.remember_folder_views());
-            assert!(!manager.checks_for_updates());
-            assert_eq!(manager.release_channel(), Channel::Nightly);
             assert!(manager.preview_muted());
             assert_eq!(manager.preview_volume(), 0.35);
             assert!(manager.preview_text_wrap());
@@ -1268,8 +1290,6 @@ fn all_preference_setters_publish_and_persist_without_duplicate_notifications() 
                 |m| m.set_interface_font(None),
                 |m| m.set_interface_renderer(InterfaceRenderer::System),
                 |m| m.set_language(crate::i18n::Language::Auto),
-                |m| m.set_checks_for_updates(true),
-                |m| m.set_release_channel(Channel::Stable),
                 |m| m.set_preview_muted(false),
                 |m| m.set_preview_volume(0.8),
                 |m| m.set_preview_text_wrap(false),

@@ -264,27 +264,6 @@ pub fn present_reveal(application: &gtk::Application, request: RevealRequest) {
     );
 }
 
-fn bind_update_notice_preferences(
-    anchor: &impl IsA<gtk::Widget>,
-    manager: &PreferenceManager,
-    notice: &super::settings::UpdateNoticeHandler,
-) {
-    let initial = Cell::new(true);
-    let notice = Rc::downgrade(notice);
-    manager.bind_preference(
-        anchor,
-        |manager| (manager.checks_for_updates(), manager.release_channel()),
-        move |_, _| {
-            if !initial.replace(false)
-                && let Some(notice) = notice.upgrade()
-            {
-                super::settings::clear_cached_update_notice();
-                notice(None);
-            }
-        },
-    );
-}
-
 fn browser_for_window() -> BrowserView {
     let browser = BrowserView::new(Rc::new(LocalFileSource), PeekBehavior::default());
     browser.set_operation_provider(Rc::new(LocalOperationProvider));
@@ -344,13 +323,8 @@ pub(super) fn present_target(
     browser
 }
 
-fn schedule_after_first_paint(
-    window: &gtk::ApplicationWindow,
-    sidebar: &SidebarView,
-    manager: &Rc<PreferenceManager>,
-) {
+fn schedule_after_first_paint(window: &gtk::ApplicationWindow, sidebar: &SidebarView) {
     let state = Rc::downgrade(&sidebar.state);
-    let manager = manager.clone();
     let armed = Cell::new(false);
     window.connect_map(move |window| {
         if armed.get() {
@@ -363,7 +337,6 @@ fn schedule_after_first_paint(
         let handler = Rc::new(RefCell::new(None));
         let handler_for_paint = handler.clone();
         let state = state.clone();
-        let manager = manager.clone();
         let id = clock.connect_after_paint(move |clock| {
             if let Some(id) = handler_for_paint.borrow_mut().take() {
                 clock.disconnect(id);
@@ -374,10 +347,6 @@ fn schedule_after_first_paint(
                 if let Some(state) = state.upgrade() {
                     state.rebuild();
                 }
-            });
-            let manager = manager.clone();
-            glib::idle_add_local_once(move || {
-                super::settings::maybe_run_due_update_check(&manager);
             });
         });
         handler.replace(Some(id));
@@ -1148,7 +1117,6 @@ pub(super) struct SidebarState {
     pub(in crate::ui) rail: Cell<bool>,
     policy: RailPolicy,
     pub(in crate::ui) saved_width: Cell<Option<i32>>,
-    update_label: gtk::Label,
     rail_changed: RefCell<Option<RailListener>>,
     keycaps: RefCell<Vec<gtk::Label>>,
     keycaps_shown: Cell<bool>,
@@ -1217,10 +1185,6 @@ fn event_changes_trash_contents(event: &BrowserEvent) -> bool {
 pub(super) struct SidebarView {
     pub(super) widget: gtk::Widget,
     pub(super) state: Rc<SidebarState>,
-    update_notice: gtk::Button,
-    update_area: gtk::Box,
-    update_label: gtk::Label,
-    update_version: gtk::Label,
     handlers: RefCell<Vec<glib::SignalHandlerId>>,
     mount_handler: RefCell<Option<glib::SignalHandlerId>>,
     recent_setting_handler: RefCell<Option<(gtk::Settings, glib::SignalHandlerId)>>,
@@ -1385,37 +1349,11 @@ impl SidebarState {
                 -1,
             );
         }
-        let text = self.update_label.parent();
-        if let Some(text) = &text {
-            text.set_visible(!rail);
-        }
-        if let Some(content) = text
-            .and_then(|text| text.parent())
-            .and_downcast::<gtk::Box>()
-        {
-            content.set_spacing(if rail { 0 } else { 8 });
-            content.set_halign(if rail {
-                gtk::Align::Center
-            } else {
-                gtk::Align::Fill
-            });
-            if let Some(dot) = content.first_child() {
-                dot.set_visible(!rail);
-            }
-        }
         self.sync_rail_rows();
     }
 
     fn sync_rail_rows(&self) {
         let rail = self.rail.get();
-        let size = if rail { sidebar_rail_button_size() } else { -1 };
-        if let Some(notice) = self
-            .update_label
-            .ancestor(gtk::Button::static_type())
-            .and_downcast::<gtk::Button>()
-        {
-            notice.set_size_request(if rail { sidebar_rail_width() } else { -1 }, size);
-        }
         let mut widget_child = self.widget.first_child();
         while let Some(child) = widget_child {
             widget_child = child.next_sibling();

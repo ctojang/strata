@@ -181,26 +181,6 @@ pub struct ParsedDocument {
 }
 
 #[derive(Clone, Copy)]
-struct MarkdownProfile {
-    /// Tables, math, block quotes and image loading; only file previews.
-    document_features: bool,
-    /// Drop HTML comments instead of showing them as inert text. GitHub's
-    /// generated release notes start with one; previews keep them visible.
-    hide_html_comments: bool,
-}
-
-impl MarkdownProfile {
-    const DOCUMENT_PREVIEW: Self = Self {
-        document_features: true,
-        hide_html_comments: false,
-    };
-    const RELEASE_NOTES: Self = Self {
-        document_features: false,
-        hide_html_comments: true,
-    };
-}
-
-#[derive(Clone, Copy)]
 struct ParseLimits {
     events: usize,
     depth: usize,
@@ -388,12 +368,7 @@ fn parse_document_with_limits(
         );
     }
     let parsed = match kind {
-        DocumentKind::Markdown => parse_markdown_bounded(
-            source,
-            cancellation,
-            limits,
-            MarkdownProfile::DOCUMENT_PREVIEW,
-        ),
+        DocumentKind::Markdown => parse_markdown_bounded(source, cancellation, limits),
         DocumentKind::Html => parse_html_bounded(source, cancellation, limits),
         DocumentKind::Rtf => parse_html_bounded(
             &super::rtf::to_html(source, cancellation)?,
@@ -406,31 +381,10 @@ fn parse_document_with_limits(
     validate_document(parsed, limits)
 }
 
-// Release notes retain their legacy unbounded parser limits and hide HTML comments.
-pub fn parse_markdown(markdown: &str) -> Document {
-    let cancellation = Cancellation::default();
-    let limits = ParseLimits {
-        events: usize::MAX,
-        depth: usize::MAX,
-        table_columns: usize::MAX,
-        markup: usize::MAX,
-        time: Duration::MAX,
-    };
-    parse_markdown_bounded(
-        markdown,
-        &cancellation,
-        limits,
-        MarkdownProfile::RELEASE_NOTES,
-    )
-    .map(|parsed| parsed.document)
-    .unwrap_or(Document { blocks: Vec::new() })
-}
-
 fn parse_markdown_bounded(
     markdown: &str,
     cancellation: &Cancellation,
     limits: ParseLimits,
-    profile: MarkdownProfile,
 ) -> Result<ParsedDocument, String> {
     let mut budget = ParseBudget::new(cancellation, limits);
     budget.check()?;
@@ -445,40 +399,20 @@ fn parse_markdown_bounded(
     let mut table_cell: Option<String> = None;
     let mut table_depth = None;
     let mut raw_html = false;
-    let mut hidden_comment_block = false;
     let mut blocked_images = false;
     let mut image = None::<(String, String)>;
     let mut pending_images = Vec::new();
     let mut completed_markup = 0usize;
     let mut completed_blocks = 0;
-    let mut options = Options::ENABLE_STRIKETHROUGH | Options::ENABLE_TASKLISTS;
-    if profile.document_features {
-        options |= Options::ENABLE_TABLES | Options::ENABLE_MATH;
-    }
+    let options = Options::ENABLE_STRIKETHROUGH
+        | Options::ENABLE_TASKLISTS
+        | Options::ENABLE_TABLES
+        | Options::ENABLE_MATH;
 
-    for (event, range) in Parser::new_ext(markdown, options).into_offset_iter() {
+    for event in Parser::new_ext(markdown, options) {
         budget.event()?;
         if matches!(event, Event::Start(_)) {
             budget.enter()?;
-        }
-        // A comment HTML block spans whole lines and also carries synthesised
-        // indentation text, so every event up to its end is dropped.
-        if hidden_comment_block {
-            if matches!(event, Event::End(TagEnd::HtmlBlock)) {
-                budget.leave();
-                hidden_comment_block = false;
-            }
-            continue;
-        }
-        if profile.hide_html_comments {
-            match &event {
-                Event::Start(Tag::HtmlBlock) if is_html_comment(&markdown[range]) => {
-                    hidden_comment_block = true;
-                    continue;
-                }
-                Event::InlineHtml(text) if is_html_comment(text) => continue,
-                _ => {}
-            }
         }
         if let Some((_, alt)) = image.as_mut() {
             match &event {
@@ -554,25 +488,21 @@ fn parse_markdown_bounded(
                 }
             }
             Event::Start(Tag::BlockQuote(_)) => {
-                if profile.document_features {
-                    finish_parent_list_item(&mut active, &mut blocks);
-                    quote_depth = quote_depth.saturating_add(1);
-                    active = Some(if let Some(depth) = list_items.last() {
-                        ActiveBlock::ListChild {
-                            depth: *depth,
-                            kind: DocumentListChildKind::Quote,
-                            markup: String::new(),
-                        }
-                    } else {
-                        ActiveBlock::Quote(String::new())
-                    });
-                }
+                finish_parent_list_item(&mut active, &mut blocks);
+                quote_depth = quote_depth.saturating_add(1);
+                active = Some(if let Some(depth) = list_items.last() {
+                    ActiveBlock::ListChild {
+                        depth: *depth,
+                        kind: DocumentListChildKind::Quote,
+                        markup: String::new(),
+                    }
+                } else {
+                    ActiveBlock::Quote(String::new())
+                });
             }
             Event::End(TagEnd::BlockQuote(_)) => {
-                if profile.document_features {
-                    finish_block(&mut active, &mut blocks);
-                    quote_depth = quote_depth.saturating_sub(1);
-                }
+                finish_block(&mut active, &mut blocks);
+                quote_depth = quote_depth.saturating_sub(1);
             }
             Event::Start(Tag::List(start)) => {
                 finish_parent_list_item(&mut active, &mut blocks);
@@ -690,7 +620,7 @@ fn parse_markdown_bounded(
                 },
             ),
             Event::Start(Tag::Image { dest_url, .. }) => {
-                if profile.document_features && table_cell.is_none() {
+                if table_cell.is_none() {
                     if !dest_url.contains(':') && !dest_url.starts_with('/') {
                         image = Some((dest_url.to_string(), String::new()));
                     } else {
@@ -871,10 +801,6 @@ fn parse_markdown_bounded(
             blocked_images.then(|| "Remote and absolute image URLs are not loaded. Use images inside the document's folder.".to_owned()),
         ].into_iter().flatten().collect(),
     })
-}
-
-fn is_html_comment(html: &str) -> bool {
-    html.trim_start().starts_with("<!--")
 }
 
 #[derive(Clone)]
