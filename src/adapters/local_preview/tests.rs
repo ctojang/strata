@@ -117,7 +117,7 @@ fn pdf_rendering_fits_the_viewport_width_without_clipping_tall_pages() {
 
 #[test]
 fn cold_previews_with_shared_thumbnails_match_rendered_cache_hits() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_preview::tests::cold_previews_with_shared_thumbnails_match_rendered_cache_hits",
         || {
             use crate::{
@@ -976,7 +976,7 @@ fn preview_families_follow_file_bytes_not_names() {
 
 #[test]
 fn archives_list_member_trees_as_preview_content() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_preview::tests::archives_list_member_trees_as_preview_content",
         || {
             use crate::{
@@ -1173,7 +1173,7 @@ fn preview_archive_with_password(
 
 #[test]
 fn tar_gz_archives_list_member_trees_as_preview_content() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_preview::tests::tar_gz_archives_list_member_trees_as_preview_content",
         || {
             use crate::services::{ArchiveDirectory, ArchiveNode, ArchivePreviewTree};
@@ -1226,7 +1226,7 @@ fn tar_gz_archives_list_member_trees_as_preview_content() {
 
 #[test]
 fn corrupt_archives_report_a_failed_preview() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_preview::tests::corrupt_archives_report_a_failed_preview",
         || {
             let directory = tempfile::tempdir().expect("preview fixture directory");
@@ -1266,7 +1266,7 @@ fn encrypted_archive_fixture(
 
 #[test]
 fn encrypted_archive_preview_prompts_for_a_password() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_preview::tests::encrypted_archive_preview_prompts_for_a_password",
         || {
             let directory = tempfile::tempdir().expect("preview fixture directory");
@@ -1300,7 +1300,7 @@ fn encrypted_archive_preview_prompts_for_a_password() {
 
 #[test]
 fn encrypted_zip_preview_unlocks_with_the_correct_password() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_preview::tests::encrypted_zip_preview_unlocks_with_the_correct_password",
         || {
             use crate::services::{ArchiveDirectory, ArchiveNode, ArchivePreviewTree};
@@ -1342,7 +1342,7 @@ fn encrypted_zip_preview_unlocks_with_the_correct_password() {
 
 #[test]
 fn encrypted_zip_preview_rejects_incorrect_and_empty_passwords() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_preview::tests::encrypted_zip_preview_rejects_incorrect_and_empty_passwords",
         || {
             use crate::services::INCORRECT_ARCHIVE_PASSWORD;
@@ -1370,7 +1370,7 @@ fn encrypted_zip_preview_rejects_incorrect_and_empty_passwords() {
 
 #[test]
 fn corrupt_encrypted_zip_preview_reports_a_failed_preview() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_preview::tests::corrupt_encrypted_zip_preview_reports_a_failed_preview",
         || {
             let directory = tempfile::tempdir().expect("preview fixture directory");
@@ -1397,7 +1397,7 @@ fn corrupt_encrypted_zip_preview_reports_a_failed_preview() {
 
 #[test]
 fn unsupported_archive_preview_reports_unsupported_format() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_preview::tests::unsupported_archive_preview_reports_unsupported_format",
         || {
             use crate::{

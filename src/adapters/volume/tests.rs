@@ -572,7 +572,7 @@ fn capabilities_follow_mount_changes_once_watched_by(
     name: &str,
     start: impl FnOnce(&Path) -> Box<dyn FnOnce()>,
 ) {
-    crate::test_support::gtk_test(name, || {
+    crate::test_support::main_context_test(name, || {
         use gio::prelude::*;
 
         let root = tempfile::tempdir().expect("fixture");
