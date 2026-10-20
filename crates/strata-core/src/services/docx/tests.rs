@@ -6,7 +6,9 @@ use super::*;
 use crate::services::document::DocumentBlock;
 
 fn fixture() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/documents/report.docx")
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .join("tests/fixtures/documents/report.docx")
 }
 
 #[test]

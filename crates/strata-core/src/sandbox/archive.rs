@@ -149,7 +149,11 @@ fn rar_extraction_command(
         .arg("--fsize=0")
         .arg("--");
     command
-        .args(["/app/strata", "--preview-helper", "extract-rar"])
+        .args([
+            "/app/strata",
+            crate::sandbox_helper::PREVIEW_HELPER_ARGUMENT,
+            "extract-rar",
+        ])
         .arg(&sandbox_input);
     command.stdin(Stdio::null());
     command.stdout(Stdio::piped());

@@ -47,10 +47,7 @@ impl Browser {
         self.operation_destination_description.borrow().clone()
     }
 
-    pub fn background_file_operation(
-        self: &Rc<Self>,
-        request_id: OperationRequestId,
-    ) -> bool {
+    pub fn background_file_operation(self: &Rc<Self>, request_id: OperationRequestId) -> bool {
         if self.backgroundable_operation() != Some(request_id) {
             return false;
         }

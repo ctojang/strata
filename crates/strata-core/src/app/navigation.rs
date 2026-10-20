@@ -2679,10 +2679,7 @@ fn merge_entries(
     (merged, insertions)
 }
 
-pub fn sort_entries(
-    entries: Vec<FileEntry>,
-    preferences: ViewPreferences,
-) -> Vec<FileEntry> {
+pub fn sort_entries(entries: Vec<FileEntry>, preferences: ViewPreferences) -> Vec<FileEntry> {
     if preferences.sort_key == SortKey::DeviceOrder || entries.len() <= 1 {
         return entries;
     }

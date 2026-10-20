@@ -633,7 +633,7 @@ impl JobService {
         active
     }
 
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     pub fn snapshot_of(&self, id: JobId) -> Option<JobSnapshot> {
         self.jobs
             .borrow()

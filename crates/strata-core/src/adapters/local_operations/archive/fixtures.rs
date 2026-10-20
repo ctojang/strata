@@ -1,10 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-use super::{
-    compression::{compress_7z, compress_tar, compress_zip, inspect_archive_sources},
-    decoders::extract_zip_from_archive,
-    extraction::ArchiveOutcome,
-};
+use super::{decoders::extract_zip_from_archive, extraction::ArchiveOutcome};
 use crate::{
     model::{EntryKind, FileEntry, Location, MetadataValue},
     services::{ArchiveFormat, TransferReport},
@@ -18,11 +14,12 @@ use std::{
     path::{Path, PathBuf},
     sync::{
         Arc,
-        atomic::{AtomicBool, AtomicUsize, Ordering},
+        atomic::{AtomicBool, AtomicUsize},
     },
 };
 
 pub(super) use super::super::tests::names;
+pub(super) use super::compression_fixture::write_compression_fixture;
 
 /// GIO cannot trash test fixtures across devices into the home Trash.
 pub(super) fn tempdir_on_home_device() -> Result<tempfile::TempDir, Box<dyn Error>> {
@@ -127,45 +124,6 @@ pub(super) fn compression_stage_mode(destination: &Path) -> Result<u32, Box<dyn 
         return Err("expected a single compression staging file".into());
     }
     Ok(fs::metadata(destination.join(name))?.permissions().mode() & 0o777)
-}
-
-pub fn write_compression_fixture(
-    path: &Path,
-    entries: &[PathBuf],
-    format: ArchiveFormat,
-    password: Option<&str>,
-) -> Result<usize, String> {
-    // The filesystem seam asserts it runs off the main thread.
-    if glib::MainContext::default().is_owner() {
-        return std::thread::scope(|scope| {
-            scope
-                .spawn(|| write_compression_fixture(path, entries, format, password))
-                .join()
-                .unwrap_or_else(|panic| std::panic::resume_unwind(panic))
-        });
-    }
-    let file = fs::File::create(path).map_err(|error| error.to_string())?;
-    let progress = Arc::new(AtomicUsize::new(0));
-    let cancelled = never_cancelled();
-    match format {
-        ArchiveFormat::Zip => compress_zip(file, entries, password, &progress, &cancelled),
-        ArchiveFormat::SevenZ => compress_7z(file, entries, password, &progress, &cancelled),
-        ArchiveFormat::Tar => compress_tar(file, entries, None, &progress, &cancelled),
-        ArchiveFormat::TarGz => compress_tar(
-            file,
-            entries,
-            Some(
-                inspect_archive_sources(entries, &cancelled)
-                    .map_err(|error| error.to_string())?
-                    .gzip_level(),
-            ),
-            &progress,
-            &cancelled,
-        ),
-        ArchiveFormat::Rar => return Err("RAR compression is not supported".to_owned()),
-    }
-    .map_err(|error| error.to_string())?;
-    Ok(progress.load(Ordering::Relaxed))
 }
 
 pub(super) fn write_zip(path: &Path, entries: &[(&str, &[u8])]) -> Result<(), Box<dyn Error>> {

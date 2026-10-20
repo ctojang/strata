@@ -7,26 +7,15 @@ rust_i18n::i18n!(
     backend = crate::i18n::Catalogs::compiled()
 );
 
-mod adapters;
-mod app;
 mod assets;
-mod build_info;
-mod i18n;
-mod logging;
-mod media;
-mod metrics;
-mod model;
-#[cfg(feature = "rar")]
-mod rar_extraction;
-mod sandbox;
-mod sandbox_helper;
-mod services;
-mod storage;
 #[cfg(test)]
 mod test_support;
-mod trusted_command;
 mod ui;
-mod util;
+
+pub(crate) use strata_core::{
+    adapters, app, build_info, i18n, logging, media, metrics, model, sandbox, sandbox_helper,
+    services, storage, trusted_command, util,
+};
 
 use std::{
     ffi::OsString, ops::ControlFlow, os::unix::process::CommandExt, process::Stdio, time::Duration,
@@ -56,8 +45,8 @@ enum LaunchMode {
 /// not a reason to abort before GIO ever sees it.
 fn launch_mode(arguments: &[OsString]) -> LaunchMode {
     match arguments.get(1).and_then(|argument| argument.to_str()) {
-        Some("--preview-helper") => LaunchMode::PreviewHelper,
-        Some("--browser-worker") => LaunchMode::BrowserWorker,
+        Some(sandbox_helper::PREVIEW_HELPER_ARGUMENT) => LaunchMode::PreviewHelper,
+        Some(sandbox_helper::BROWSER_WORKER_ARGUMENT) => LaunchMode::BrowserWorker,
         Some(GVFS_PROBE_ARGUMENT) => LaunchMode::GvfsProbe,
         Some("--version") => LaunchMode::Version,
         _ => LaunchMode::Application,

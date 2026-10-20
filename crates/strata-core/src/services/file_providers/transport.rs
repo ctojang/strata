@@ -107,7 +107,7 @@ impl Updates {
         (state.replies.drain(..).collect(), state.closed)
     }
 
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     pub fn try_recv(&self) -> Result<Update, TryRecvError> {
         let mut state = self.state.lock().expect("provider update queue");
         if state.replies.is_empty() {
@@ -124,7 +124,7 @@ impl Updates {
         Ok(update)
     }
 
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     pub fn recv_timeout(&self, timeout: Duration) -> Result<Update, mpsc::RecvTimeoutError> {
         let deadline = Instant::now() + timeout;
         loop {

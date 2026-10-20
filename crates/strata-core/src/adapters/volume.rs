@@ -23,7 +23,7 @@ use crate::{
     services::{VolumeIdentity, VolumeRelation, volume_relation},
 };
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub use mount_capabilities::forget_test_mount_capabilities;
 pub use mount_capabilities::{
     MountCapabilities, MountKey, XattrNamespace, learn_mount_capability, mount_capabilities,
@@ -34,7 +34,7 @@ pub use mount_snapshot::{
 };
 #[cfg(test)]
 pub use mounts::FAT32_MAX_FILE_SIZE;
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub use mounts::set_mountinfo_for_isolated_test;
 pub use mounts::{
     CoarseTimes, Family, FuseFormat, LONGEST_NAME_NTFS_3G_RENAMES_OVER, MountKey as TrashMountKey,

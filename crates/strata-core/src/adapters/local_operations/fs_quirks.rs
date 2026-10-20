@@ -27,9 +27,9 @@ use rustix::{
     io::Errno,
 };
 
-use super::super::copy_engine::{clock_for_test, forget_learned_copy_support};
-use super::super::environment::FsEnvironment;
-use super::super::fs_ops::{Entry, EntryStat, FsOps, FsStat, System, assert_off_main_thread};
+use super::copy_engine::{clock_for_test, forget_learned_copy_support};
+use super::environment::FsEnvironment;
+use super::fs_ops::{Entry, EntryStat, FsOps, FsStat, System, assert_off_main_thread};
 use crate::adapters::volume::{MountKey, MountSite, MountType, forget_test_mount_capabilities};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -150,6 +150,7 @@ pub enum NameOpens {
 }
 
 pub type Racer = Box<dyn FnMut() + Send>;
+#[cfg(test)]
 pub type Preset = fn() -> Quirks;
 
 /// Patterns match a name exactly, or by prefix when they end in `*`.
@@ -1530,6 +1531,7 @@ fn scope_for_path(path: &Path) -> Option<Arc<Scope>> {
         .cloned()
 }
 
+#[cfg(test)]
 pub fn recreated(path: &Path) {
     let (Some(scope), Some(name)) = (scope_for_path(path), path.file_name()) else {
         return;
@@ -1542,6 +1544,7 @@ pub fn recreated(path: &Path) {
 /// Whether a row that sends the malformed `name` as it is to the filesystem holding `root` is
 /// skipped there: a FUSE daemon gets what a preset over it passes on, and exfat-fuse writes an
 /// overlong `/` into its volume as a real one.
+#[cfg(test)]
 pub fn skips_malformed_name_on_fuse(root: &Path, name: &OsStr) -> bool {
     let skipped = name.to_str().is_none()
         && rustix::fs::statfs(root).is_ok_and(|stat| stat.f_type == FUSE_SUPER_MAGIC);
@@ -1554,6 +1557,7 @@ pub fn skips_malformed_name_on_fuse(root: &Path, name: &OsStr) -> bool {
 /// Makes whatever is at `path` report another inode number until it is
 /// unlinked, as libfuse without `use_ino` and cifs without server inode
 /// numbers do once the kernel evicts an entry.
+#[cfg(test)]
 pub fn renumbered(path: &Path) {
     let (Some(scope), Some(name)) = (scope_for_path(path), path.file_name()) else {
         return;

@@ -19,7 +19,7 @@ pub enum MountKey {
     Device(u64),
     /// A GVfs FUSE bridge backend, keyed by the bridge and the backend's folder.
     Backend(u64),
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     Test(u64),
 }
 
@@ -128,17 +128,17 @@ pub fn forget_mount_capabilities() {
     capabilities().retain(|key, _| is_test_key(key));
 }
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 fn is_test_key(key: &MountKey) -> bool {
     matches!(key, MountKey::Test(_))
 }
 
-#[cfg(not(test))]
+#[cfg(not(any(test, feature = "test-support")))]
 fn is_test_key(_: &MountKey) -> bool {
     false
 }
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub fn forget_test_mount_capabilities(id: u64) {
     capabilities().remove(&MountKey::Test(id));
 }

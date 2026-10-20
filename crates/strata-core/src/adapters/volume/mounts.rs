@@ -338,12 +338,12 @@ pub struct MountKey {
     pub fs_type: String,
 }
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 static MOUNTINFO_FOR_TEST: std::sync::Mutex<Option<String>> = std::sync::Mutex::new(None);
 
 /// Replaces `/proc/self/mountinfo` for the whole process, so only a test that
 /// runs in its own process may use it.
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub fn set_mountinfo_for_isolated_test(mountinfo: Option<String>) {
     assert!(
         std::env::var_os("STRATA_ISOLATED_TEST").is_some(),
@@ -356,7 +356,7 @@ pub fn set_mountinfo_for_isolated_test(mountinfo: Option<String>) {
 
 impl MountTable {
     pub fn current() -> Self {
-        #[cfg(test)]
+        #[cfg(any(test, feature = "test-support"))]
         if let Some(mountinfo) = MOUNTINFO_FOR_TEST
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)

@@ -358,7 +358,7 @@ impl DecodedMedia {
     #[cfg(test)]
     pub(crate) fn use_test_stream(&self) {
         self.imp().loader.replace(Some(std::rc::Rc::new(|_, tick| {
-            crate::sandbox::media::tests::stream(Header {
+            crate::sandbox::media::fixtures::stream(Header {
                 width: 16,
                 height: 16,
                 audio: false,
@@ -378,7 +378,7 @@ impl DecodedMedia {
         self.imp()
             .loader
             .replace(Some(std::rc::Rc::new(move |_, tick| {
-                crate::sandbox::media::tests::stream(Header {
+                crate::sandbox::media::fixtures::stream(Header {
                     width: 0,
                     height: 0,
                     audio: true,

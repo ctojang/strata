@@ -2405,19 +2405,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_norway"
-version = "0.9.42"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e408f29489b5fd500fab51ff1484fc859bb655f32c671f307dcd733b72e8168c"
-dependencies = [
- "indexmap",
- "itoa",
- "ryu",
- "serde",
- "unsafe-libyaml-norway",
-]
-
-[[package]]
 name = "serde_repr"
 version = "0.1.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2622,6 +2609,38 @@ version = "1.0.0"
 dependencies = [
  "async-io",
  "cairo-rs",
+ "futures-channel",
+ "futures-lite",
+ "gdk4-wayland",
+ "gdk4-x11",
+ "gio",
+ "gio-unix",
+ "glib",
+ "gstreamer",
+ "gstreamer-app",
+ "gtk4",
+ "pangocairo",
+ "resvg",
+ "rust-i18n",
+ "rustix",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sourceview5",
+ "strata-core",
+ "tempfile",
+ "toml 1.1.6+spec-1.1.0",
+ "tracing",
+ "tracing-subscriber",
+ "yeslogic-fontconfig-sys",
+ "zbus",
+]
+
+[[package]]
+name = "strata-core"
+version = "1.0.0"
+dependencies = [
+ "cairo-rs",
  "calamine",
  "csv",
  "docx-rs",
@@ -2630,15 +2649,11 @@ dependencies = [
  "futures-channel",
  "futures-lite",
  "gdk-pixbuf",
- "gdk4-wayland",
- "gdk4-x11",
  "gio",
  "gio-unix",
  "glib",
  "glib-build-tools",
  "gstreamer",
- "gstreamer-app",
- "gtk4",
  "html5gum",
  "ignore",
  "image",
@@ -2659,10 +2674,8 @@ dependencies = [
  "seccompiler",
  "serde",
  "serde_json",
- "serde_norway",
  "sevenz-rust2",
  "sha2",
- "sourceview5",
  "tar",
  "tempfile",
  "toml 1.1.6+spec-1.1.0",
@@ -2671,8 +2684,6 @@ dependencies = [
  "unicode-normalization",
  "unrar",
  "unrar_sys",
- "yeslogic-fontconfig-sys",
- "zbus",
  "zip 9.0.4",
 ]
 
@@ -3113,12 +3124,6 @@ dependencies = [
  "libc",
  "winapi",
 ]
-
-[[package]]
-name = "unsafe-libyaml-norway"
-version = "0.2.15"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b39abd59bf32521c7f2301b52d05a6a2c975b6003521cbd0c6dc1582f0a22104"
 
 [[package]]
 name = "untrusted"

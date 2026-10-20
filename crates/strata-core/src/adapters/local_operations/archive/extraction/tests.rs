@@ -20,7 +20,7 @@ use super::{ArchiveError, ArchiveOutcome, ExtractionSession, MemberContent, Memb
 use crate::{
     adapters::local_operations::{
         archive::fixtures::{EXTRACTION_STAGE, expected_mode, stages},
-        tests::fs_quirks::{FsQuirks, Op, Preset, Quirks, skips_malformed_name_on_fuse},
+        fs_quirks::{FsQuirks, Op, Preset, Quirks, skips_malformed_name_on_fuse},
     },
     model::Location,
     services::{RenameCause, RenamedItem, SkippedItem, SpecialKind, TransferReport},

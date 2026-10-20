@@ -28,19 +28,19 @@ pub use local_operations::{
     archive_payload_valid, encode_archive_result, flush_filesystem, list_archive_entries_direct,
     transfer_targets, typed_name_refusal,
 };
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub use local_operations::{
     ArchiveListing, ArchiveListingStatus, decode_archive_listing, write_compression_fixture,
 };
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub use local_operations::{FsOp, FsQuirks, Quirks};
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub use local_operations::{
     clear_sync_probe, install_sync_probe, release_sync_probe, sync_probe_is_blocked,
     sync_probe_len, sync_probe_observations,
 };
 pub use local_preview::LocalPreviewProvider;
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub use volume::set_mountinfo_for_isolated_test;
 pub use volume::{DropVolumeQuery, DropVolumes, lookup_drop_volumes};
 pub use volume::{

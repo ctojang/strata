@@ -14,12 +14,7 @@ use super::super::{Browser, BrowserEvent, SortFill};
 mod tests;
 
 impl Browser {
-    pub fn apply_thumbnail_metadata(
-        &self,
-        depth: usize,
-        position: usize,
-        update: MetadataUpdate,
-    ) {
+    pub fn apply_thumbnail_metadata(&self, depth: usize, position: usize, update: MetadataUpdate) {
         let mut state = self.state.borrow_mut();
         let Some(request) = state.request_id_for_depth(depth) else {
             return;

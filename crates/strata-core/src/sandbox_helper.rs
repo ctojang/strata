@@ -30,6 +30,11 @@ mod raw_metadata;
 
 const PROCESS_POLL_INTERVAL: Duration = Duration::from_millis(20);
 
+/// First argument that re-executes the binary as the sandboxed preview helper.
+pub const PREVIEW_HELPER_ARGUMENT: &str = "--preview-helper";
+/// First argument that re-executes the binary as the sandboxed browser worker.
+pub const BROWSER_WORKER_ARGUMENT: &str = "--browser-worker";
+
 pub fn run(arguments: &[String]) -> Result<(), String> {
     #[cfg(not(feature = "rar"))]
     if arguments
@@ -1047,10 +1052,7 @@ fn stop_child(child: &mut Child) {
     let _waited = child.wait();
 }
 
-pub fn run_command_with_timeout(
-    command: &mut Command,
-    timeout: Duration,
-) -> io::Result<bool> {
+pub fn run_command_with_timeout(command: &mut Command, timeout: Duration) -> io::Result<bool> {
     if timeout.is_zero() {
         return Ok(false);
     }

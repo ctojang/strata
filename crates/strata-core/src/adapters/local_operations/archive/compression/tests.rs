@@ -9,9 +9,7 @@ use super::super::fixtures::{
 };
 use super::{ArchiveError, inspect_archive_sources, process_umask, write_staged_archive};
 use crate::{
-    adapters::local_operations::tests::fs_quirks::{
-        FsQuirks, Op, Preset, Quirks, Trash, recreated,
-    },
+    adapters::local_operations::fs_quirks::{FsQuirks, Op, Preset, Quirks, Trash, recreated},
     services::{ArchiveFormat, ReplacedOriginal, TransferConflict, TrashedOriginal},
     test_support::ASYNC_MAIN_CONTEXT_DEFAULT,
 };

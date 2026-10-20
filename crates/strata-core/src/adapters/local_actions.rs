@@ -40,7 +40,7 @@ impl LocalActionStore {
         Rc::new(Self { root })
     }
 
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     pub fn root(&self) -> &Path {
         &self.root
     }

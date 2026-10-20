@@ -67,11 +67,6 @@ pub fn record_stage(stage: &str, elapsed_ms: u64) {
     tracing::debug!(stage, elapsed_ms, "directory stage completed");
 }
 
-#[expect(dead_code, reason = "frame-clock plumbing lands with Task 11")]
-pub fn record_input_latency(elapsed_ms: u64) {
-    tracing::debug!(elapsed_ms, "input event to presented frame");
-}
-
 pub fn mark_batch_rendered(entries: usize, render_started: Instant) {
     let render_micros = render_started.elapsed().as_micros() as u64;
     tracing::debug!(entries, render_micros, "directory batch rendered");

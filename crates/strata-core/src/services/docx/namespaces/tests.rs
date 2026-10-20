@@ -9,6 +9,7 @@ const WORD: &str = "http://schemas.openxmlformats.org/wordprocessingml/2006/main
 fn namespace_aliases_preserve_document_content_and_formatting() {
     let fixture = std::fs::read(
         std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../..")
             .join("tests/fixtures/documents/report.docx"),
     )
     .expect("fixture");

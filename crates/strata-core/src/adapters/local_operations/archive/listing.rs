@@ -18,8 +18,7 @@ mod tests;
 
 pub const INVALID_ARCHIVE: &str = "This file is not a valid archive or is damaged.";
 
-pub const ARCHIVE_UNSUPPORTED_MESSAGE: &str =
-    "This archive format is not supported for preview.";
+pub const ARCHIVE_UNSUPPORTED_MESSAGE: &str = "This archive format is not supported for preview.";
 
 pub const ARCHIVE_PREVIEW_FAILED_MESSAGE: &str = "Preview couldn't be completed. Try again.";
 

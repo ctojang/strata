@@ -1145,7 +1145,7 @@ pub struct Browser {
 }
 
 impl Browser {
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     pub fn new(source: Rc<dyn FileSource>) -> Rc<Self> {
         Self::with_preferences(source, ViewPreferences::default())
     }
@@ -1263,7 +1263,7 @@ impl Browser {
         self.operation_provider.replace(Some(provider));
     }
 
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     pub fn navigate_input(self: &Rc<Self>, input: &str) -> Result<(), LocationValidationError> {
         self.navigate_input_located(input, None).map(|_| ())
     }
@@ -4747,7 +4747,7 @@ impl Browser {
         }
     }
 
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     pub fn select_entries_by_name(self: &Rc<Self>, names: &[String]) {
         let Some(depth) = self.active_depth() else {
             return;

@@ -5,7 +5,7 @@ use super::{
     ExtractNameResolver, ExtractionDestination, FUSE_SUPER_MAGIC, MemberMetadata, Placed,
     archive_stem, sanitized_archive_path,
 };
-use crate::adapters::local_operations::tests::fs_quirks::{FsQuirks, Op, Quirks, Support};
+use crate::adapters::local_operations::fs_quirks::{FsQuirks, Op, Quirks, Support};
 use std::{
     error::Error,
     ffi::{OsStr, OsString},

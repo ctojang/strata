@@ -137,7 +137,7 @@ pub(super) mod trash;
 mod typed_names;
 mod work_queue;
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub use archive::ArchiveListing;
 pub use archive::{
     ARCHIVE_PREVIEW_FAILED_MESSAGE, ARCHIVE_TOO_LARGE_MESSAGE, ARCHIVE_UNSUPPORTED_MESSAGE,
@@ -146,10 +146,12 @@ pub use archive::{
     list_archive_entries_direct,
 };
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub use archive::write_compression_fixture;
-#[cfg(test)]
-pub use tests::fs_quirks::{FsQuirks, Op as FsOp, Quirks};
+#[cfg(any(test, feature = "test-support"))]
+pub mod fs_quirks;
+#[cfg(any(test, feature = "test-support"))]
+pub use fs_quirks::{FsQuirks, Op as FsOp, Quirks};
 pub use transfer_targets::transfer_targets;
 pub use typed_names::refused_in as typed_name_refusal;
 
@@ -294,14 +296,14 @@ pub fn sync_filesystem(root: &Path) -> io::Result<()> {
 }
 
 pub fn flush_filesystem(root: &Path) -> io::Result<()> {
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     if let Some(kind) = sync_probe_before(root) {
         return Err(io::Error::new(kind, "flush failed"));
     }
     sync_filesystem(root)
 }
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 mod sync_probe {
     use std::{
         io,
@@ -355,6 +357,7 @@ mod sync_probe {
         *slot = None;
     }
 
+    #[cfg(test)]
     pub fn set_sync_observer(observer: Option<SyncObserver>) {
         let mut slot = SYNC_OBSERVER
             .lock()
@@ -432,14 +435,16 @@ mod sync_probe {
 }
 
 #[cfg(test)]
+pub use sync_probe::set_sync_observer;
+#[cfg(any(test, feature = "test-support"))]
 use sync_probe::sync_probe_before;
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub use sync_probe::{
-    clear_sync_probe, install_sync_probe, release_sync_probe, set_sync_observer,
-    sync_probe_is_blocked, sync_probe_len, sync_probe_observations,
+    clear_sync_probe, install_sync_probe, release_sync_probe, sync_probe_is_blocked,
+    sync_probe_len, sync_probe_observations,
 };
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 thread_local! {
     static REMOVABLE_ROOTS_FOR_TEST: RefCell<Option<Vec<PathBuf>>> = const { RefCell::new(None) };
 }
@@ -449,7 +454,7 @@ pub fn set_removable_roots_for_test(roots: Option<Vec<PathBuf>>) {
     REMOVABLE_ROOTS_FOR_TEST.with(|slot| *slot.borrow_mut() = roots);
 }
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 fn removable_hints_for_test() -> Option<Vec<MountFlushHint>> {
     REMOVABLE_ROOTS_FOR_TEST.with(|slot| {
         slot.borrow().as_ref().map(|roots| {
@@ -497,7 +502,7 @@ async fn removable_roots_for_paths(paths: &[PathBuf]) -> Vec<PathBuf> {
         .iter()
         .map(|path| SyncDestination::Local(path))
         .collect();
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     if let Some(hints) = removable_hints_for_test() {
         return removable_sync_roots(&destinations, &hints);
     }
@@ -1409,8 +1414,8 @@ struct ExistingFolder {
 fn device(file: &gio::File, info: &gio::FileInfo) -> Option<u64> {
     let device = (file.is_native() && info.has_attribute(gio::FILE_ATTRIBUTE_UNIX_DEVICE))
         .then(|| u64::from(info.attribute_uint32(gio::FILE_ATTRIBUTE_UNIX_DEVICE)));
-    #[cfg(test)]
-    let device = tests::fs_quirks::gio_device(file, device);
+    #[cfg(any(test, feature = "test-support"))]
+    let device = fs_quirks::gio_device(file, device);
     device
 }
 

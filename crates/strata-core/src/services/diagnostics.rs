@@ -216,10 +216,7 @@ pub enum InstallHint {
     Package(&'static str),
 }
 
-pub fn install_hint(
-    packages: Packages,
-    manager: Option<PackageManager>,
-) -> Option<InstallHint> {
+pub fn install_hint(packages: Packages, manager: Option<PackageManager>) -> Option<InstallHint> {
     let (_, reference) = packages.first()?;
     manager
         .and_then(|manager| {
@@ -775,11 +772,7 @@ pub fn terminal(program: Option<String>) -> Check {
     }
 }
 
-pub fn custom_actions(
-    installed: usize,
-    unavailable: Vec<String>,
-    failed: Vec<String>,
-) -> Check {
+pub fn custom_actions(installed: usize, unavailable: Vec<String>, failed: Vec<String>) -> Check {
     let id = CheckId::CustomActions;
     if !unavailable.is_empty() || !failed.is_empty() {
         return Check::warning(

@@ -829,7 +829,7 @@ fn sandbox_command(
     }
     command.args([
         "/app/strata",
-        "--preview-helper",
+        crate::sandbox_helper::PREVIEW_HELPER_ARGUMENT,
         operation.argument(),
         &sandbox_input,
     ]);

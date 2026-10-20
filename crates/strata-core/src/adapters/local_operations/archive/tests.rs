@@ -14,7 +14,7 @@ use super::{
 use crate::{
     adapters::local_operations::{
         LocalOperationProvider,
-        tests::fs_quirks::{FsQuirks, Preset, Quirks},
+        fs_quirks::{FsQuirks, Preset, Quirks},
     },
     model::Location,
     services::{

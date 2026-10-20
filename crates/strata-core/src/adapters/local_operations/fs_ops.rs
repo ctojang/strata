@@ -166,11 +166,11 @@ pub(super) trait FsOps: super::environment::FsEnvironment {
 pub(super) struct System;
 
 pub(super) fn fs() -> &'static dyn FsOps {
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     {
-        &super::tests::fs_quirks::SCOPED
+        &super::fs_quirks::SCOPED
     }
-    #[cfg(not(test))]
+    #[cfg(not(any(test, feature = "test-support")))]
     {
         &System
     }

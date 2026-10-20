@@ -7,11 +7,15 @@ use std::{
 };
 
 fn main() {
-    println!("cargo::rerun-if-changed=data/locales");
+    println!("cargo::rerun-if-changed={}", workspace_path("data/locales"));
     write_translation_catalogs();
-    println!("cargo::rerun-if-changed=integrations");
+    println!("cargo::rerun-if-changed={}", workspace_path("integrations"));
     write_integration_bundle();
-    glib_build_tools::compile_resources(&["data"], "data/strata.gresource.xml", "strata.gresource");
+    glib_build_tools::compile_resources(
+        &[workspace_path("data")],
+        &workspace_path("data/strata.gresource.xml"),
+        "strata.gresource",
+    );
 
     println!("cargo::rerun-if-env-changed=STRATA_TRUSTED_COMMAND_PATH");
     validate_trusted_command_path();
@@ -70,7 +74,7 @@ fn validate_trusted_command_path() {
 /// Embeds the catalogs as static tables. rust-i18n's own `i18n!` loader emits one
 /// statement per message, and that unoptimized frame overflows 2 MiB thread stacks.
 fn write_translation_catalogs() {
-    let catalogs = rust_i18n_support::load_locales("data/locales", |_| false);
+    let catalogs = rust_i18n_support::load_locales(&workspace_path("data/locales"), |_| false);
     // load_locales silently returns nothing when the catalog directory is absent.
     assert!(
         catalogs.contains_key("en"),
@@ -93,7 +97,7 @@ fn write_translation_catalogs() {
 /// without packaging changes. Directories starting with `.` or `_` and
 /// documentation files are left out.
 fn write_integration_bundle() {
-    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("integrations");
+    let root = PathBuf::from(workspace_path("integrations"));
     let mut directories: Vec<PathBuf> = fs::read_dir(&root)
         .map(|entries| {
             entries
@@ -190,10 +194,14 @@ fn is_project_checkout() -> bool {
     let Ok(root) = PathBuf::from(root.trim()).canonicalize() else {
         return false;
     };
-    let Ok(manifest) = PathBuf::from(env!("CARGO_MANIFEST_DIR")).canonicalize() else {
+    let Ok(workspace) = PathBuf::from(workspace_path("")).canonicalize() else {
         return false;
     };
-    root == manifest
+    root == workspace
+}
+
+fn workspace_path(relative: &str) -> String {
+    format!("{}/../../{relative}", env!("CARGO_MANIFEST_DIR"))
 }
 
 fn git_output(arguments: &[&str]) -> Option<String> {

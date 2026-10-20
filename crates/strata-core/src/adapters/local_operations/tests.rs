@@ -22,8 +22,8 @@ use std::{
 
 use gio::prelude::*;
 
+use super::fs_quirks::{self, FsQuirks, Preset, Quirks};
 use crate::test_support::ASYNC_MAIN_CONTEXT_DEFAULT;
-use fs_quirks::{FsQuirks, Preset, Quirks};
 
 fn serial() -> Result<std::sync::MutexGuard<'static, ()>, String> {
     ASYNC_MAIN_CONTEXT_DEFAULT
@@ -38,7 +38,6 @@ mod create_entry;
 mod deletion;
 mod file_copy;
 mod folder_copy;
-pub(super) mod fs_quirks;
 mod merge;
 mod moves;
 mod naming;

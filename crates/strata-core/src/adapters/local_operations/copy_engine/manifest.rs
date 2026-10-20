@@ -50,7 +50,7 @@ use crate::{
 pub(in crate::adapters::local_operations) struct Unlinks(Mutex<HashMap<(u64, u64), Vec<u64>>>);
 
 /// The time tests pretend it is, which waits move on instead of sleeping.
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 static TEST_NOW: Mutex<Option<SystemTime>> = Mutex::new(None);
 
 #[cfg(test)]
@@ -59,7 +59,7 @@ pub(in crate::adapters::local_operations) fn set_clock_for_test(now: Option<Syst
 }
 
 pub(in crate::adapters::local_operations) fn now() -> SystemTime {
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     if let Some(now) = *lock(&TEST_NOW) {
         return now;
     }
@@ -67,7 +67,7 @@ pub(in crate::adapters::local_operations) fn now() -> SystemTime {
 }
 
 pub(super) fn sleep(duration: Duration) {
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     if let Some(pretended) = lock(&TEST_NOW).as_mut() {
         *pretended += duration;
         return;
@@ -97,7 +97,7 @@ fn wait_until(unsettled: Unsettled, stopped: &dyn Fn() -> bool) -> Waited {
         if stopped() {
             return Waited::Stopped;
         }
-        #[cfg(test)]
+        #[cfg(any(test, feature = "test-support"))]
         if let Some(pretended) = lock(&TEST_NOW).as_mut() {
             *pretended = unsettled.settled;
             continue;
@@ -685,7 +685,7 @@ impl Placed {
 /// bytes each, as undo history keeps them.
 const PLACED_ENTRIES: usize = 100_000;
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 static TEST_PLACED_ENTRIES: Mutex<Option<usize>> = Mutex::new(None);
 
 #[cfg(test)]
@@ -694,7 +694,7 @@ pub(in crate::adapters::local_operations) fn set_placed_entries_for_test(limit: 
 }
 
 pub(super) fn placed_entries() -> AtomicUsize {
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     if let Some(limit) = *lock(&TEST_PLACED_ENTRIES) {
         return AtomicUsize::new(limit);
     }

@@ -813,7 +813,7 @@ impl ProcessWorker {
                 "i-know-the-risks",
                 "--",
                 "/app/strata",
-                "--browser-worker",
+                crate::sandbox_helper::BROWSER_WORKER_ARGUMENT,
             ])
             .stdin(Stdio::from(std::os::fd::OwnedFd::from(child_socket)))
             .stdout(Stdio::null())

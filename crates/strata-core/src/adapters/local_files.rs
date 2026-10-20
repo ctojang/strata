@@ -1060,10 +1060,7 @@ fn recent_remove_entries_with_backend(
     }
 }
 
-pub fn recent_remove_entries(
-    state: &RecentRemovalState,
-    uris: impl IntoIterator<Item = String>,
-) {
+pub fn recent_remove_entries(state: &RecentRemovalState, uris: impl IntoIterator<Item = String>) {
     let backend: Rc<dyn RecentRemovalBackend> = Rc::new(GioRecentRemovalBackend);
     recent_remove_entries_with_backend(state, &backend, uris);
 }
@@ -1743,7 +1740,7 @@ fn fill_parallel_with_details(
     })
 }
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 fn media_metadata_probe_counts() -> &'static Mutex<HashMap<PathBuf, usize>> {
     static COUNTS: OnceLock<Mutex<HashMap<PathBuf, usize>>> = OnceLock::new();
     COUNTS.get_or_init(|| Mutex::new(HashMap::new()))
@@ -1763,7 +1760,7 @@ fn probe_sandboxed_media_metadata(
     image: bool,
     cancellable: &gio::Cancellable,
 ) -> Result<crate::sandbox::metadata::MediaMetadata, String> {
-    #[cfg(not(test))]
+    #[cfg(not(any(test, feature = "test-support")))]
     {
         let cancellation = crate::sandbox::Cancellation::default();
         let cancel = cancellation.clone();
@@ -1774,7 +1771,7 @@ fn probe_sandboxed_media_metadata(
         }
         result
     }
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     {
         if cancellable.is_cancelled() {
             return Err("Metadata probe cancelled".to_owned());
@@ -1871,7 +1868,7 @@ fn fill_icon_details_with_probe(
         && (is_image_path(path) || is_media_path(path))
         && bytes_support_named_family(path);
     if needs_metadata {
-        #[cfg(test)]
+        #[cfg(any(test, feature = "test-support"))]
         if let Ok(mut counts) = media_metadata_probe_counts().lock() {
             *counts.entry(path.to_path_buf()).or_default() += 1;
         }

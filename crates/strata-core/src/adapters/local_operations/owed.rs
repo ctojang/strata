@@ -5,7 +5,7 @@
 //! originals a merge set aside. A paste batches them per destination
 //! filesystem, so one barrier serves many items.
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 use std::cell::Cell;
 use std::{
     path::PathBuf,
@@ -156,7 +156,7 @@ const LIMITS: Limits = Limits {
     age: Duration::from_secs(5),
 };
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 thread_local! {
     static TEST_LIMITS: Cell<Option<Limits>> = const { Cell::new(None) };
 }
@@ -167,7 +167,7 @@ pub(super) fn set_batch_limits_for_test(limits: Option<Limits>) {
 }
 
 fn limits() -> Limits {
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     if let Some(limits) = TEST_LIMITS.get() {
         return limits;
     }
@@ -176,7 +176,7 @@ fn limits() -> Limits {
 
 /// How far tests moved the batches' clock on, in milliseconds; racers on
 /// worker threads move it.
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 static TEST_CLOCK: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
 
 #[cfg(test)]
@@ -192,12 +192,12 @@ pub(super) fn advance_batch_clock_for_test(by: Option<Duration>) {
 }
 
 fn now() -> Instant {
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     {
         let advanced = TEST_CLOCK.load(std::sync::atomic::Ordering::SeqCst);
         Instant::now() + Duration::from_millis(advanced)
     }
-    #[cfg(not(test))]
+    #[cfg(not(any(test, feature = "test-support")))]
     {
         Instant::now()
     }

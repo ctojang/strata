@@ -8,6 +8,4 @@ pub use browser::folder_destination_texts;
 pub use browser::{
     Browser, BrowserColumnSnapshot, BrowserEvent, CursorToggle, SelectionUpdate, VisualKind,
 };
-pub use navigation::{
-    EntryInsertion, EntrySplice, FolderSortResolver, compare_display_names,
-};
+pub use navigation::{EntryInsertion, EntrySplice, FolderSortResolver, compare_display_names};

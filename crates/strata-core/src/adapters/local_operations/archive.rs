@@ -11,7 +11,7 @@ mod destination;
 mod extraction;
 mod listing;
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub use listing::ArchiveListing;
 pub use listing::{
     ARCHIVE_PREVIEW_FAILED_MESSAGE, ARCHIVE_TOO_LARGE_MESSAGE, ARCHIVE_UNSUPPORTED_MESSAGE,
@@ -19,10 +19,12 @@ pub use listing::{
     decode_archive_listing, encode_archive_result, list_archive_entries_direct,
 };
 
+#[cfg(any(test, feature = "test-support"))]
+mod compression_fixture;
+#[cfg(any(test, feature = "test-support"))]
+pub use compression_fixture::write_compression_fixture;
 #[cfg(test)]
 mod fixtures;
-#[cfg(test)]
-pub use fixtures::write_compression_fixture;
 #[cfg(test)]
 mod tests;
 

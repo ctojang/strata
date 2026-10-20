@@ -4,11 +4,12 @@ use super::*;
 use crate::rar_extraction::{self as wire, Record};
 use std::io::Cursor;
 
-const RAR_VERSION_FIXTURE: &[u8] = include_bytes!("../../../tests/fixtures/rar/version.rar");
-const RAR_ENCRYPTED_FIXTURE: &[u8] = include_bytes!("../../../tests/fixtures/rar/encrypted.rar");
+const RAR_VERSION_FIXTURE: &[u8] = include_bytes!("../../../../../tests/fixtures/rar/version.rar");
+const RAR_ENCRYPTED_FIXTURE: &[u8] =
+    include_bytes!("../../../../../tests/fixtures/rar/encrypted.rar");
 const RAR_ENCRYPTED_HEADERS_FIXTURE: &[u8] =
-    include_bytes!("../../../tests/fixtures/rar/comment-hpw-password.rar");
-const RAR_UNICODE_FIXTURE: &[u8] = include_bytes!("../../../tests/fixtures/rar/unicode.rar");
+    include_bytes!("../../../../../tests/fixtures/rar/comment-hpw-password.rar");
+const RAR_UNICODE_FIXTURE: &[u8] = include_bytes!("../../../../../tests/fixtures/rar/unicode.rar");
 
 #[test]
 fn excessive_native_dictionary_is_rejected() {

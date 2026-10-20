@@ -4,8 +4,8 @@ use std::{error::Error, fs, os::fd::AsFd, path::Path};
 
 use super::super::{
     fs_ops::fs,
+    fs_quirks::{FsQuirks, Preset, Quirks},
     open_local_parent_directory,
-    tests::fs_quirks::{FsQuirks, Preset, Quirks},
 };
 use super::{MountProfile, Profiles, folder_name_limit, learn_mount_type};
 use crate::adapters::volume::{

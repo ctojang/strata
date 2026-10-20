@@ -121,7 +121,7 @@ pub struct SearchItem {
 }
 
 impl SearchItem {
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     pub fn for_test(path: PathBuf, is_directory: bool) -> Self {
         Self::new(
             path.clone(),
@@ -162,7 +162,7 @@ impl SearchItem {
         self.search_name() == normalized_name
     }
 
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     fn new(path: PathBuf, root: &Path, is_directory: bool) -> Self {
         let kind = if is_directory {
             EntryKind::Directory
@@ -561,7 +561,7 @@ impl SearchHandle {
 }
 
 impl SearchHandle {
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     pub fn shares_index_with(&self, other: &Self) -> bool {
         Arc::ptr_eq(&self.index, &other.index)
     }

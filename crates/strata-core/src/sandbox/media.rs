@@ -484,5 +484,7 @@ fn consume_storyboard(
     Ok(())
 }
 
+#[cfg(any(test, feature = "test-support"))]
+pub mod fixtures;
 #[cfg(test)]
-pub mod tests;
+mod tests;

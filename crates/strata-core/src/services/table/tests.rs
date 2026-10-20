@@ -42,9 +42,11 @@ fn cancellation_and_column_budget_are_observable() {
 #[test]
 fn reads_first_worksheet_in_each_supported_workbook_format() {
     for extension in ["xls", "xlsx", "ods"] {
-        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join(format!(
-            "tests/fixtures/spreadsheets/any_sheets.{extension}"
-        ));
+        let path = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../..")
+            .join(format!(
+                "tests/fixtures/spreadsheets/any_sheets.{extension}"
+            ));
         let table = read_workbook(&path).expect("workbook fixture");
         assert_eq!(table.rows[0], ["1", "2"], "{extension}");
         assert_eq!(table.rows[1], ["3", "4"], "{extension}");

@@ -32,10 +32,7 @@ pub fn is_document(content_type: &str, name: &OsStr) -> bool {
 }
 
 impl RichTextData {
-    pub fn into_document(
-        self,
-        cancellation: &Cancellation,
-    ) -> Result<ParsedDocument, String> {
+    pub fn into_document(self, cancellation: &Cancellation) -> Result<ParsedDocument, String> {
         let mut parsed = parse_document(DocumentKind::Html, &self.html, cancellation)?;
         if self.truncated {
             parsed.warnings.push(

@@ -66,10 +66,12 @@ pub(super) use barrier::Barrier;
 use data::Data;
 #[cfg(test)]
 pub(super) use data::set_kernel_for_test;
+#[cfg(any(test, feature = "test-support"))]
+pub(super) use manifest::now as clock_for_test;
 pub(super) use manifest::{Manifest, Ownership, Published, Unlinks};
 use manifest::{Placed, Removed};
 #[cfg(test)]
-pub(super) use manifest::{now as clock_for_test, set_clock_for_test, set_placed_entries_for_test};
+pub(super) use manifest::{set_clock_for_test, set_placed_entries_for_test};
 use metadata::Snapshot;
 pub(super) use restrictive::Restrictive;
 pub(super) use tree::{refuses_node, taken};
@@ -1637,7 +1639,7 @@ const TMPFILE_LINK_UNAVAILABLE: u8 = 3;
 /// unprivileged, and the `/proc` form needs `/proc`.
 static TMPFILE_LINK: AtomicU8 = AtomicU8::new(TMPFILE_LINK_UNKNOWN);
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub(super) fn forget_learned_copy_support() {
     TMPFILE_LINK.store(TMPFILE_LINK_UNKNOWN, Ordering::Relaxed);
     data::forget_learned();

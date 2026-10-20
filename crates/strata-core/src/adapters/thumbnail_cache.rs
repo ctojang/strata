@@ -96,7 +96,7 @@ fn filename_uri(path: &Path) -> Option<String> {
         .map(|uri| uri.to_string())
 }
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 static CACHE_DIR_OVERRIDE: std::sync::Mutex<Option<PathBuf>> = std::sync::Mutex::new(None);
 
 /// Test-only bucket override: mutating process-global environment in tests is unsafe and racy, so tests swap this cell instead.
@@ -111,7 +111,7 @@ fn set_cache_dir_override(dir: Option<PathBuf>) {
     }
 }
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 fn cache_dir_override() -> Option<PathBuf> {
     match CACHE_DIR_OVERRIDE.lock() {
         Ok(slot) => slot.clone(),
@@ -123,7 +123,7 @@ fn cache_dir_override() -> Option<PathBuf> {
 }
 
 fn shared_cache_dir() -> Option<PathBuf> {
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     if let Some(dir) = cache_dir_override() {
         return Some(dir);
     }

@@ -49,7 +49,7 @@ pub(super) fn math(path: &Path, display: bool) -> Result<Vec<u8>, String> {
         .with(|ctx| -> rquickjs::Result<String> {
             // Only our bundled program is evaluated. TeX is passed as a string argument,
             // with no host functions, module loader, filesystem, or network bindings.
-            ctx.eval::<(), _>(include_str!("../../data/math-renderer.js"))?;
+            ctx.eval::<(), _>(include_str!("../../../../data/math-renderer.js"))?;
             let render: rquickjs::Function = ctx.globals().get("strataMath")?;
             render.call((source.as_str(), display))
         })

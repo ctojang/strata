@@ -30,7 +30,7 @@ const MIB: usize = 1 << 20;
 
 static COPY_RANGE_MISSING: AtomicBool = AtomicBool::new(false);
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 pub(super) fn forget_learned() {
     COPY_RANGE_MISSING.store(false, Ordering::Relaxed);
 }
@@ -51,7 +51,7 @@ fn network(family: Family) -> Option<Network> {
     }
 }
 
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 static TEST_KERNEL: std::sync::Mutex<Option<(u32, u32, u32)>> = std::sync::Mutex::new(None);
 
 #[cfg(test)]
@@ -60,7 +60,7 @@ pub(in crate::adapters::local_operations) fn set_kernel_for_test(release: Option
 }
 
 pub(super) fn kernel() -> (u32, u32, u32) {
-    #[cfg(test)]
+    #[cfg(any(test, feature = "test-support"))]
     if let Some(release) = *super::lock(&TEST_KERNEL) {
         return release;
     }
