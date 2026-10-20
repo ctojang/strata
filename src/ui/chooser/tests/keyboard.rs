@@ -25,7 +25,7 @@ impl Chooser {
     }
 
     fn open_with(mode: BrowserMode, tree: &[&str], tenxer: bool) -> Self {
-        crate::ui::prepare_portal_ui();
+        crate::ui::prepare_test_ui();
         let preferences = PreferenceManager::shared();
         preferences.set_browser_mode(mode);
         preferences.set_tenxer_mode(tenxer);

@@ -49,7 +49,7 @@ fn directory_confirmation_distinguishes_load_cursor_from_explicit_selection() {
     crate::test_support::gtk_test(
         "ui::chooser::tests::acceptance::directory_confirmation_distinguishes_load_cursor_from_explicit_selection",
         || {
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             for mode in [BrowserMode::List, BrowserMode::Icons, BrowserMode::Columns] {
                 PreferenceManager::shared().set_browser_mode(mode);
                 for explicit in [false, true] {
@@ -100,7 +100,7 @@ fn folder_only_requests_filter_recursive_results() {
     crate::test_support::gtk_test(
         "ui::chooser::tests::acceptance::folder_only_requests_filter_recursive_results",
         || {
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             PreferenceManager::shared().set_filter_include_subfolders(true);
             for mode in [BrowserMode::List, BrowserMode::Icons, BrowserMode::Columns] {
                 PreferenceManager::shared().set_browser_mode(mode);
@@ -183,7 +183,7 @@ fn arrow_scope_keeps_left_in_the_chooser_file_view() {
     crate::test_support::gtk_test(
         "ui::chooser::tests::acceptance::arrow_scope_keeps_left_in_the_chooser_file_view",
         || {
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             PreferenceManager::shared().set_arrow_navigation_scoped(true);
             let root = tempfile::tempdir().expect("fixture");
             for name in ["a", "b", "c"] {
@@ -227,7 +227,7 @@ fn item_menu_offers_compress_for_native_folder() {
         "ui::chooser::tests::acceptance::item_menu_offers_compress_for_native_folder",
         || {
             use gtk::prelude::*;
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let root = tempfile::tempdir().expect("fixture");
             std::fs::create_dir(root.path().join("folder")).expect("folder");
             std::fs::write(root.path().join("notes.txt"), "notes").expect("file");

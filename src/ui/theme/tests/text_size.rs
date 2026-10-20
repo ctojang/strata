@@ -27,7 +27,7 @@ fn custom_text_size_loads_and_updates_two_windows_and_new_content_with_desktop_s
             .expect("persist text size fixture");
             ThemeManager::shared();
             let manager = crate::ui::preferences::PreferenceManager::shared();
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let settings = gtk::Settings::default().expect("GTK settings");
             settings.set_gtk_xft_dpi(96 * 1024);
             let labels = [

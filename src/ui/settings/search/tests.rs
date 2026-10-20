@@ -152,7 +152,7 @@ fn global_search_navigates_filters_lazy_pages_and_restores_without_editing_prefe
     crate::test_support::gtk_test(
         "ui::settings::search::tests::global_search_navigates_filters_lazy_pages_and_restores_without_editing_preferences",
         || {
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let manager = PreferenceManager::shared();
             let original = manager.folder_peeking();
             let (layer, entry, stack) = settings_layer(&manager);
@@ -203,7 +203,7 @@ fn search_field_selects_all_with_ctrl_a_on_any_layout() {
     crate::test_support::gtk_test(
         "ui::settings::search::tests::search_field_selects_all_with_ctrl_a_on_any_layout",
         || {
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let (_, entry, _) = settings_layer(&PreferenceManager::shared());
             let ctrl = ModifierType::CONTROL_MASK;
             for (key, keycode, modifiers, selects) in [
@@ -308,7 +308,7 @@ fn global_search_routes_every_target_to_its_page() {
     crate::test_support::gtk_test(
         "ui::settings::search::tests::global_search_routes_every_target_to_its_page",
         || {
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let (layer, entry, stack) = settings_layer(&PreferenceManager::shared());
             let title = descendants(&layer)
                 .into_iter()
@@ -393,7 +393,7 @@ fn every_page_row_is_registered_for_search() {
     crate::test_support::gtk_test(
         "ui::settings::search::tests::every_page_row_is_registered_for_search",
         || {
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             // One loaded action and one load failure, so the Actions list and its
             // problems section both have rows.
             let actions = crate::storage::config_directory().join("actions");

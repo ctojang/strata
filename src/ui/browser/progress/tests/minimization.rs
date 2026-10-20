@@ -31,7 +31,7 @@ struct Fixture {
 
 impl Fixture {
     fn new() -> Self {
-        crate::ui::prepare_portal_ui();
+        crate::ui::prepare_test_ui();
         set_file_progress_delay_for_test(Duration::ZERO);
         let temp = tempfile::tempdir().expect("progress fixture");
         let source: Rc<dyn FileSource> = Rc::new(LocalFileSource);

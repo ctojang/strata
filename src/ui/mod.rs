@@ -62,6 +62,6 @@ pub(in crate::ui) use window::{
 pub use window::{UnlockTarget, present, present_open, present_unlock};
 
 #[cfg(test)]
-pub(crate) fn prepare_portal_ui() {
+pub(crate) fn prepare_test_ui() {
     let _theme = theme::ThemeManager::shared();
 }

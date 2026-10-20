@@ -39,7 +39,7 @@ fn typing_a_character_opens_the_filter_with_that_query() {
     crate::test_support::gtk_test(
         "ui::chooser::tests::filtered_preview::typing_a_character_opens_the_filter_with_that_query",
         || {
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let root = tempfile::tempdir().expect("fixture");
             std::fs::create_dir(root.path().join("notes")).expect("folder");
             for mode in [BrowserMode::Columns, BrowserMode::Icons, BrowserMode::List] {
@@ -122,7 +122,7 @@ fn escape_on_a_focused_result_dismisses_the_filter_without_cancelling() {
     crate::test_support::gtk_test(
         "ui::chooser::tests::filtered_preview::escape_on_a_focused_result_dismisses_the_filter_without_cancelling",
         || {
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let root = tempfile::tempdir().expect("fixture");
             std::fs::create_dir(root.path().join("notes")).expect("folder");
             std::fs::create_dir(root.path().join("other")).expect("folder");

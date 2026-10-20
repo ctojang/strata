@@ -274,7 +274,7 @@ fn list_resizes_persist_across_windows_without_changing_the_other_scope() {
         "ui::chooser::tests::column_widths::list_resizes_persist_across_windows_without_changing_the_other_scope",
         || {
             seed_settings("list", 26);
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let preferences = PreferenceManager::shared();
             let root = fixture_root();
             for chooser in [true, false] {
@@ -333,7 +333,7 @@ fn miller_resizes_persist_across_windows_without_changing_the_other_scope() {
         "ui::chooser::tests::column_widths::miller_resizes_persist_across_windows_without_changing_the_other_scope",
         || {
             seed_settings("columns", 16);
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let preferences = PreferenceManager::shared();
             let root = fixture_root();
             for chooser in [true, false] {
@@ -375,7 +375,7 @@ fn miller_autofit_saves_a_width_within_the_visible_browser_area() {
         "ui::chooser::tests::column_widths::miller_autofit_saves_a_width_within_the_visible_browser_area",
         || {
             seed_settings("columns", 16);
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let root = long_name_fixture_root();
             for chooser in [true, false] {
                 let other = saved_column(!chooser);
@@ -401,7 +401,7 @@ fn miller_drag_cannot_exceed_the_visible_browser_area() {
         "ui::chooser::tests::column_widths::miller_drag_cannot_exceed_the_visible_browser_area",
         || {
             seed_settings("columns", 16);
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let root = fixture_root();
             for chooser in [true, false] {
                 let other = saved_column(!chooser);
@@ -450,7 +450,7 @@ fn failed_chooser_saves_are_only_logged() {
         "ui::chooser::tests::column_widths::failed_chooser_saves_are_only_logged",
         || {
             seed_settings("list", 26);
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let root = fixture_root();
             let window = open_browser(root.path(), true);
             wait_until(|| window.is_active());
@@ -484,7 +484,7 @@ fn list_column_customizations_update_live_across_windows() {
         "ui::chooser::tests::column_widths::list_column_customizations_update_live_across_windows",
         || {
             seed_settings("list", 16);
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let root = fixture_root();
             let first = open_browser(root.path(), false);
             let second = open_browser(root.path(), false);

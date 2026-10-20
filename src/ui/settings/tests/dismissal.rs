@@ -117,7 +117,7 @@ fn closing_settings_cancels_the_theme_preview_and_collapses_the_editor() {
     crate::test_support::gtk_test(
         "ui::settings::tests::dismissal::closing_settings_cancels_the_theme_preview_and_collapses_the_editor",
         || {
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let manager = ThemeManager::shared();
             manager.set_follow_omarchy(false);
             manager.select_theme("azure-glow");

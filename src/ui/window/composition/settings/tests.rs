@@ -7,7 +7,7 @@ fn settings_launcher_refuses_to_open_over_another_modal() {
     crate::test_support::gtk_test(
         "ui::window::composition::settings::tests::settings_launcher_refuses_to_open_over_another_modal",
         || {
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let content = gtk::Box::new(gtk::Orientation::Vertical, 0);
             let blurred_root = BlurBin::new(&content);
             let overlay = gtk::Overlay::new();
