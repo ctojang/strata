@@ -21,7 +21,7 @@ use std::{
     time::{Duration, SystemTime},
 };
 
-use gtk::{gio, glib, prelude::FileExt};
+use gio::prelude::FileExt;
 use rustix::{
     fs::{AtFlags, FileType, FsWord, Mode, OFlags, RenameFlags, ResolveFlags},
     io::Errno,

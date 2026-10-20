@@ -24,7 +24,6 @@ use crate::{
     },
     test_support::ASYNC_MAIN_CONTEXT_DEFAULT,
 };
-use gtk::glib;
 use std::{
     cell::RefCell,
     error::Error,

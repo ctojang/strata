@@ -28,7 +28,6 @@ use std::{
     time::Duration,
 };
 
-use gtk::{gio, glib};
 use rustix::{
     fs::{AtFlags, FileType, Mode},
     io::Errno,

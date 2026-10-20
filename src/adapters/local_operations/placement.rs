@@ -13,7 +13,6 @@ use std::{
     os::fd::{AsFd, BorrowedFd},
 };
 
-use gtk::glib;
 use rustix::{
     fs::{AtFlags, FileType, Mode, RenameFlags},
     io::Errno,

@@ -18,7 +18,7 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
-use gtk::{gio, glib, prelude::*};
+use gio::prelude::*;
 
 use crate::{
     adapters::{gio_file_for_location, location_for_file},

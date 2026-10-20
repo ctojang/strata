@@ -9,7 +9,7 @@ use crate::{
     model::{FileEntry, Location},
     services::{OperationEvent, OperationRequestId},
 };
-use gtk::{gio, glib, prelude::*};
+use gio::prelude::*;
 use std::{
     collections::HashSet,
     ffi::{OsStr, OsString},

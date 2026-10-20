@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-use gtk::prelude::FileExt;
+use gio::prelude::FileExt;
 use std::{
     cell::Cell,
     ffi::{OsStr, OsString},
@@ -1378,7 +1378,7 @@ fn removed(location: &Location) -> LocationChange {
 fn pump_until(condition: impl Fn() -> bool) {
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
     while !condition() && std::time::Instant::now() < deadline {
-        gtk::glib::MainContext::default().iteration(true);
+        glib::MainContext::default().iteration(true);
     }
 }
 

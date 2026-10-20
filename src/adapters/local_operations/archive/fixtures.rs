@@ -26,8 +26,8 @@ pub(super) use super::super::tests::names;
 
 /// GIO cannot trash test fixtures across devices into the home Trash.
 pub(super) fn tempdir_on_home_device() -> Result<tempfile::TempDir, Box<dyn Error>> {
-    let home = gtk::glib::home_dir();
-    let cache = gtk::glib::user_cache_dir();
+    let home = glib::home_dir();
+    let cache = glib::user_cache_dir();
     let parent = if same_device(&cache, &home) {
         cache
     } else {
@@ -56,8 +56,8 @@ impl HomeTrashGuard {
 
 impl Drop for HomeTrashGuard {
     fn drop(&mut self) {
-        let info_dir = gtk::glib::user_data_dir().join("Trash/info");
-        let files_dir = gtk::glib::user_data_dir().join("Trash/files");
+        let info_dir = glib::user_data_dir().join("Trash/info");
+        let files_dir = glib::user_data_dir().join("Trash/files");
         let Ok(entries) = fs::read_dir(&info_dir) else {
             return;
         };
@@ -136,7 +136,7 @@ pub(crate) fn write_compression_fixture(
     password: Option<&str>,
 ) -> Result<usize, String> {
     // The filesystem seam asserts it runs off the main thread.
-    if gtk::glib::MainContext::default().is_owner() {
+    if glib::MainContext::default().is_owner() {
         return std::thread::scope(|scope| {
             scope
                 .spawn(|| write_compression_fixture(path, entries, format, password))

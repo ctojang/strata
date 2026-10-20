@@ -5,7 +5,7 @@
 
 use std::path::Path;
 
-use gtk::{gio, glib, prelude::*};
+use gio::prelude::*;
 use rustix::io::Errno;
 
 use super::{

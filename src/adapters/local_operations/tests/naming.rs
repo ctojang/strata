@@ -496,7 +496,7 @@ fn duplicating_multi_extension_file_uses_last_extension_for_candidate_name()
 
 #[test]
 fn pasted_names_fixed_for_fat_are_planned_after_the_names_kept() {
-    use gtk::gio::FileType::{Directory, Regular};
+    use gio::FileType::{Directory, Regular};
     let sources = [
         "/one/a:b",
         "/two/a_b",
@@ -1139,7 +1139,7 @@ fn cut_names_keep_their_extension_and_whole_clusters() {
     let family = "\u{1f468}\u{200d}\u{1f469}\u{200d}\u{1f467}\u{200d}\u{1f466}";
     let heart = "\u{2764}\u{fe0f}";
     // Pango keeps consonants joined by a virama together from 1.54 on.
-    let joins_conjuncts = gtk::pango::version_check(1, 54, 0).is_none();
+    let joins_conjuncts = pangocairo::pango::version_check(1, 54, 0).is_none();
     for (name, profile, folder, expected) in [
         (
             format!("abx{}.txt", repeat("\u{301}", 600)),

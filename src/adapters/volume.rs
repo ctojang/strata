@@ -15,7 +15,7 @@ use std::{
     time::Duration,
 };
 
-use gtk::{gio, glib, prelude::*};
+use gio::prelude::*;
 
 use super::gio_file_for_location;
 use crate::{

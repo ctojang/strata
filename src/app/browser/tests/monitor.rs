@@ -802,7 +802,7 @@ fn the_open_directory_follows_an_outside_rename_and_leaves_an_outside_removal() 
     let _serial = crate::test_support::ASYNC_MAIN_CONTEXT_DEFAULT
         .lock()
         .expect("async test lock");
-    let context = gtk::glib::MainContext::default();
+    let context = glib::MainContext::default();
     let pump_for = |condition: &dyn Fn() -> bool| {
         let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
         while !condition() && std::time::Instant::now() < deadline {

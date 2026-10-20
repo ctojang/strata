@@ -11,7 +11,7 @@ use std::{
     os::unix::ffi::{OsStrExt, OsStringExt},
 };
 
-use gtk::pango;
+use pangocairo::pango;
 
 use crate::{
     adapters::volume::{

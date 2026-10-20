@@ -3,8 +3,6 @@
 //! Names the user types for an item, refused before anything changes where
 //! the location would store another name.
 
-use gtk::gio;
-
 use super::{
     mount_profile::folder_name_rules,
     names::fix::{Refusal, refusal},
