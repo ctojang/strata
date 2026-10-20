@@ -4,7 +4,7 @@ use crate::model::Location;
 use crate::services::sanitize_uri_credentials;
 use gio::prelude::*;
 
-pub(crate) fn gio_file_for_location(location: &Location) -> gio::File {
+pub fn gio_file_for_location(location: &Location) -> gio::File {
     location
         .native_path()
         .map(gio::File::for_path)
@@ -19,7 +19,7 @@ pub(crate) fn gio_file_for_location(location: &Location) -> gio::File {
 /// GIO URIs keep GLib's normalized percent-encoding (`trash:///caf%E9.txt` is not decoded), so
 /// names that are not valid UTF-8 round-trip. Returns `None` only for a genuinely malformed URI,
 /// such as an invalid `%` escape.
-pub(crate) fn location_for_file(file: &gio::File) -> Option<Location> {
+pub fn location_for_file(file: &gio::File) -> Option<Location> {
     if file.is_native()
         && let Some(path) = file.path()
     {
@@ -31,7 +31,7 @@ pub(crate) fn location_for_file(file: &gio::File) -> Option<Location> {
 }
 
 /// Rebuild the child as GIO listings do, preserving location equality across URI spellings.
-pub(crate) fn reveal_target_for_file(file: &gio::File) -> Option<(Location, Location)> {
+pub fn reveal_target_for_file(file: &gio::File) -> Option<(Location, Location)> {
     let parent = file.parent()?;
     let name = file.basename()?;
     Some((

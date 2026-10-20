@@ -3,39 +3,39 @@
 use serde_json::Value;
 
 /// Pretty-printed chapter lists and subtitle streams need far more than a plain file.
-pub(crate) const MAX_METADATA_BYTES: u64 = 256 * 1024;
+pub const MAX_METADATA_BYTES: u64 = 256 * 1024;
 
 const MAX_CHAPTERS: usize = 200;
 const MAX_SUBTITLE_TRACKS: usize = 64;
 
 /// Chapter titles and languages are sanitized; other arbitrary tags are not exposed.
 #[derive(Clone, Debug, Default, PartialEq)]
-pub(crate) struct MediaMetadata {
-    pub(crate) dimensions: Option<(u32, u32)>,
-    pub(crate) duration: Option<f64>,
-    pub(crate) bitrate: Option<f64>,
-    pub(crate) video_codec: Option<String>,
-    pub(crate) pixel_format: Option<String>,
-    pub(crate) color_transfer: Option<String>,
-    pub(crate) audio_codec: Option<String>,
-    pub(crate) frame_rate: Option<f64>,
-    pub(crate) sample_rate: Option<f64>,
-    pub(crate) channels: Option<u32>,
-    pub(crate) channel_layout: Option<String>,
-    pub(crate) chapters: Vec<Chapter>,
-    pub(crate) subtitle_tracks: Vec<SubtitleTrack>,
+pub struct MediaMetadata {
+    pub dimensions: Option<(u32, u32)>,
+    pub duration: Option<f64>,
+    pub bitrate: Option<f64>,
+    pub video_codec: Option<String>,
+    pub pixel_format: Option<String>,
+    pub color_transfer: Option<String>,
+    pub audio_codec: Option<String>,
+    pub frame_rate: Option<f64>,
+    pub sample_rate: Option<f64>,
+    pub channels: Option<u32>,
+    pub channel_layout: Option<String>,
+    pub chapters: Vec<Chapter>,
+    pub subtitle_tracks: Vec<SubtitleTrack>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) struct Chapter {
-    pub(crate) start: f64,
-    pub(crate) end: f64,
-    pub(crate) title: Option<String>,
+pub struct Chapter {
+    pub start: f64,
+    pub end: f64,
+    pub title: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct SubtitleTrack {
-    pub(crate) language: Option<String>,
+pub struct SubtitleTrack {
+    pub language: Option<String>,
 }
 
 fn positive(value: &Value) -> Option<f64> {
@@ -100,7 +100,7 @@ fn frame_rate(value: &Value) -> Option<f64> {
 }
 
 impl MediaMetadata {
-    pub(crate) fn hdr_format(&self) -> Option<&'static str> {
+    pub fn hdr_format(&self) -> Option<&'static str> {
         match self.color_transfer.as_deref()? {
             "smpte2084" => Some("HDR10"),
             "arib-std-b67" => Some("HLG"),
@@ -108,7 +108,7 @@ impl MediaMetadata {
         }
     }
 
-    pub(crate) fn from_json(bytes: &[u8], image: bool) -> Result<Self, String> {
+    pub fn from_json(bytes: &[u8], image: bool) -> Result<Self, String> {
         if bytes.len() as u64 > MAX_METADATA_BYTES {
             return Err("Media metadata exceeds the size limit".into());
         }
@@ -202,17 +202,17 @@ impl MediaMetadata {
     }
 }
 
-pub(crate) const TAG_KEYS: &str = "title,artist,album,album_artist,track,tracktotal,totaltracks";
+pub const TAG_KEYS: &str = "title,artist,album,album_artist,track,tracktotal,totaltracks";
 const MAX_TAG_CHARS: usize = 200;
 
 /// Untrusted tags sanitized for plain-text display.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub(crate) struct AudioTags {
-    pub(crate) title: Option<String>,
-    pub(crate) artist: Option<String>,
-    pub(crate) album: Option<String>,
-    pub(crate) track: Option<u32>,
-    pub(crate) track_total: Option<u32>,
+pub struct AudioTags {
+    pub title: Option<String>,
+    pub artist: Option<String>,
+    pub album: Option<String>,
+    pub track: Option<u32>,
+    pub track_total: Option<u32>,
 }
 
 fn display_text(value: &str) -> Option<String> {
@@ -250,7 +250,7 @@ fn track_number(value: &str) -> Option<u32> {
 }
 
 impl AudioTags {
-    pub(crate) fn from_json(bytes: &[u8]) -> Result<Self, String> {
+    pub fn from_json(bytes: &[u8]) -> Result<Self, String> {
         if bytes.len() as u64 > MAX_METADATA_BYTES {
             return Err("Audio tags exceed the size limit".into());
         }

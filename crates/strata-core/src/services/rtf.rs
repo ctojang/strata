@@ -114,7 +114,7 @@ impl Writer {
     }
 }
 
-pub(crate) fn to_html(source: &str, cancellation: &Cancellation) -> Result<String, String> {
+pub fn to_html(source: &str, cancellation: &Cancellation) -> Result<String, String> {
     if !source.trim_start().starts_with("{\\rtf") {
         return Err("Rendered preview is unavailable because the file is not RTF".to_owned());
     }

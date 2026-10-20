@@ -32,18 +32,18 @@ impl Drop for NavigationUpdate<'_> {
 }
 
 impl Browser {
-    pub(crate) fn observe_navigation(&self, observer: impl Fn() + 'static) {
+    pub fn observe_navigation(&self, observer: impl Fn() + 'static) {
         self.navigation_lifecycle
             .observers
             .borrow_mut()
             .push(Rc::new(observer));
     }
 
-    pub(crate) fn pending_navigation_generation(&self) -> Option<u64> {
+    pub fn pending_navigation_generation(&self) -> Option<u64> {
         self.navigation_lifecycle.pending.get()
     }
 
-    pub(crate) fn navigation_update_in_progress(&self) -> bool {
+    pub fn navigation_update_in_progress(&self) -> bool {
         self.navigation_lifecycle.depth.get() != 0
     }
 

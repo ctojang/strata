@@ -1934,7 +1934,7 @@ fn push_styled_units(
 }
 
 impl DocumentUnit {
-    pub(crate) fn copy_range(&self, range: Range<usize>) -> String {
+    pub fn copy_range(&self, range: Range<usize>) -> String {
         let mut output = String::new();
         for (index, character) in self
             .text

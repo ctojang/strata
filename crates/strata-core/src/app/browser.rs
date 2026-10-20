@@ -58,7 +58,7 @@ const REMOTE_DIRECTORY_BATCH_SIZE: usize = 128;
 const PEEK_MAX_ENTRIES: usize = 64;
 const PEEK_TIME_BUDGET: Duration = Duration::from_secs(3);
 
-pub(crate) fn folder_destination_texts(location: &Location) -> (String, String) {
+pub fn folder_destination_texts(location: &Location) -> (String, String) {
     let path = location.display_path();
     (
         rust_i18n::t!("Destination: %{path}", path = path).into_owned(),
@@ -1386,12 +1386,12 @@ impl Browser {
         self.state.borrow().active_location()
     }
 
-    pub(crate) fn navigation_generation(&self) -> u64 {
+    pub fn navigation_generation(&self) -> u64 {
         self.validation_generation.get()
     }
 
     /// Invalidates work whose result is guarded by the navigation generation.
-    pub(crate) fn bump_navigation_generation(&self) -> u64 {
+    pub fn bump_navigation_generation(&self) -> u64 {
         let _update = self.navigation_update();
         let generation = self.validation_generation.get().saturating_add(1);
         self.validation_generation.set(generation);
@@ -1405,13 +1405,13 @@ impl Browser {
         generation
     }
 
-    pub(crate) fn set_navigation_cleanup(&self, cleanup: impl FnOnce() + 'static) {
+    pub fn set_navigation_cleanup(&self, cleanup: impl FnOnce() + 'static) {
         if let Some(previous) = self.navigation_cleanup.replace(Some(Box::new(cleanup))) {
             previous();
         }
     }
 
-    pub(crate) fn finish_navigation_cleanup(&self) {
+    pub fn finish_navigation_cleanup(&self) {
         self.navigation_cleanup.take();
     }
 
@@ -1463,7 +1463,7 @@ impl Browser {
 
     /// Navigates directly for native paths and validates URI locations first so mountable
     /// locations can be mounted by the UI before loading them.
-    pub(crate) fn navigate_location(self: &Rc<Self>, location: Location, select_first: bool) {
+    pub fn navigate_location(self: &Rc<Self>, location: Location, select_first: bool) {
         if location.native_path().is_some() {
             self.navigate_with_selection(location, select_first);
         } else {
@@ -1475,7 +1475,7 @@ impl Browser {
         self.navigate_with_selection(location, true);
     }
 
-    pub(crate) fn navigate_with_selection(self: &Rc<Self>, location: Location, select_first: bool) {
+    pub fn navigate_with_selection(self: &Rc<Self>, location: Location, select_first: bool) {
         self.navigate_for_selection(location, load_selection(select_first));
     }
 
@@ -1516,7 +1516,7 @@ impl Browser {
         }
     }
 
-    pub(crate) fn open_depth(&self, directory: &Location) -> Option<usize> {
+    pub fn open_depth(&self, directory: &Location) -> Option<usize> {
         let state = self.state.borrow();
         state
             .columns
@@ -1567,7 +1567,7 @@ impl Browser {
         self.select_entries_by_location_at(depth, targets)
     }
 
-    pub(crate) fn lists_every_target(&self, depth: usize, targets: &[Location]) -> bool {
+    pub fn lists_every_target(&self, depth: usize, targets: &[Location]) -> bool {
         self.state.borrow().lists_every_target(depth, targets)
     }
 
@@ -1598,7 +1598,7 @@ impl Browser {
         }
     }
 
-    pub(crate) fn cancel_deferred_reveal(&self) {
+    pub fn cancel_deferred_reveal(&self) {
         self.deferred_reveal.take();
     }
 
@@ -1896,18 +1896,18 @@ impl Browser {
         self.suppress_child_mirror.set(was);
     }
 
-    pub(crate) fn child_mirror_suppressed(&self) -> bool {
+    pub fn child_mirror_suppressed(&self) -> bool {
         self.suppress_child_mirror.get()
     }
 
     /// Whether the `FocusChanged` being observed comes from an outside change, not a cursor move.
-    pub(crate) fn focus_follows_external_change(&self) -> bool {
+    pub fn focus_follows_external_change(&self) -> bool {
         self.external_change_focus.get()
     }
 
     /// Whether the `FocusChanged` being observed only moves a finished load's cursor,
     /// so it must not pull focus from elsewhere in the window.
-    pub(crate) fn focus_follows_background_load(&self) -> bool {
+    pub fn focus_follows_background_load(&self) -> bool {
         self.background_load_focus.get()
     }
 
@@ -2372,7 +2372,7 @@ impl Browser {
         self.state.borrow().column_preferences(depth)
     }
 
-    pub(crate) fn column_request_id(&self, depth: usize) -> Option<RequestId> {
+    pub fn column_request_id(&self, depth: usize) -> Option<RequestId> {
         self.state.borrow().request_id_for_depth(depth)
     }
 
@@ -3566,7 +3566,7 @@ impl Browser {
         self.operation_destination_label.replace(label);
     }
 
-    pub(crate) fn operation_destination_label(&self) -> String {
+    pub fn operation_destination_label(&self) -> String {
         self.operation_destination_label.borrow().clone()
     }
 
@@ -3584,11 +3584,11 @@ impl Browser {
         Some(self.begin_operation())
     }
 
-    pub(crate) fn is_current_operation(&self, request_id: OperationRequestId) -> bool {
+    pub fn is_current_operation(&self, request_id: OperationRequestId) -> bool {
         self.current_operation.get() == Some(request_id)
     }
 
-    pub(crate) fn last_started_operation(&self) -> Option<OperationRequestId> {
+    pub fn last_started_operation(&self) -> Option<OperationRequestId> {
         self.last_started_operation.get()
     }
 
@@ -3708,7 +3708,7 @@ impl Browser {
     }
 
     /// The successful creation has already established the entry's type and location.
-    pub(crate) fn reveal_created_entry(self: &Rc<Self>, depth: usize, position: usize) {
+    pub fn reveal_created_entry(self: &Rc<Self>, depth: usize, position: usize) {
         let _update = self.navigation_update();
         let Some(entry) = self.entry_at(depth, position) else {
             return;
@@ -3725,7 +3725,7 @@ impl Browser {
         }
     }
 
-    pub(crate) fn is_open_child(&self, parent_depth: usize, location: &Location) -> bool {
+    pub fn is_open_child(&self, parent_depth: usize, location: &Location) -> bool {
         parent_depth
             .checked_add(1)
             .and_then(|depth| self.location_at(depth))
@@ -4158,7 +4158,7 @@ impl Browser {
         self.queue_metadata_fill(depth, position, location, include_icon_details, false);
     }
 
-    pub(crate) fn request_visible_metadata_fill(
+    pub fn request_visible_metadata_fill(
         self: &Rc<Self>,
         depth: usize,
         position: usize,
@@ -4223,7 +4223,7 @@ impl Browser {
         self.schedule_metadata_fill();
     }
 
-    pub(crate) fn prioritize_metadata_fills(&self, depth: usize, visible: &[Location]) {
+    pub fn prioritize_metadata_fills(&self, depth: usize, visible: &[Location]) {
         let mut pending = self.metadata_pending.borrow_mut();
         let Some(targets) = pending.get_mut(&depth) else {
             return;
@@ -4538,7 +4538,7 @@ impl Browser {
         )
     }
 
-    pub(crate) fn refresh_columns_at(self: &Rc<Self>, location: &Location) {
+    pub fn refresh_columns_at(self: &Rc<Self>, location: &Location) {
         self.refresh_columns_at_many([location]);
     }
 
@@ -4569,11 +4569,11 @@ impl Browser {
         depths
     }
 
-    pub(crate) fn refresh_after_cancellation(self: &Rc<Self>, roots: &HashSet<Location>) {
+    pub fn refresh_after_cancellation(self: &Rc<Self>, roots: &HashSet<Location>) {
         self.refresh_columns_at_or_below(roots);
     }
 
-    pub(crate) fn column_has_monitor(&self, depth: usize) -> bool {
+    pub fn column_has_monitor(&self, depth: usize) -> bool {
         self.monitors
             .borrow()
             .get(depth)
@@ -4663,7 +4663,7 @@ impl Browser {
         self.refresh_column_with_reveal(depth, None);
     }
 
-    pub(crate) fn refresh_operation_columns(self: &Rc<Self>, depths: &[usize]) {
+    pub fn refresh_operation_columns(self: &Rc<Self>, depths: &[usize]) {
         for &depth in depths {
             self.refresh_column_preserving_entries(depth);
         }

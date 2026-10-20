@@ -17,7 +17,7 @@ pub(super) const MAX_OUTPUT_BYTES: u64 = super::super::MAX_OUTPUT_BYTES;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(u8)]
-pub(crate) enum Operation {
+pub enum Operation {
     Image = 1,
     Raw = 2,
     Pdf = 3,
@@ -122,9 +122,9 @@ pub(super) fn receive(socket: &impl AsFd) -> io::Result<Option<(Operation, Owned
 }
 
 #[derive(Default)]
-pub(crate) struct Response {
-    pub(crate) png: Vec<u8>,
-    pub(crate) metadata: Vec<u8>,
+pub struct Response {
+    pub png: Vec<u8>,
+    pub metadata: Vec<u8>,
 }
 
 impl Response {

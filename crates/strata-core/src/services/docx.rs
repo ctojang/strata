@@ -12,18 +12,18 @@ use crate::sandbox::Cancellation;
 
 use super::document::{DOCUMENT_INPUT_LIMIT, DocumentKind, ParsedDocument, parse_document};
 
-pub(crate) const DOCX_BYTE_LIMIT: u64 = 20 * 1024 * 1024;
+pub const DOCX_BYTE_LIMIT: u64 = 20 * 1024 * 1024;
 const HTML_LIMIT: usize = DOCUMENT_INPUT_LIMIT - 4096;
 
 mod namespaces;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct RichTextData {
+pub struct RichTextData {
     pub html: String,
     pub truncated: bool,
 }
 
-pub(crate) fn is_document(content_type: &str, name: &OsStr) -> bool {
+pub fn is_document(content_type: &str, name: &OsStr) -> bool {
     content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         || Path::new(name)
             .extension()
@@ -32,7 +32,7 @@ pub(crate) fn is_document(content_type: &str, name: &OsStr) -> bool {
 }
 
 impl RichTextData {
-    pub(crate) fn into_document(
+    pub fn into_document(
         self,
         cancellation: &Cancellation,
     ) -> Result<ParsedDocument, String> {
@@ -46,7 +46,7 @@ impl RichTextData {
         Ok(parsed)
     }
 
-    pub(crate) fn from_json(bytes: &[u8]) -> Result<Self, String> {
+    pub fn from_json(bytes: &[u8]) -> Result<Self, String> {
         let data: Self = serde_json::from_slice(bytes).map_err(|error| error.to_string())?;
         if data.html.len() > DOCUMENT_INPUT_LIMIT {
             return Err("Document preview budget exceeded".into());
@@ -57,7 +57,7 @@ impl RichTextData {
 
 // Called only by the resource-limited sandbox helper: reading a Word file
 // decompresses every part into memory before any output budget applies.
-pub(crate) fn read_document(path: &Path) -> Result<RichTextData, String> {
+pub fn read_document(path: &Path) -> Result<RichTextData, String> {
     if std::fs::metadata(path).map_err(|e| e.to_string())?.len() > DOCX_BYTE_LIMIT {
         return Err("Document is too large to preview safely".into());
     }

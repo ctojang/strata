@@ -12,7 +12,7 @@ pub enum BuildKind {
 }
 
 impl BuildKind {
-    pub(crate) fn localized_label(self) -> String {
+    pub fn localized_label(self) -> String {
         crate::i18n::tr(match self {
             BuildKind::Stable => "Stable",
             BuildKind::Nightly => "build_kind.nightly",

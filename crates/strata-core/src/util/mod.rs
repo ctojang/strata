@@ -38,7 +38,7 @@ impl DateFormat {
 }
 
 #[derive(Clone, Copy)]
-pub(crate) enum DateDisplay {
+pub enum DateDisplay {
     Preferred,
     Full,
 }
@@ -48,7 +48,7 @@ thread_local! {
     static MODIFIED_DATE_FORMAT: Cell<DateFormat> = const { Cell::new(DateFormat::Relative) };
 }
 
-pub(crate) fn set_date_format(format: DateFormat) {
+pub fn set_date_format(format: DateFormat) {
     MODIFIED_DATE_FORMAT.with(|current| current.set(format));
 }
 
@@ -69,7 +69,7 @@ pub fn modified_date_example(format: DateFormat) -> String {
     modified_date_at(&sample, &now, format)
 }
 
-pub(crate) fn modified_date_for_seconds(seconds: i64, display: DateDisplay) -> String {
+pub fn modified_date_for_seconds(seconds: i64, display: DateDisplay) -> String {
     let format = MODIFIED_DATE_FORMAT.with(Cell::get);
     let Some(modified) = glib::DateTime::from_unix_local(seconds).ok() else {
         return "—".to_owned();
@@ -88,7 +88,7 @@ pub(crate) fn modified_date_for_seconds(seconds: i64, display: DateDisplay) -> S
     modified_date_at(&modified, &now, format)
 }
 
-pub(crate) fn localized_date(date: &glib::DateTime, pattern: &str) -> String {
+pub fn localized_date(date: &glib::DateTime, pattern: &str) -> String {
     // GLib's named months follow the process locale, not the saved app language.
     let pattern = pattern
         .replace(

@@ -18,7 +18,7 @@ fn path_frame_size(path: &str) -> usize {
         .sum::<usize>()
 }
 
-pub(crate) fn selection_fits(paths: &[String]) -> bool {
+pub fn selection_fits(paths: &[String]) -> bool {
     // Reserve space for the envelope and the largest escaped leaf context.
     paths
         .iter()
@@ -27,7 +27,7 @@ pub(crate) fn selection_fits(paths: &[String]) -> bool {
         < FRAME_LIMIT - 16384
 }
 
-pub(crate) fn query_batch(paths: Vec<String>) -> Vec<String> {
+pub fn query_batch(paths: Vec<String>) -> Vec<String> {
     let mut size = 0;
     paths
         .into_iter()
@@ -40,7 +40,7 @@ pub(crate) fn query_batch(paths: Vec<String>) -> Vec<String> {
 }
 
 #[derive(Clone, Debug, Serialize)]
-pub(crate) struct Request {
+pub struct Request {
     pub version: u32,
     pub id: u64,
     pub method: String,
@@ -75,7 +75,7 @@ impl Request {
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq)]
-pub(crate) struct Decoration {
+pub struct Decoration {
     pub path: String,
     pub badge: Option<String>,
     #[serde(default)]
@@ -87,7 +87,7 @@ pub(crate) struct Decoration {
 /// Where a root action is shown; values from newer revisions use the section.
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
-pub(crate) enum Placement {
+pub enum Placement {
     /// A destination inside the provider's Send to… submenu.
     SendTo,
     /// The provider's only Send to… item, shown in place of its submenu.
@@ -97,7 +97,7 @@ pub(crate) enum Placement {
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq)]
-pub(crate) struct MenuAction {
+pub struct MenuAction {
     pub id: String,
     pub label: String,
     pub icon: Option<String>,
@@ -107,7 +107,7 @@ pub(crate) struct MenuAction {
 }
 
 impl MenuAction {
-    pub(crate) fn sends_to(&self) -> bool {
+    pub fn sends_to(&self) -> bool {
         matches!(
             self.placement,
             Some(Placement::SendTo | Placement::SendToEntry)
@@ -117,7 +117,7 @@ impl MenuAction {
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
-pub(crate) enum OutcomeStatus {
+pub enum OutcomeStatus {
     Accepted,
     Rejected,
     Partial,
@@ -127,7 +127,7 @@ pub(crate) enum OutcomeStatus {
 /// Presentation the provider requests for a fully accepted activation.
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
-pub(crate) enum Feedback {
+pub enum Feedback {
     Dialog,
     Notice,
     None,
@@ -137,7 +137,7 @@ pub(crate) enum Feedback {
 }
 
 #[derive(Clone, Debug, Deserialize)]
-pub(crate) struct Outcome {
+pub struct Outcome {
     pub status: OutcomeStatus,
     pub accepted: Option<usize>,
     pub total: Option<usize>,
@@ -145,7 +145,7 @@ pub(crate) struct Outcome {
 }
 
 #[derive(Clone, Debug, Deserialize, Default)]
-pub(crate) struct Reply {
+pub struct Reply {
     pub version: u32,
     pub id: Option<u64>,
     pub event: Option<String>,
@@ -162,7 +162,7 @@ pub(crate) struct Reply {
 
 impl Reply {
     /// Problems and unconfirmed outcomes always use the dialog.
-    pub(crate) fn feedback(&self) -> Feedback {
+    pub fn feedback(&self) -> Feedback {
         match (self.feedback, &self.outcome) {
             (Some(feedback @ (Feedback::Notice | Feedback::None)), Some(outcome))
                 if self.error.is_none() && outcome.status == OutcomeStatus::Accepted =>

@@ -12,18 +12,18 @@ use std::{
 mod protocol;
 mod transport;
 
-pub(crate) use protocol::{
+pub use protocol::{
     Decoration, Feedback, MenuAction, OutcomeStatus, Placement, Reply, Request, query_batch,
     selection_fits,
 };
-pub(crate) use transport::{Client, Update, start};
-pub(crate) const PATH_LIMIT: usize = 200;
-pub(crate) const ICON_LIMIT: u64 = 65536;
+pub use transport::{Client, Update, start};
+pub const PATH_LIMIT: usize = 200;
+pub const ICON_LIMIT: u64 = 65536;
 /// An empty file beside `provider.json` that keeps the registration from loading.
-pub(crate) const DISABLED_FILE: &str = "disabled";
+pub const DISABLED_FILE: &str = "disabled";
 
 #[derive(Clone, Deserialize)]
-pub(crate) struct Manifest {
+pub struct Manifest {
     pub version: u32,
     pub id: String,
     pub name: Option<String>,
@@ -37,7 +37,7 @@ pub(crate) struct Manifest {
     pub category: Option<String>,
 }
 #[derive(Clone)]
-pub(crate) struct Registration {
+pub struct Registration {
     pub manifest: Manifest,
     pub icons: BTreeMap<String, Vec<u8>>,
 }
@@ -50,10 +50,10 @@ fn trusted(path: &Path, directory: bool) -> bool {
             && m.mode() & 0o022 == 0
     })
 }
-pub(crate) fn slug(s: &str) -> bool {
+pub fn slug(s: &str) -> bool {
     !s.is_empty() && s.len() <= 64 && s.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-')
 }
-pub(crate) fn load(dir: &Path) -> Option<Registration> {
+pub fn load(dir: &Path) -> Option<Registration> {
     if !trusted(dir, true) || !trusted(&dir.join("provider.json"), false) {
         return None;
     }
@@ -107,7 +107,7 @@ pub(crate) fn load(dir: &Path) -> Option<Registration> {
     Some(Registration { manifest, icons })
 }
 /// A PNG of at most 256×256 pixels; the size cap is enforced by the reader.
-pub(crate) fn valid_icon(bytes: &[u8]) -> bool {
+pub fn valid_icon(bytes: &[u8]) -> bool {
     let dimension = |range: std::ops::Range<usize>| {
         bytes
             .get(range)
@@ -127,7 +127,7 @@ fn read_limited(path: &Path, limit: u64) -> Option<Vec<u8>> {
         .ok()?;
     (bytes.len() <= limit as usize).then_some(bytes)
 }
-pub(crate) fn discover(root: &Path) -> Vec<Registration> {
+pub fn discover(root: &Path) -> Vec<Registration> {
     if !trusted(root, true) {
         return Vec::new();
     }
@@ -161,7 +161,7 @@ pub(crate) fn discover(root: &Path) -> Vec<Registration> {
         .take(8)
         .collect()
 }
-pub(crate) fn config_root() -> Option<PathBuf> {
+pub fn config_root() -> Option<PathBuf> {
     let base = std::env::var_os("XDG_CONFIG_HOME")
         .map(PathBuf::from)
         .filter(|p| p.is_absolute())

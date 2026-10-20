@@ -19,7 +19,7 @@ use crate::sandbox::{self, Cancellation, MediaPreviewBackend, ParseOperation};
 mod tests;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
-pub(crate) enum CheckId {
+pub enum CheckId {
     Sandbox,
     Workers,
     PdfThumbnails,
@@ -47,7 +47,7 @@ pub(crate) enum CheckId {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum Group {
+pub enum Group {
     Sandbox,
     Previews,
     Locations,
@@ -55,7 +55,7 @@ pub(crate) enum Group {
 }
 
 /// Display order. Every [`CheckId`] appears exactly once.
-pub(crate) const GROUPS: [(Group, &[CheckId]); 4] = [
+pub const GROUPS: [(Group, &[CheckId]); 4] = [
     (Group::Sandbox, &[CheckId::Sandbox, CheckId::Workers]),
     (
         Group::Previews,
@@ -97,14 +97,14 @@ pub(crate) const GROUPS: [(Group, &[CheckId]); 4] = [
 ];
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
-pub(crate) enum Status {
+pub enum Status {
     Passed,
     Warning,
     Problem,
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) enum Finding {
+pub enum Finding {
     SandboxWorks,
     BubblewrapMissing,
     PrlimitMissing {
@@ -158,17 +158,17 @@ pub(crate) enum Finding {
     NotRun,
 }
 
-pub(crate) type Packages = &'static [(PackageManager, &'static str)];
+pub type Packages = &'static [(PackageManager, &'static str)];
 
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) struct Check {
-    pub(crate) id: CheckId,
-    pub(crate) status: Status,
-    pub(crate) finding: Finding,
+pub struct Check {
+    pub id: CheckId,
+    pub status: Status,
+    pub finding: Finding,
     /// Packages that fix a failed check, per distribution.
-    pub(crate) packages: Packages,
+    pub packages: Packages,
     /// Untranslated library or system text.
-    pub(crate) detail: Option<String>,
+    pub detail: Option<String>,
 }
 
 impl Check {
@@ -204,19 +204,19 @@ impl Check {
         self
     }
 
-    pub(crate) fn not_run(id: CheckId) -> Self {
+    pub fn not_run(id: CheckId) -> Self {
         Self::warning(id, Finding::NotRun)
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) enum InstallHint {
+pub enum InstallHint {
     Command(String),
     /// No command for this distribution; names the Arch package as a reference.
     Package(&'static str),
 }
 
-pub(crate) fn install_hint(
+pub fn install_hint(
     packages: Packages,
     manager: Option<PackageManager>,
 ) -> Option<InstallHint> {
@@ -327,7 +327,7 @@ type Worker = fn(&Sender<Check>);
 
 /// Runs the background checks on worker threads, sending each result as it
 /// completes. The receiver disconnects once every worker has finished.
-pub(crate) fn spawn(sender: Sender<Check>) {
+pub fn spawn(sender: Sender<Check>) {
     let workers: [(&str, Worker); 2] = [
         ("strata-diagnostics-previews", preview_checks),
         ("strata-diagnostics-system", system_checks),
@@ -594,7 +594,7 @@ fn appimage_icons(found: bool) -> Check {
     }
 }
 
-pub(crate) fn syntax_highlighting(languages: usize) -> Check {
+pub fn syntax_highlighting(languages: usize) -> Check {
     if languages == 0 {
         Check::warning(CheckId::SyntaxHighlighting, Finding::LanguagesMissing)
             .fixed_by(packages::GTKSOURCEVIEW)
@@ -739,7 +739,7 @@ fn secret_service(session: Option<&HashSet<String>>) -> Check {
 const LOW_WATCH_LIMIT: u64 = 8192;
 
 /// GTK thread only: the monitor attaches to the thread's main context.
-pub(crate) fn folder_monitoring() -> Check {
+pub fn folder_monitoring() -> Check {
     let limit = std::fs::read_to_string("/proc/sys/fs/inotify/max_user_watches")
         .ok()
         .and_then(|text| text.trim().parse().ok());
@@ -768,14 +768,14 @@ fn folder_monitoring_for(monitored: Result<(), String>, limit: Option<u64>) -> C
     }
 }
 
-pub(crate) fn terminal(program: Option<String>) -> Check {
+pub fn terminal(program: Option<String>) -> Check {
     match program {
         Some(program) => Check::passed(CheckId::Terminal, Finding::Found(vec![program])),
         None => Check::problem(CheckId::Terminal, Finding::TerminalMissing),
     }
 }
 
-pub(crate) fn custom_actions(
+pub fn custom_actions(
     installed: usize,
     unavailable: Vec<String>,
     failed: Vec<String>,

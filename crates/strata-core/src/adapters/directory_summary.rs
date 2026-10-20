@@ -15,27 +15,27 @@ use gio::prelude::*;
 use super::local_files::{info_is_hidden, info_is_symlink};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub(crate) struct MeasurementIssues {
-    pub(crate) unreadable: bool,
-    pub(crate) timed_out: bool,
-    pub(crate) depth_limited: bool,
+pub struct MeasurementIssues {
+    pub unreadable: bool,
+    pub timed_out: bool,
+    pub depth_limited: bool,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub(crate) struct DirectorySummary {
-    pub(crate) item_count: usize,
-    pub(crate) total_size: u64,
-    pub(crate) visible_file_count: usize,
-    pub(crate) visible_folder_count: usize,
-    pub(crate) issues: MeasurementIssues,
+pub struct DirectorySummary {
+    pub item_count: usize,
+    pub total_size: u64,
+    pub visible_file_count: usize,
+    pub visible_folder_count: usize,
+    pub issues: MeasurementIssues,
 }
 
 impl DirectorySummary {
-    pub(crate) fn truncated(&self) -> bool {
+    pub fn truncated(&self) -> bool {
         self.issues.unreadable || self.issues.timed_out || self.issues.depth_limited
     }
 
-    pub(crate) fn include(&mut self, child: Self) {
+    pub fn include(&mut self, child: Self) {
         self.item_count = self.item_count.saturating_add(child.item_count);
         self.total_size = self.total_size.saturating_add(child.total_size);
         self.visible_file_count = self
@@ -87,11 +87,11 @@ async fn enumerate_children(file: &gio::File) -> Result<gio::FileEnumerator, gli
     .await
 }
 
-pub(crate) async fn summarize_directory(root: &gio::File) -> Result<DirectorySummary, glib::Error> {
+pub async fn summarize_directory(root: &gio::File) -> Result<DirectorySummary, glib::Error> {
     summarize_directory_with_progress(root, |_| {}).await
 }
 
-pub(crate) async fn summarize_directory_with_progress(
+pub async fn summarize_directory_with_progress(
     root: &gio::File,
     on_progress: impl Fn(DirectorySummary) + 'static,
 ) -> Result<DirectorySummary, glib::Error> {

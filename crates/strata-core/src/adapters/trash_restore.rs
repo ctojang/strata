@@ -38,7 +38,7 @@ enum RestoreTargetErrorKind {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) struct RestoreTargetError {
+pub struct RestoreTargetError {
     kind: RestoreTargetErrorKind,
 }
 
@@ -55,14 +55,14 @@ impl RestoreTargetError {
         }
     }
 
-    pub(crate) fn message(&self) -> &str {
+    pub fn message(&self) -> &str {
         match &self.kind {
             RestoreTargetErrorKind::Reason(reason) => reason,
             RestoreTargetErrorKind::System(message) => message,
         }
     }
 
-    pub(crate) fn user_message(&self) -> String {
+    pub fn user_message(&self) -> String {
         match &self.kind {
             RestoreTargetErrorKind::Reason(reason) => crate::i18n::tr(reason),
             RestoreTargetErrorKind::System(message) => message.clone(),
@@ -77,22 +77,22 @@ impl std::fmt::Display for RestoreTargetError {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) struct RestorePlan {
-    pub(crate) source_path: PathBuf,
-    pub(crate) destination: PathBuf,
-    pub(crate) allowed_root: PathBuf,
-    pub(crate) trash_info: Option<PathBuf>,
+pub struct RestorePlan {
+    pub source_path: PathBuf,
+    pub destination: PathBuf,
+    pub allowed_root: PathBuf,
+    pub trash_info: Option<PathBuf>,
 }
 
 #[derive(Clone)]
-pub(crate) struct RestoreContext {
-    pub(crate) home_trash_root: PathBuf,
-    pub(crate) uid: u32,
-    pub(crate) mounts: MountTable,
+pub struct RestoreContext {
+    pub home_trash_root: PathBuf,
+    pub uid: u32,
+    pub mounts: MountTable,
 }
 
 impl RestoreContext {
-    pub(crate) async fn current() -> Self {
+    pub async fn current() -> Self {
         Self {
             home_trash_root: glib::user_data_dir().join("Trash"),
             uid: rustix::process::getuid().as_raw(),
@@ -101,7 +101,7 @@ impl RestoreContext {
     }
 }
 
-pub(crate) fn decode_trashinfo_path(encoded: &str) -> Option<PathBuf> {
+pub fn decode_trashinfo_path(encoded: &str) -> Option<PathBuf> {
     let encoded = encoded.trim();
     if encoded.is_empty() {
         return None;
@@ -117,7 +117,7 @@ pub(crate) fn decode_trashinfo_path(encoded: &str) -> Option<PathBuf> {
     Some(PathBuf::from(OsString::from_vec(decoded)))
 }
 
-pub(crate) fn plan_restore_from_known_paths(
+pub fn plan_restore_from_known_paths(
     source_path: &Path,
     orig_path: &Path,
     trash_root: &Path,
@@ -168,7 +168,7 @@ pub(crate) fn plan_restore_from_known_paths(
     })
 }
 
-pub(crate) async fn plan_restore_for_location(
+pub async fn plan_restore_for_location(
     source: &Location,
     original_target: Option<&Location>,
     trash_info: Option<&Path>,
@@ -234,7 +234,7 @@ pub(crate) async fn plan_restore_for_location(
 }
 
 /// Bounds concurrent lookups; cancellation drops their active futures.
-pub(crate) async fn restore_destinations_for_locations(
+pub async fn restore_destinations_for_locations(
     items: Vec<(Location, Option<PathBuf>)>,
 ) -> Vec<Result<PathBuf, RestoreTargetError>> {
     let context = RestoreContext::current().await;
@@ -575,7 +575,7 @@ fn trash_tree_root(trash_root: &Path) -> PathBuf {
         .to_path_buf()
 }
 
-pub(crate) fn trash_root_from_files_path(path: &Path) -> Option<PathBuf> {
+pub fn trash_root_from_files_path(path: &Path) -> Option<PathBuf> {
     let files = path.parent()?;
     if files.file_name()? != "files" {
         return None;

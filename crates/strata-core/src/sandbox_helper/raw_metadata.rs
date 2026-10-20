@@ -11,7 +11,7 @@ use super::bounded_output_with_timeout;
 const NEW_SUBFILE_TYPE: Tag = Tag(exif::Context::Tiff, 254);
 const DEFAULT_CROP_SIZE: Tag = Tag(exif::Context::Tiff, 50720);
 
-pub(crate) fn read(input: &Path) -> Result<Vec<u8>, String> {
+pub fn read(input: &Path) -> Result<Vec<u8>, String> {
     let mut metadata = RawMetadata::default();
     for tool in ["raw-identify", "dcraw"] {
         let mut command = Command::new(tool);

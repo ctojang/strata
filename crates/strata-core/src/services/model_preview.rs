@@ -5,19 +5,19 @@ use std::{ffi::OsStr, path::Path};
 use super::MediaPreviewSize;
 
 // Input and geometry limits are independent; neither is a resident-memory budget.
-pub(crate) const MAX_MODEL_INPUT_BYTES: u64 = 128 * 1024 * 1024;
-pub(crate) const MAX_MODEL_XML_BYTES: u64 = 128 * 1024 * 1024;
-pub(crate) const MAX_3MF_ARCHIVE_ENTRIES: usize = 256;
-pub(crate) const MAX_FREECAD_ARCHIVE_ENTRIES: usize = 4096;
-pub(crate) const MAX_3MF_OBJECTS: usize = 1024;
-pub(crate) const MAX_3MF_BUILD_ITEMS: usize = 1024;
-pub(crate) const MAX_3MF_COMPONENT_DEPTH: usize = 16;
-pub(crate) const MAX_3MF_RELATIONSHIPS_BYTES: u64 = 64 * 1024;
-pub(crate) const MAX_MODEL_TRIANGLES: usize = 2_000_000;
-pub(crate) const MAX_MODEL_VERTICES: usize = 2_000_000;
-pub(crate) const MAX_MODEL_COMPONENT_REFERENCES: usize = 100_000;
-pub(crate) const MAX_MODEL_COMPONENT_EXPANSIONS: usize = 100_000;
-pub(crate) const MAX_MODEL_RASTER_WORK: u64 = 100_000_000;
+pub const MAX_MODEL_INPUT_BYTES: u64 = 128 * 1024 * 1024;
+pub const MAX_MODEL_XML_BYTES: u64 = 128 * 1024 * 1024;
+pub const MAX_3MF_ARCHIVE_ENTRIES: usize = 256;
+pub const MAX_FREECAD_ARCHIVE_ENTRIES: usize = 4096;
+pub const MAX_3MF_OBJECTS: usize = 1024;
+pub const MAX_3MF_BUILD_ITEMS: usize = 1024;
+pub const MAX_3MF_COMPONENT_DEPTH: usize = 16;
+pub const MAX_3MF_RELATIONSHIPS_BYTES: u64 = 64 * 1024;
+pub const MAX_MODEL_TRIANGLES: usize = 2_000_000;
+pub const MAX_MODEL_VERTICES: usize = 2_000_000;
+pub const MAX_MODEL_COMPONENT_REFERENCES: usize = 100_000;
+pub const MAX_MODEL_COMPONENT_EXPANSIONS: usize = 100_000;
+pub const MAX_MODEL_RASTER_WORK: u64 = 100_000_000;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum ModelFormat {
@@ -27,7 +27,7 @@ pub enum ModelFormat {
 }
 
 impl ModelFormat {
-    pub(crate) fn for_name(name: &OsStr) -> Option<Self> {
+    pub fn for_name(name: &OsStr) -> Option<Self> {
         match Path::new(name)
             .extension()?
             .to_str()?
@@ -41,7 +41,7 @@ impl ModelFormat {
         }
     }
 
-    pub(crate) fn argument(self) -> &'static str {
+    pub fn argument(self) -> &'static str {
         match self {
             Self::Stl => "stl",
             Self::ThreeMf => "3mf",
@@ -49,7 +49,7 @@ impl ModelFormat {
         }
     }
 
-    pub(crate) fn from_argument(value: &str) -> Option<Self> {
+    pub fn from_argument(value: &str) -> Option<Self> {
         match value {
             "stl" => Some(Self::Stl),
             "3mf" => Some(Self::ThreeMf),
@@ -92,14 +92,14 @@ pub struct ModelMesh {
 }
 
 impl ModelView {
-    pub(crate) const ALL: [Self; 4] = [
+    pub const ALL: [Self; 4] = [
         Self::FrontLeft,
         Self::FrontRight,
         Self::BackRight,
         Self::BackLeft,
     ];
 
-    pub(crate) fn index(self) -> usize {
+    pub fn index(self) -> usize {
         match self {
             Self::FrontLeft => 0,
             Self::FrontRight => 1,
@@ -109,7 +109,7 @@ impl ModelView {
     }
 
     /// From the model centre toward the camera: +X is right, −Y front and +Z up.
-    pub(crate) fn camera_direction(self) -> [f32; 3] {
+    pub fn camera_direction(self) -> [f32; 3] {
         match self {
             Self::FrontLeft => [-1., -1., 1.],
             Self::FrontRight => [1., -1., 1.],
@@ -118,11 +118,11 @@ impl ModelView {
         }
     }
 
-    pub(crate) fn step(self, step: i32) -> Self {
+    pub fn step(self, step: i32) -> Self {
         Self::ALL[(self.index() + step.rem_euclid(4) as usize) % Self::ALL.len()]
     }
 
-    pub(crate) fn argument(self) -> &'static str {
+    pub fn argument(self) -> &'static str {
         match self {
             Self::FrontLeft => "front-left",
             Self::FrontRight => "front-right",
@@ -131,13 +131,13 @@ impl ModelView {
         }
     }
 
-    pub(crate) fn from_argument(value: &str) -> Option<Self> {
+    pub fn from_argument(value: &str) -> Option<Self> {
         Self::ALL.into_iter().find(|view| view.argument() == value)
     }
 }
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub(crate) struct ModelRender {
+pub struct ModelRender {
     pub format: ModelFormat,
     pub size: MediaPreviewSize,
     pub palette: ModelPalette,

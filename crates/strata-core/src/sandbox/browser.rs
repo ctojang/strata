@@ -21,17 +21,17 @@ use crate::services::ModelFormat;
 use wire::{Operation, Response};
 
 mod process;
-pub(crate) mod wire;
+pub mod wire;
 mod worker;
-pub(crate) use worker::run;
+pub use worker::run;
 
 const CACHE_ENTRIES: usize = 64;
 const CACHE_TTL: Duration = Duration::from_secs(30);
 const WAIT_QUANTUM: Duration = Duration::from_millis(20);
-pub(crate) const MAX_WORKERS: usize = 16;
+pub const MAX_WORKERS: usize = 16;
 const DEFAULT_WORKER_IDLE_TIMEOUT: Duration = Duration::from_secs(60);
 
-pub(crate) fn default_worker_limit() -> usize {
+pub fn default_worker_limit() -> usize {
     let default = std::thread::available_parallelism().map_or(2, |n| n.get().min(4));
     configured_limit(
         std::env::var("STRATA_THUMBNAIL_WORKERS").ok().as_deref(),
@@ -39,11 +39,11 @@ pub(crate) fn default_worker_limit() -> usize {
     )
 }
 
-pub(crate) fn worker_limit() -> usize {
+pub fn worker_limit() -> usize {
     pool().limit.load(Ordering::Relaxed)
 }
 
-pub(crate) fn set_worker_limit(limit: usize) {
+pub fn set_worker_limit(limit: usize) {
     pool().set_limit(limit);
     preview_pool().set_limit(limit);
     if let Some(Ok(launcher)) = LAUNCHER.get() {
@@ -132,12 +132,12 @@ fn cache_entry(cache: &Mutex<Cache>, key: FileKey, operation: Operation) -> Arc<
     result
 }
 
-pub(crate) struct Thumbnail {
-    pub(crate) png: Vec<u8>,
-    pub(crate) metadata: Option<MediaMetadata>,
+pub struct Thumbnail {
+    pub png: Vec<u8>,
+    pub metadata: Option<MediaMetadata>,
 }
 
-pub(crate) fn thumbnail(
+pub fn thumbnail(
     path: &Path,
     operation: ParseOperation,
     cancellation: &Cancellation,
@@ -173,7 +173,7 @@ pub(crate) fn thumbnail(
     })
 }
 
-pub(crate) fn metadata(
+pub fn metadata(
     path: &Path,
     image: bool,
     cancellation: &Cancellation,
@@ -190,7 +190,7 @@ pub(crate) fn metadata(
         .ok_or_else(|| "Media details unavailable".into())
 }
 
-pub(crate) fn preview(
+pub fn preview(
     path: &Path,
     operation: &ParseOperation,
     cancellation: &Cancellation,
@@ -431,7 +431,7 @@ fn preview_pool() -> &'static Pool {
     })
 }
 
-pub(crate) fn workers_supported() -> bool {
+pub fn workers_supported() -> bool {
     static SUPPORTED: OnceLock<bool> = OnceLock::new();
     *SUPPORTED.get_or_init(|| {
         let supported = worker::supported();

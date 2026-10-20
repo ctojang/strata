@@ -187,7 +187,7 @@ pub struct LocalPreviewProvider {
 }
 
 impl LocalPreviewProvider {
-    pub(crate) fn new(media_preview_backend: Rc<dyn Fn() -> MediaPreviewBackend>) -> Self {
+    pub fn new(media_preview_backend: Rc<dyn Fn() -> MediaPreviewBackend>) -> Self {
         Self {
             media_preview_backend,
         }

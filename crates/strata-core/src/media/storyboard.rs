@@ -8,17 +8,17 @@ use std::io::{self, Read, Write};
 use super::{MAX_DURATION_US, invalid, u32_at, u64_at};
 
 const MAGIC: &[u8; 8] = b"STRSTB01";
-pub(crate) const HEADER_BYTES: usize = 28;
-pub(crate) const MAX_CELL_EDGE: u32 = 192;
-pub(crate) const MIN_CELL_EDGE: u32 = 32;
-pub(crate) const MIN_CELLS: u32 = 8;
-pub(crate) const MAX_CELLS: u32 = 48;
-pub(crate) const SECONDS_PER_CELL: u64 = 2;
+pub const HEADER_BYTES: usize = 28;
+pub const MAX_CELL_EDGE: u32 = 192;
+pub const MIN_CELL_EDGE: u32 = 32;
+pub const MIN_CELLS: u32 = 8;
+pub const MAX_CELLS: u32 = 48;
+pub const SECONDS_PER_CELL: u64 = 2;
 /// Clips shorter than this scrub well enough without a storyboard.
-pub(crate) const MIN_DURATION_US: u64 = 4_000_000;
+pub const MIN_DURATION_US: u64 = 4_000_000;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) struct Sheet {
+pub struct Sheet {
     pub width: u32,
     pub height: u32,
     pub count: u32,
@@ -78,13 +78,13 @@ impl Sheet {
     }
 }
 
-pub(crate) fn cell_count(duration_us: u64) -> u32 {
+pub fn cell_count(duration_us: u64) -> u32 {
     ((duration_us / 1_000_000 / SECONDS_PER_CELL) as u32).clamp(MIN_CELLS, MAX_CELLS)
 }
 
 /// Middle first, then quarters, eighths and so on, so a partial board already
 /// covers the whole timeline.
-pub(crate) fn subdivision_order(count: u32) -> Vec<u32> {
+pub fn subdivision_order(count: u32) -> Vec<u32> {
     let mut order = Vec::with_capacity(count as usize);
     let mut ranges = std::collections::VecDeque::from([(0, count)]);
     while let Some((low, high)) = ranges.pop_front() {
@@ -99,18 +99,18 @@ pub(crate) fn subdivision_order(count: u32) -> Vec<u32> {
     order
 }
 
-pub(crate) fn write_cell(writer: &mut impl Write, index: u32, pixels: &[u8]) -> io::Result<()> {
+pub fn write_cell(writer: &mut impl Write, index: u32, pixels: &[u8]) -> io::Result<()> {
     writer.write_all(&index.to_le_bytes())?;
     writer.write_all(&(pixels.len() as u32).to_le_bytes())?;
     writer.write_all(pixels)
 }
 
-pub(crate) fn write_end(writer: &mut impl Write, sheet: Sheet) -> io::Result<()> {
+pub fn write_end(writer: &mut impl Write, sheet: Sheet) -> io::Result<()> {
     writer.write_all(&sheet.count.to_le_bytes())?;
     writer.write_all(&0_u32.to_le_bytes())
 }
 
-pub(crate) struct CellReader {
+pub struct CellReader {
     sheet: Sheet,
     seen: Vec<bool>,
     ended: bool,

@@ -8,18 +8,18 @@ use super::metadata::MAX_METADATA_BYTES;
 
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 #[serde(default)]
-pub(crate) struct RawMetadata {
-    pub(crate) dimensions: Option<(u32, u32)>,
-    pub(crate) camera: Option<String>,
-    pub(crate) lens: Option<String>,
-    pub(crate) focal_length: Option<f64>,
-    pub(crate) shutter_speed: Option<f64>,
-    pub(crate) iso: Option<f64>,
-    pub(crate) gps: Option<(f64, f64)>,
+pub struct RawMetadata {
+    pub dimensions: Option<(u32, u32)>,
+    pub camera: Option<String>,
+    pub lens: Option<String>,
+    pub focal_length: Option<f64>,
+    pub shutter_speed: Option<f64>,
+    pub iso: Option<f64>,
+    pub gps: Option<(f64, f64)>,
 }
 
 impl RawMetadata {
-    pub(crate) fn from_json(bytes: &[u8]) -> Result<Self, String> {
+    pub fn from_json(bytes: &[u8]) -> Result<Self, String> {
         if bytes.len() as u64 > MAX_METADATA_BYTES {
             return Err("RAW metadata exceeds the size limit".into());
         }
@@ -62,7 +62,7 @@ fn valid_text(value: &str) -> bool {
         })
 }
 
-pub(crate) fn is_raw(path: &Path) -> bool {
+pub fn is_raw(path: &Path) -> bool {
     path.extension()
         .and_then(|extension| extension.to_str())
         .is_some_and(|extension| {

@@ -33,7 +33,7 @@ struct Destination {
 
 /// `Display` is English for logs and tests; [`Self::message`] is for the UI.
 #[derive(Debug)]
-pub(crate) enum DestinationError {
+pub enum DestinationError {
     NonRegular {
         path: PathBuf,
     },
@@ -98,7 +98,7 @@ impl std::error::Error for DestinationError {
 
 impl DestinationError {
     /// Localized, standalone text for the UI.
-    pub(crate) fn message(&self) -> String {
+    pub fn message(&self) -> String {
         match self {
             Self::NonRegular { path } => rust_i18n::t!(
                 "The destination “%{path}” is not a regular file",
@@ -146,15 +146,15 @@ impl DestinationError {
     }
 }
 
-pub(crate) fn config_directory() -> PathBuf {
+pub fn config_directory() -> PathBuf {
     glib::user_config_dir().join("strata")
 }
 
-pub(crate) fn state_directory() -> PathBuf {
+pub fn state_directory() -> PathBuf {
     glib::user_state_dir().join("strata")
 }
 
-pub(crate) fn atomic_write(path: &Path, contents: &[u8]) -> io::Result<()> {
+pub fn atomic_write(path: &Path, contents: &[u8]) -> io::Result<()> {
     atomic_write_with(path, LinkPolicy::Reject, |file| file.write_all(contents))
 }
 
@@ -163,7 +163,7 @@ pub(crate) fn atomic_write(path: &Path, contents: &[u8]) -> io::Result<()> {
 /// in its own directory while the links stay untouched; every link and the
 /// target must belong to the effective user. An existing destination keeps
 /// its permission bits, and a new one is created owner-only.
-pub(crate) fn atomic_write_config(path: &Path, contents: &[u8]) -> io::Result<()> {
+pub fn atomic_write_config(path: &Path, contents: &[u8]) -> io::Result<()> {
     atomic_write_with(path, LinkPolicy::FollowUserOwned, |file| {
         file.write_all(contents)
     })

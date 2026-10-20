@@ -21,25 +21,25 @@ use crate::services::{
 };
 
 #[cfg(feature = "rar")]
-pub(crate) mod archive;
-pub(crate) mod browser;
-pub(crate) mod media;
-pub(crate) mod metadata;
+pub mod archive;
+pub mod browser;
+pub mod media;
+pub mod metadata;
 mod model;
-pub(crate) mod raw_metadata;
-pub(crate) mod runtime;
+pub mod raw_metadata;
+pub mod runtime;
 
 const WALL_TIME_LIMIT: Duration = Duration::from_secs(12);
 const ADDRESS_SPACE_LIMIT_BYTES: u64 = 2 * 1024 * 1024 * 1024;
-pub(crate) const FILE_SIZE_LIMIT_BYTES: u64 = 512 * 1024 * 1024;
+pub const FILE_SIZE_LIMIT_BYTES: u64 = 512 * 1024 * 1024;
 const TEMPORARY_STORAGE_LIMIT_BYTES: u64 = 512 * 1024 * 1024;
 const MAX_RASTER_INPUT_BYTES: u64 = 512 * 1024 * 1024;
-pub(crate) const MAX_OUTPUT_BYTES: u64 = 32 * 1024 * 1024;
-pub(crate) const MAX_TEXT_LAYER_BYTES: u64 = 8 * 1024 * 1024;
+pub const MAX_OUTPUT_BYTES: u64 = 32 * 1024 * 1024;
+pub const MAX_TEXT_LAYER_BYTES: u64 = 8 * 1024 * 1024;
 static NEXT_DIRECTORY: AtomicU64 = AtomicU64::new(1);
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub(crate) enum MediaPreviewBackend {
+pub enum MediaPreviewBackend {
     Automatic,
     VaApi,
     Vulkan,
@@ -47,7 +47,7 @@ pub(crate) enum MediaPreviewBackend {
 }
 
 impl MediaPreviewBackend {
-    pub(crate) fn argument(self) -> &'static str {
+    pub fn argument(self) -> &'static str {
         match self {
             Self::Automatic => "automatic",
             Self::VaApi => "vaapi",
@@ -56,7 +56,7 @@ impl MediaPreviewBackend {
         }
     }
 
-    pub(crate) fn from_argument(value: &str) -> Option<Self> {
+    pub fn from_argument(value: &str) -> Option<Self> {
         match value {
             "automatic" => Some(Self::Automatic),
             "vaapi" => Some(Self::VaApi),
@@ -68,9 +68,9 @@ impl MediaPreviewBackend {
 }
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub(crate) struct PdfRenderSize {
-    pub(crate) width: i32,
-    pub(crate) height: i32,
+pub struct PdfRenderSize {
+    pub width: i32,
+    pub height: i32,
 }
 
 impl PdfRenderSize {
@@ -78,18 +78,18 @@ impl PdfRenderSize {
     const MAX_HEIGHT: i32 = 1_800;
     const MAX_PIXELS: u64 = 2_500_000;
 
-    pub(crate) fn new(width: i32, height: i32) -> Self {
+    pub fn new(width: i32, height: i32) -> Self {
         Self {
             width: width.clamp(16, Self::MAX_WIDTH),
             height: height.clamp(16, Self::MAX_HEIGHT),
         }
     }
 
-    pub(crate) fn for_viewport_width(width: i32) -> Self {
+    pub fn for_viewport_width(width: i32) -> Self {
         Self::new(width, Self::MAX_HEIGHT)
     }
 
-    pub(crate) fn image_limits(self) -> (u32, u32, u64) {
+    pub fn image_limits(self) -> (u32, u32, u64) {
         let size = Self::new(self.width, self.height);
         let width = size.width as u32;
         let height = size.height as u32;
@@ -102,19 +102,19 @@ impl PdfRenderSize {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum CoverFormat {
+pub enum CoverFormat {
     Cbz,
     Cbr,
     Epub,
 }
 
 impl CoverFormat {
-    pub(crate) fn for_name(name: &std::ffi::OsStr) -> Option<Self> {
+    pub fn for_name(name: &std::ffi::OsStr) -> Option<Self> {
         let extension = Path::new(name).extension()?.to_str()?;
         Self::from_argument(&extension.to_ascii_lowercase())
     }
 
-    pub(crate) fn argument(self) -> &'static str {
+    pub fn argument(self) -> &'static str {
         match self {
             Self::Cbz => "cbz",
             Self::Cbr => "cbr",
@@ -122,7 +122,7 @@ impl CoverFormat {
         }
     }
 
-    pub(crate) fn from_argument(value: &str) -> Option<Self> {
+    pub fn from_argument(value: &str) -> Option<Self> {
         match value {
             "cbz" => Some(Self::Cbz),
             "cbr" => Some(Self::Cbr),
@@ -133,7 +133,7 @@ impl CoverFormat {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) enum ParseOperation {
+pub enum ParseOperation {
     ThumbnailImage,
     ThumbnailRaw,
     ThumbnailPdf,
@@ -315,7 +315,7 @@ impl ParseOperation {
 }
 
 #[derive(Clone, Default)]
-pub(crate) struct Cancellation(Arc<AtomicBool>);
+pub struct Cancellation(Arc<AtomicBool>);
 
 impl From<Arc<AtomicBool>> for Cancellation {
     fn from(flag: Arc<AtomicBool>) -> Self {
@@ -324,24 +324,24 @@ impl From<Arc<AtomicBool>> for Cancellation {
 }
 
 impl Cancellation {
-    pub(crate) fn cancel(&self) {
+    pub fn cancel(&self) {
         self.0.store(true, Ordering::Release);
     }
 
-    pub(crate) fn is_cancelled(&self) -> bool {
+    pub fn is_cancelled(&self) -> bool {
         self.0.load(Ordering::Acquire)
     }
 }
 
-pub(crate) struct ParseOutput {
-    pub(crate) data: Vec<u8>,
-    pub(crate) page: i32,
-    pub(crate) pages: i32,
-    pub(crate) text_layer: Option<crate::services::PdfTextLayer>,
-    pub(crate) model_mesh: Option<crate::services::ModelMesh>,
+pub struct ParseOutput {
+    pub data: Vec<u8>,
+    pub page: i32,
+    pub pages: i32,
+    pub text_layer: Option<crate::services::PdfTextLayer>,
+    pub model_mesh: Option<crate::services::ModelMesh>,
 }
 
-pub(crate) fn parse(
+pub fn parse(
     input: &Path,
     operation: ParseOperation,
     value: i32,
@@ -358,7 +358,7 @@ pub(crate) fn parse(
     )
 }
 
-pub(crate) fn parse_with_progress(
+pub fn parse_with_progress(
     input: &Path,
     operation: ParseOperation,
     value: i32,
@@ -558,7 +558,7 @@ fn parse_sandboxed(
 
 // A memfd avoids named-file residue and dependence on TMPDIR's O_TMPFILE support.
 // CLOEXEC prevents unrelated children from inheriting it before the renderer spawns.
-pub(crate) fn stage_secret_anon(secret: &[u8]) -> Result<rustix::fd::OwnedFd, String> {
+pub fn stage_secret_anon(secret: &[u8]) -> Result<rustix::fd::OwnedFd, String> {
     use rustix::fs::{MemfdFlags, Mode, fchmod, memfd_create};
     use std::io::{Seek, Write};
 
@@ -590,12 +590,12 @@ fn resolve_renderer_executable(
 }
 
 /// Fixed text for a missing or untrusted bubblewrap; the detail names system directories.
-pub(crate) fn sandbox_unavailable(detail: &str) -> String {
+pub fn sandbox_unavailable(detail: &str) -> String {
     tracing::warn!(detail, "the bubblewrap sandbox is unavailable");
     crate::i18n::tr("The bubblewrap sandbox is not available")
 }
 
-pub(crate) fn sandbox_start_failed(error: &io::Error) -> String {
+pub fn sandbox_start_failed(error: &io::Error) -> String {
     tracing::warn!(%error, "unable to start the sandbox");
     rust_i18n::t!(
         "Unable to start the sandbox: %{error}",
@@ -676,7 +676,7 @@ fn wait_for_renderer_reporting(
 
 /// Resolves a helper tool the way the sandbox's `PATH` does. The sandbox root
 /// is mounted at its host path, so the host file is the one helpers run.
-pub(crate) fn sandbox_tool(name: &str) -> Option<PathBuf> {
+pub fn sandbox_tool(name: &str) -> Option<PathBuf> {
     use std::os::unix::fs::PermissionsExt;
     runtime::current()
         .tool_directories()
@@ -883,7 +883,7 @@ fn sandbox_input_path(input: &Path) -> String {
     }
 }
 
-pub(crate) fn gpu_devices(dev: &Path, media_backend: MediaPreviewBackend) -> Vec<PathBuf> {
+pub fn gpu_devices(dev: &Path, media_backend: MediaPreviewBackend) -> Vec<PathBuf> {
     if media_backend == MediaPreviewBackend::Software {
         return Vec::new();
     }
@@ -909,7 +909,7 @@ pub(crate) fn gpu_devices(dev: &Path, media_backend: MediaPreviewBackend) -> Vec
     devices
 }
 
-pub(crate) fn polaris_gpu_available() -> bool {
+pub fn polaris_gpu_available() -> bool {
     polaris_gpu_available_at(Path::new("/dev"), Path::new("/sys/class/drm"))
 }
 
@@ -940,7 +940,7 @@ fn pci_id(path: &Path) -> Option<u16> {
     u16::from_str_radix(value.trim().strip_prefix("0x").unwrap_or(value.trim()), 16).ok()
 }
 
-pub(crate) fn numbered_name(name: &std::ffi::OsStr, prefix: &str) -> bool {
+pub fn numbered_name(name: &std::ffi::OsStr, prefix: &str) -> bool {
     name.to_str()
         .and_then(|name| name.strip_prefix(prefix))
         .is_some_and(|suffix| {
@@ -986,7 +986,7 @@ fn valid_output(operation: ParseOperation, data: &[u8]) -> bool {
     }
 }
 
-pub(crate) fn png_dimensions(data: &[u8]) -> Option<(u32, u32)> {
+pub fn png_dimensions(data: &[u8]) -> Option<(u32, u32)> {
     if !data.starts_with(b"\x89PNG\r\n\x1a\n")
         || data.get(8..12)? != 13u32.to_be_bytes()
         || data.get(12..16)? != b"IHDR"

@@ -7,16 +7,16 @@ use gio::prelude::*;
 use super::{MountTable, mount_capabilities::forget_mount_capabilities, mount_is_removable};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) struct RemovableRoot {
-    pub(crate) uuid: String,
-    pub(crate) path: PathBuf,
+pub struct RemovableRoot {
+    pub uuid: String,
+    pub path: PathBuf,
 }
 
 /// Mount facts read once and dropped whenever mounts change, so lookups on
 /// navigation never read the mount table or query GIO.
-pub(crate) struct MountSnapshot {
-    pub(crate) table: MountTable,
-    pub(crate) removable: Vec<RemovableRoot>,
+pub struct MountSnapshot {
+    pub table: MountTable,
+    pub removable: Vec<RemovableRoot>,
 }
 
 struct MountCache {
@@ -28,13 +28,13 @@ thread_local! {
     static MOUNTS: RefCell<Option<MountCache>> = const { RefCell::new(None) };
 }
 
-pub(crate) fn watch_operation_mounts() {
+pub fn watch_operation_mounts() {
     MOUNTS.with(|cache| {
         cache.borrow_mut().get_or_insert_with(watch_mounts);
     });
 }
 
-pub(crate) fn with_mount_snapshot<T>(read: impl FnOnce(&MountSnapshot) -> T) -> T {
+pub fn with_mount_snapshot<T>(read: impl FnOnce(&MountSnapshot) -> T) -> T {
     MOUNTS.with(|cache| {
         let mut cache = cache.borrow_mut();
         let cache = cache.get_or_insert_with(watch_mounts);
@@ -44,7 +44,7 @@ pub(crate) fn with_mount_snapshot<T>(read: impl FnOnce(&MountSnapshot) -> T) -> 
 
 /// GIO announces a mount from an idle callback, which can run after Strata
 /// already opens a drive it just mounted, so that path calls this as well.
-pub(crate) fn invalidate_mount_snapshot() {
+pub fn invalidate_mount_snapshot() {
     forget_mount_capabilities();
     MOUNTS.with(|cache| {
         if let Ok(mut cache) = cache.try_borrow_mut()

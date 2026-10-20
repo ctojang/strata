@@ -3,11 +3,11 @@
 use super::*;
 use crate::media::Frame;
 
-pub(crate) fn stream(header: Header) -> Result<Session, String> {
+pub fn stream(header: Header) -> Result<Session, String> {
     stream_to(header, header.duration_us)
 }
 
-pub(crate) fn stream_to(header: Header, end: u64) -> Result<Session, String> {
+pub fn stream_to(header: Header, end: u64) -> Result<Session, String> {
     let slot = WorkerSlot::acquire().ok_or("Media previews are busy (four active players)")?;
     let slot = Arc::new(slot);
     let worker_slot = slot.clone();
@@ -46,7 +46,7 @@ pub(crate) fn stream_to(header: Header, end: u64) -> Result<Session, String> {
 
 /// A session whose decoder dies before producing a header, as a seek past the
 /// end of a truncated file does.
-pub(crate) fn failing_stream() -> Result<Session, String> {
+pub fn failing_stream() -> Result<Session, String> {
     let slot = WorkerSlot::acquire().ok_or("Media previews are busy (four active players)")?;
     let slot = Arc::new(slot);
     let worker_slot = slot.clone();

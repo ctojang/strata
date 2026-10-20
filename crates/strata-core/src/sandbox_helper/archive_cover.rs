@@ -9,7 +9,7 @@ use quick_xml::{
 
 use crate::sandbox::CoverFormat;
 
-pub(crate) const MAX_INPUT_BYTES: u64 = 128 * 1024 * 1024;
+pub const MAX_INPUT_BYTES: u64 = 128 * 1024 * 1024;
 pub(super) const MAX_ENTRIES: usize = 4096;
 pub(super) const MAX_IMAGE_BYTES: u64 = 8 * 1024 * 1024;
 const MAX_XML_BYTES: u64 = 256 * 1024;
@@ -66,11 +66,11 @@ pub(super) fn compare_names(left: &str, right: &str) -> std::cmp::Ordering {
     left.len().cmp(&right.len()).then_with(|| left.cmp(right))
 }
 
-pub(crate) fn thumbnail(input: &Path, format: CoverFormat) -> Result<Vec<u8>, String> {
+pub fn thumbnail(input: &Path, format: CoverFormat) -> Result<Vec<u8>, String> {
     render(input, format, 256)
 }
 
-pub(crate) fn render(input: &Path, format: CoverFormat, edge: i32) -> Result<Vec<u8>, String> {
+pub fn render(input: &Path, format: CoverFormat, edge: i32) -> Result<Vec<u8>, String> {
     if fs::metadata(input).map_err(|e| e.to_string())?.len() > MAX_INPUT_BYTES {
         return Err("Cover archive exceeds the input size limit".into());
     }

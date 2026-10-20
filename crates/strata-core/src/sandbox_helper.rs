@@ -20,7 +20,7 @@ use crate::{
 };
 
 mod appimage;
-pub(crate) mod archive_cover;
+pub mod archive_cover;
 #[cfg(feature = "rar")]
 mod archive_rar;
 mod document_media;
@@ -30,7 +30,7 @@ mod raw_metadata;
 
 const PROCESS_POLL_INTERVAL: Duration = Duration::from_millis(20);
 
-pub(crate) fn run(arguments: &[String]) -> Result<(), String> {
+pub fn run(arguments: &[String]) -> Result<(), String> {
     #[cfg(not(feature = "rar"))]
     if arguments
         .first()
@@ -373,7 +373,7 @@ fn read_media_metadata(input: &Path) -> Result<Vec<u8>, String> {
     Ok(bytes)
 }
 
-pub(crate) fn browser_render(
+pub fn browser_render(
     input: &Path,
     operation: crate::sandbox::browser::wire::Operation,
 ) -> crate::sandbox::browser::wire::Response {
@@ -455,7 +455,7 @@ pub(crate) fn browser_render(
 const RGBA_CHANNELS: u64 = 4;
 const MAX_DECODED_PIXELS: u64 = FILE_SIZE_LIMIT_BYTES / RGBA_CHANNELS;
 
-pub(crate) fn exceeds_decoded_frame_budget(width: i32, height: i32) -> bool {
+pub fn exceeds_decoded_frame_budget(width: i32, height: i32) -> bool {
     let width = u64::try_from(width).unwrap_or(0);
     let height = u64::try_from(height).unwrap_or(0);
     width.saturating_mul(height) > MAX_DECODED_PIXELS
@@ -1047,7 +1047,7 @@ fn stop_child(child: &mut Child) {
     let _waited = child.wait();
 }
 
-pub(crate) fn run_command_with_timeout(
+pub fn run_command_with_timeout(
     command: &mut Command,
     timeout: Duration,
 ) -> io::Result<bool> {

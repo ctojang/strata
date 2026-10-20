@@ -24,38 +24,38 @@ use crate::{
 };
 
 #[cfg(test)]
-pub(crate) use mount_capabilities::forget_test_mount_capabilities;
-pub(crate) use mount_capabilities::{
+pub use mount_capabilities::forget_test_mount_capabilities;
+pub use mount_capabilities::{
     MountCapabilities, MountKey, XattrNamespace, learn_mount_capability, mount_capabilities,
     teach_mount_capability,
 };
-pub(crate) use mount_snapshot::{
+pub use mount_snapshot::{
     RemovableRoot, invalidate_mount_snapshot, watch_operation_mounts, with_mount_snapshot,
 };
 #[cfg(test)]
-pub(crate) use mounts::FAT32_MAX_FILE_SIZE;
+pub use mounts::FAT32_MAX_FILE_SIZE;
 #[cfg(test)]
-pub(crate) use mounts::set_mountinfo_for_isolated_test;
-pub(crate) use mounts::{
+pub use mounts::set_mountinfo_for_isolated_test;
+pub use mounts::{
     CoarseTimes, Family, FuseFormat, LONGEST_NAME_NTFS_3G_RENAMES_OVER, MountKey as TrashMountKey,
     MountSite, MountTable, MountType, family, holds_symlinks, is_fuse_fs_type,
     is_local_fuse_overlay, max_file_size,
 };
-pub(crate) use names::{
+pub use names::{
     MountNames, NameEncoding, NameLimit, NameProfile, NameRules, PrivateUse, Reserved, StrictRule,
     Strictness, Strip, gvfs_bridge_profile, gvfs_profile,
 };
 
-pub(crate) const REMOTE_QUERY_TIMEOUT: Duration = Duration::from_secs(2);
+pub const REMOTE_QUERY_TIMEOUT: Duration = Duration::from_secs(2);
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) struct DropVolumeQuery {
+pub struct DropVolumeQuery {
     pub dest: Location,
     pub source_parents: Vec<Location>,
 }
 
 impl DropVolumeQuery {
-    pub(crate) fn new(dest: &Location, sources: &[Location]) -> Self {
+    pub fn new(dest: &Location, sources: &[Location]) -> Self {
         Self::with_mounts(dest, sources, &MountTable::current())
     }
 
@@ -92,7 +92,7 @@ impl DropVolumeQuery {
 }
 
 #[derive(Clone, Debug)]
-pub(crate) struct DropVolumeLookup {
+pub struct DropVolumeLookup {
     pub dest: Option<VolumeIdentity>,
     pub sources: Vec<Option<VolumeIdentity>>,
     pub relation: VolumeRelation,
@@ -111,7 +111,7 @@ impl DropVolumeLookup {
         }
     }
 
-    pub(crate) fn describe(&self) -> String {
+    pub fn describe(&self) -> String {
         let id = |identity: &Option<VolumeIdentity>| {
             identity
                 .as_ref()
@@ -123,20 +123,20 @@ impl DropVolumeLookup {
     }
 }
 
-pub(crate) enum DropVolumes {
+pub enum DropVolumes {
     Ready(DropVolumeLookup),
     Pending(PendingVolumeLookup),
 }
 
 impl DropVolumes {
-    pub(crate) fn relation(&self) -> VolumeRelation {
+    pub fn relation(&self) -> VolumeRelation {
         match self {
             Self::Ready(lookup) => lookup.relation,
             Self::Pending(_) => VolumeRelation::Unknown,
         }
     }
 
-    pub(crate) fn describe(&self) -> String {
+    pub fn describe(&self) -> String {
         match self {
             Self::Ready(lookup) => lookup.describe(),
             Self::Pending(pending) if pending.cancellable.is_cancelled() => "timed out".into(),
@@ -146,7 +146,7 @@ impl DropVolumes {
 }
 
 /// Calls `on_ready` once on the main context unless the pending handle is dropped.
-pub(crate) fn lookup_drop_volumes(
+pub fn lookup_drop_volumes(
     query: &DropVolumeQuery,
     on_ready: impl FnOnce(DropVolumeLookup) + 'static,
 ) -> DropVolumes {
@@ -233,7 +233,7 @@ fn native_query_may_leave_mount(path: &Path) -> bool {
     false
 }
 
-pub(crate) struct PendingVolumeLookup {
+pub struct PendingVolumeLookup {
     cancellable: gio::Cancellable,
     state: Rc<RefCell<PendingState>>,
 }
@@ -287,7 +287,7 @@ impl PendingVolumeLookup {
         Self { cancellable, state }
     }
 
-    pub(crate) fn cancel(&self) {
+    pub fn cancel(&self) {
         self.state.borrow_mut().on_ready = None;
         self.cancellable.cancel();
     }
@@ -328,7 +328,7 @@ impl PendingState {
     }
 }
 
-pub(crate) fn volume_identity_of_existing_ancestor(location: &Location) -> Option<VolumeIdentity> {
+pub fn volume_identity_of_existing_ancestor(location: &Location) -> Option<VolumeIdentity> {
     volume_identity_of_existing_ancestor_with(location, gio::FileQueryInfoFlags::NONE)
 }
 
@@ -345,7 +345,7 @@ fn volume_identity_of_existing_ancestor_with(
     }
 }
 
-pub(crate) fn restore_volume_relation(source: &Location, dest: &Location) -> VolumeRelation {
+pub fn restore_volume_relation(source: &Location, dest: &Location) -> VolumeRelation {
     volume_relation(
         volume_identity_of_existing_ancestor(dest).as_ref(),
         &[volume_identity_of_existing_ancestor_with(
@@ -356,7 +356,7 @@ pub(crate) fn restore_volume_relation(source: &Location, dest: &Location) -> Vol
 }
 
 /// Uses GIO for native paths so native and `file://` identities are comparable.
-pub(crate) fn native_volume_identity(location: &Location) -> Option<VolumeIdentity> {
+pub fn native_volume_identity(location: &Location) -> Option<VolumeIdentity> {
     native_volume_identity_with(location, gio::FileQueryInfoFlags::NONE)
 }
 
@@ -374,7 +374,7 @@ fn native_volume_identity_with(
     identity_from_gio(&info, "file")
 }
 
-pub(crate) fn location_is_remote(location: &Location) -> bool {
+pub fn location_is_remote(location: &Location) -> bool {
     match location.native_path() {
         Some(path) => MountTable::current().is_remote_path(path),
         None => {
@@ -399,7 +399,7 @@ fn drive_can_unplug(drive: &gio::Drive) -> bool {
     drive.is_removable() || drive.is_media_removable() || drive.can_eject()
 }
 
-pub(crate) fn mount_can_unplug(mount: &gio::Mount) -> bool {
+pub fn mount_can_unplug(mount: &gio::Mount) -> bool {
     if mount.can_eject() {
         return true;
     }
@@ -409,7 +409,7 @@ pub(crate) fn mount_can_unplug(mount: &gio::Mount) -> bool {
         .is_some_and(|drive| drive_can_unplug(&drive))
 }
 
-pub(crate) fn volume_can_unplug(volume: &gio::Volume) -> bool {
+pub fn volume_can_unplug(volume: &gio::Volume) -> bool {
     if volume.can_eject() {
         return true;
     }
@@ -417,7 +417,7 @@ pub(crate) fn volume_can_unplug(volume: &gio::Volume) -> bool {
         || volume.get_mount().is_some_and(|mount| mount.can_eject())
 }
 
-pub(crate) fn mount_is_removable(mount: &gio::Mount) -> bool {
+pub fn mount_is_removable(mount: &gio::Mount) -> bool {
     mount_can_unplug(mount)
         || mount
             .volume()

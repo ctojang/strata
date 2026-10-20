@@ -12,7 +12,7 @@ const HEADER_BYTES: usize = 32;
 const NO_MODE: u32 = u32::MAX;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum WireTime {
+pub enum WireTime {
     /// Windows FILETIME (UTC), as RAR 5 headers store it.
     FileTime(u64),
     /// MS-DOS date (high 16 bits) and time in the archiver's local zone, as
@@ -21,13 +21,13 @@ pub(crate) enum WireTime {
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub(crate) struct WireMetadata {
-    pub(crate) mode: Option<u32>,
-    pub(crate) modified: Option<WireTime>,
+pub struct WireMetadata {
+    pub mode: Option<u32>,
+    pub modified: Option<WireTime>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum FailureKind {
+pub enum FailureKind {
     Other,
     PasswordRequired,
     IncorrectPassword,
@@ -53,20 +53,20 @@ impl FailureKind {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct Failure {
-    pub(crate) kind: FailureKind,
-    pub(crate) message: String,
+pub struct Failure {
+    pub kind: FailureKind,
+    pub message: String,
 }
 
 impl Failure {
-    pub(crate) fn new(kind: FailureKind, message: impl Into<String>) -> Self {
+    pub fn new(kind: FailureKind, message: impl Into<String>) -> Self {
         Self {
             kind,
             message: message.into(),
         }
     }
 
-    pub(crate) fn from_io(error: io::Error) -> Self {
+    pub fn from_io(error: io::Error) -> Self {
         match error
             .get_ref()
             .and_then(|inner| inner.downcast_ref::<Self>())
@@ -109,18 +109,18 @@ const ERROR_RECORD: u32 = 3;
 const FAILED_TRAILER: u32 = 1;
 
 #[derive(Debug, PartialEq, Eq)]
-pub(crate) enum Record {
+pub enum Record {
     Directory(String, WireMetadata),
     File(String, u64, WireMetadata),
     End,
     Error(Failure),
 }
 
-pub(crate) fn write_magic(writer: &mut impl Write) -> io::Result<()> {
+pub fn write_magic(writer: &mut impl Write) -> io::Result<()> {
     writer.write_all(MAGIC)
 }
 
-pub(crate) fn read_magic(reader: &mut impl Read) -> io::Result<()> {
+pub fn read_magic(reader: &mut impl Read) -> io::Result<()> {
     let mut bytes = [0; MAGIC.len()];
     reader.read_exact(&mut bytes)?;
     if &bytes != MAGIC {
@@ -129,7 +129,7 @@ pub(crate) fn read_magic(reader: &mut impl Read) -> io::Result<()> {
     Ok(())
 }
 
-pub(crate) fn write_directory(
+pub fn write_directory(
     writer: &mut impl Write,
     name: &str,
     metadata: WireMetadata,
@@ -137,7 +137,7 @@ pub(crate) fn write_directory(
     write_header(writer, 0, name, 0, metadata)
 }
 
-pub(crate) fn write_file_header(
+pub fn write_file_header(
     writer: &mut impl Write,
     name: &str,
     size: u64,
@@ -146,11 +146,11 @@ pub(crate) fn write_file_header(
     write_header(writer, 1, name, size, metadata)
 }
 
-pub(crate) fn write_end(writer: &mut impl Write) -> io::Result<()> {
+pub fn write_end(writer: &mut impl Write) -> io::Result<()> {
     write_header(writer, 2, "", 0, WireMetadata::default())
 }
 
-pub(crate) fn write_error(writer: &mut impl Write, failure: &Failure) -> io::Result<()> {
+pub fn write_error(writer: &mut impl Write, failure: &Failure) -> io::Result<()> {
     write_header(
         writer,
         ERROR_RECORD + failure.kind.code(),
@@ -184,18 +184,18 @@ fn write_header(
 
 /// Each body chunk is length-prefixed so a decoder failure before the declared
 /// size cannot be mistaken for file contents.
-pub(crate) fn write_chunk(writer: &mut impl Write, bytes: &[u8]) -> io::Result<()> {
+pub fn write_chunk(writer: &mut impl Write, bytes: &[u8]) -> io::Result<()> {
     let length = u32::try_from(bytes.len()).map_err(|_| invalid("RAR chunk is too large"))?;
     writer.write_all(&length.to_le_bytes())?;
     writer.write_all(bytes)
 }
 
-pub(crate) fn write_file_ok(writer: &mut impl Write) -> io::Result<()> {
+pub fn write_file_ok(writer: &mut impl Write) -> io::Result<()> {
     writer.write_all(&0u32.to_le_bytes())?;
     write_trailer(writer, 0, "")
 }
 
-pub(crate) fn write_file_failed(writer: &mut impl Write, failure: &Failure) -> io::Result<()> {
+pub fn write_file_failed(writer: &mut impl Write, failure: &Failure) -> io::Result<()> {
     writer.write_all(&0u32.to_le_bytes())?;
     write_trailer(
         writer,
@@ -207,7 +207,7 @@ pub(crate) fn write_file_failed(writer: &mut impl Write, failure: &Failure) -> i
 /// The framed member reader validates the trailer before reporting EOF to the
 /// destination, so failed or truncated members are removed by ExtractionSession.
 /// A failed trailer's [`Failure`] is the reported error's inner error.
-pub(crate) struct FileBody<'a, R> {
+pub struct FileBody<'a, R> {
     reader: &'a mut R,
     remaining: u64,
     chunk_remaining: u32,
@@ -215,7 +215,7 @@ pub(crate) struct FileBody<'a, R> {
 }
 
 impl<'a, R: Read> FileBody<'a, R> {
-    pub(crate) fn new(reader: &'a mut R, size: u64) -> Self {
+    pub fn new(reader: &'a mut R, size: u64) -> Self {
         Self {
             reader,
             remaining: size,
@@ -265,7 +265,7 @@ fn write_trailer(writer: &mut impl Write, status: u32, message: &str) -> io::Res
     writer.write_all(bytes)
 }
 
-pub(crate) fn read_record(reader: &mut impl Read) -> io::Result<Record> {
+pub fn read_record(reader: &mut impl Read) -> io::Result<Record> {
     let mut header = [0; HEADER_BYTES];
     reader.read_exact(&mut header)?;
     let kind = u32_at(&header, 0);
@@ -303,7 +303,7 @@ pub(crate) fn read_record(reader: &mut impl Read) -> io::Result<Record> {
     }
 }
 
-pub(crate) fn read_file_trailer(reader: &mut impl Read) -> io::Result<Result<(), Failure>> {
+pub fn read_file_trailer(reader: &mut impl Read) -> io::Result<Result<(), Failure>> {
     let mut trailer = [0; 8];
     reader.read_exact(&mut trailer)?;
     let status = u32_at(&trailer, 0);

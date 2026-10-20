@@ -10,14 +10,14 @@ use std::{collections::HashSet, path::Path};
 use crate::model::Location;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) struct VolumeIdentity {
+pub struct VolumeIdentity {
     pub filesystem_id: String,
     /// GIO URI scheme; native paths and file URIs share the `file` namespace.
     pub backend: String,
 }
 
 impl VolumeIdentity {
-    pub(crate) fn matches(&self, other: &Self) -> bool {
+    pub fn matches(&self, other: &Self) -> bool {
         !self.filesystem_id.is_empty()
             && self.filesystem_id == other.filesystem_id
             && self.backend == other.backend
@@ -25,21 +25,21 @@ impl VolumeIdentity {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum VolumeRelation {
+pub enum VolumeRelation {
     Same,
     Different,
     Unknown,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum DropOverride {
+pub enum DropOverride {
     None,
     ForceCopy,
     ForceMove,
 }
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-pub(crate) enum CrossVolumeDropStrategy {
+pub enum CrossVolumeDropStrategy {
     Copy,
     Move,
     #[default]
@@ -47,7 +47,7 @@ pub(crate) enum CrossVolumeDropStrategy {
 }
 
 impl CrossVolumeDropStrategy {
-    pub(crate) fn as_str(self) -> &'static str {
+    pub fn as_str(self) -> &'static str {
         match self {
             Self::Copy => "always-copy",
             Self::Move => "always-move",
@@ -55,7 +55,7 @@ impl CrossVolumeDropStrategy {
         }
     }
 
-    pub(crate) fn parse(value: &str) -> Self {
+    pub fn parse(value: &str) -> Self {
         match value {
             "always-copy" => Self::Copy,
             "always-move" => Self::Move,
@@ -65,14 +65,14 @@ impl CrossVolumeDropStrategy {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum TransferKind {
+pub enum TransferKind {
     Copy,
     Move,
     Forbidden,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum DropCommit {
+pub enum DropCommit {
     Copy,
     Move,
     /// `Unknown` must not be presented as a confirmed device difference.
@@ -84,7 +84,7 @@ pub(crate) enum DropCommit {
 }
 
 impl DropCommit {
-    pub(crate) fn transfer_kind(self) -> TransferKind {
+    pub fn transfer_kind(self) -> TransferKind {
         match self {
             Self::Copy => TransferKind::Copy,
             Self::Move => TransferKind::Move,
@@ -95,7 +95,7 @@ impl DropCommit {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) struct DropActionInput {
+pub struct DropActionInput {
     pub can_copy: bool,
     pub can_move: bool,
     pub volume: VolumeRelation,
@@ -103,7 +103,7 @@ pub(crate) struct DropActionInput {
     pub strategy: CrossVolumeDropStrategy,
 }
 
-pub(crate) fn volume_relation(
+pub fn volume_relation(
     dest: Option<&VolumeIdentity>,
     sources: &[Option<VolumeIdentity>],
 ) -> VolumeRelation {
@@ -129,7 +129,7 @@ pub(crate) fn volume_relation(
     }
 }
 
-pub(crate) fn drop_commit(input: DropActionInput) -> DropCommit {
+pub fn drop_commit(input: DropActionInput) -> DropCommit {
     if !input.can_copy && !input.can_move {
         return DropCommit::Forbidden;
     }
@@ -176,7 +176,7 @@ fn cross_volume_commit(input: DropActionInput) -> DropCommit {
     }
 }
 
-pub(crate) fn transferable_drop_sources(dest: &Location, sources: &[Location]) -> Vec<Location> {
+pub fn transferable_drop_sources(dest: &Location, sources: &[Location]) -> Vec<Location> {
     if sources.is_empty() {
         return Vec::new();
     }

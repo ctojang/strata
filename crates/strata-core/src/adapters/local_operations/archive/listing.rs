@@ -16,19 +16,19 @@ use std::{
 #[cfg(test)]
 mod tests;
 
-pub(crate) const INVALID_ARCHIVE: &str = "This file is not a valid archive or is damaged.";
+pub const INVALID_ARCHIVE: &str = "This file is not a valid archive or is damaged.";
 
-pub(crate) const ARCHIVE_UNSUPPORTED_MESSAGE: &str =
+pub const ARCHIVE_UNSUPPORTED_MESSAGE: &str =
     "This archive format is not supported for preview.";
 
-pub(crate) const ARCHIVE_PREVIEW_FAILED_MESSAGE: &str = "Preview couldn't be completed. Try again.";
+pub const ARCHIVE_PREVIEW_FAILED_MESSAGE: &str = "Preview couldn't be completed. Try again.";
 
-pub(crate) const MAX_ARCHIVE_ENTRIES: usize = 20_000;
-pub(crate) const MAX_TAR_GZ_COMPRESSED_BYTES: u64 = 1024 * 1024 * 1024;
-pub(crate) const MAX_TAR_GZ_DECOMPRESSED_BYTES: u64 = 1024 * 1024 * 1024;
-pub(crate) const ARCHIVE_TOO_LARGE_MESSAGE: &str = "Archive too large to preview.";
+pub const MAX_ARCHIVE_ENTRIES: usize = 20_000;
+pub const MAX_TAR_GZ_COMPRESSED_BYTES: u64 = 1024 * 1024 * 1024;
+pub const MAX_TAR_GZ_DECOMPRESSED_BYTES: u64 = 1024 * 1024 * 1024;
+pub const ARCHIVE_TOO_LARGE_MESSAGE: &str = "Archive too large to preview.";
 
-pub(crate) const MAX_ARCHIVE_PASSWORD_BYTES: usize = 4096;
+pub const MAX_ARCHIVE_PASSWORD_BYTES: usize = 4096;
 
 const WIRE_OPEN: &str = "open";
 const WIRE_NEEDS_PASSWORD: &str = "needs-password";
@@ -38,14 +38,14 @@ const WIRE_TOO_LARGE: &str = "too-large";
 const WIRE_ERROR: &str = "error";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum ArchiveListingStatus {
+pub enum ArchiveListingStatus {
     Open,
     NeedsPassword,
     WrongPassword,
     Unsupported,
 }
 
-pub(crate) struct ArchiveListing {
+pub struct ArchiveListing {
     pub status: ArchiveListingStatus,
     pub entries: Vec<ArchiveFileEntry>,
 }
@@ -60,7 +60,7 @@ impl ArchiveListing {
 }
 
 /// Parses untrusted input with ambient authority; production callers must run inside the sandbox.
-pub(crate) fn list_archive_entries_direct(
+pub fn list_archive_entries_direct(
     archive_path: &Path,
     format: ArchiveFormat,
     password: Option<&str>,
@@ -443,7 +443,7 @@ fn collect_tar_members<'a, R: Read + 'a>(
     Ok(ArchiveListing::open(listed))
 }
 
-pub(crate) fn encode_archive_result(result: &Result<ArchiveListing, String>) -> Vec<u8> {
+pub fn encode_archive_result(result: &Result<ArchiveListing, String>) -> Vec<u8> {
     let (status, entries, message): (&str, &[ArchiveFileEntry], Option<&str>) = match result {
         Ok(listing) => (
             match listing.status {
@@ -560,11 +560,11 @@ fn decode_archive_payload(data: &[u8]) -> Result<ArchivePayload, String> {
     })
 }
 
-pub(crate) fn archive_payload_valid(data: &[u8]) -> bool {
+pub fn archive_payload_valid(data: &[u8]) -> bool {
     decode_archive_payload(data).is_ok()
 }
 
-pub(crate) fn decode_archive_listing(data: &[u8]) -> Result<ArchiveListing, String> {
+pub fn decode_archive_listing(data: &[u8]) -> Result<ArchiveListing, String> {
     let payload = decode_archive_payload(data)?;
     let mut budget = MemberNameBudget::default();
     for entry in &payload.entries {

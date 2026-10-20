@@ -72,16 +72,16 @@ pub struct PreviewRequest {
 /// A decode request, not a playable file. Only the sandbox may open `path`.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SandboxedMedia {
-    pub(crate) path: PathBuf,
-    pub(crate) size: MediaPreviewSize,
-    pub(crate) backend: crate::sandbox::MediaPreviewBackend,
-    pub(crate) input_owner: Option<PreviewInputLease>,
+    pub path: PathBuf,
+    pub size: MediaPreviewSize,
+    pub backend: crate::sandbox::MediaPreviewBackend,
+    pub input_owner: Option<PreviewInputLease>,
     /// Audio-name hint: skip attached pictures, but preserve any real video found by the probe.
-    pub(crate) audio_only: bool,
+    pub audio_only: bool,
 }
 
 impl SandboxedMedia {
-    pub(crate) fn retain_input(mut self, owner: impl Send + Sync + 'static) -> Self {
+    pub fn retain_input(mut self, owner: impl Send + Sync + 'static) -> Self {
         self.input_owner = Some(PreviewInputLease(std::sync::Arc::new(owner)));
         self
     }
@@ -89,7 +89,7 @@ impl SandboxedMedia {
 
 /// Keeps a staged source alive across player clones, seeks, and worker teardown.
 #[derive(Clone)]
-pub(crate) struct PreviewInputLease(std::sync::Arc<dyn Send + Sync>);
+pub struct PreviewInputLease(std::sync::Arc<dyn Send + Sync>);
 
 impl std::fmt::Debug for PreviewInputLease {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -163,7 +163,7 @@ pub struct Preview {
     pub content: PreviewContent,
 }
 
-pub(crate) const INCORRECT_ARCHIVE_PASSWORD: &str = "The password is incorrect.";
+pub const INCORRECT_ARCHIVE_PASSWORD: &str = "The password is incorrect.";
 
 #[derive(Clone, Debug)]
 pub enum PreviewEvent {
@@ -208,9 +208,9 @@ pub trait PreviewProvider {
 }
 
 /// Leading bytes read to decide a local file's preview family.
-pub(crate) const CONTENT_SAMPLE_BYTES: usize = 8 * 1024;
+pub const CONTENT_SAMPLE_BYTES: usize = 8 * 1024;
 
-pub(crate) fn guess_content_type(path: &Path) -> (String, bool) {
+pub fn guess_content_type(path: &Path) -> (String, bool) {
     let (guessed, uncertain) = gio::content_type_guess(Some(path), None::<&[u8]>);
     if !guessed.starts_with("image/") && crate::sandbox::raw_metadata::is_raw(path) {
         return ("image/x-dcraw".to_owned(), false);
@@ -222,16 +222,16 @@ fn content_type_for_path(path: &Path) -> String {
     guess_content_type(path).0
 }
 
-pub(crate) fn is_image_path(path: &Path) -> bool {
+pub fn is_image_path(path: &Path) -> bool {
     content_type_for_path(path).starts_with("image/")
 }
 
-pub(crate) fn is_media_path(path: &Path) -> bool {
+pub fn is_media_path(path: &Path) -> bool {
     let content_type = content_type_for_path(path);
     content_type.starts_with("audio/") || content_type.starts_with("video/")
 }
 
-pub(crate) fn read_head_sample(path: &Path) -> Option<Vec<u8>> {
+pub fn read_head_sample(path: &Path) -> Option<Vec<u8>> {
     use std::io::Read;
     let file = std::fs::File::open(path).ok()?;
     let mut sample = Vec::with_capacity(CONTENT_SAMPLE_BYTES);
@@ -243,7 +243,7 @@ pub(crate) fn read_head_sample(path: &Path) -> Option<Vec<u8>> {
 
 /// Whether a local file's leading bytes still back the visual family its name claims,
 /// so metadata probes skip source files that merely share a media extension.
-pub(crate) fn bytes_support_named_family(path: &Path) -> bool {
+pub fn bytes_support_named_family(path: &Path) -> bool {
     let Some(sample) = read_head_sample(path) else {
         return true;
     };
@@ -256,7 +256,7 @@ pub(crate) fn bytes_support_named_family(path: &Path) -> bool {
 /// Text is NUL-free and either valid UTF-8 (allowing a sequence cut by the sample
 /// boundary) or a legacy single-byte encoding with few control bytes; UTF-16 announces
 /// itself with a byte-order mark.
-pub(crate) fn looks_like_text(sample: &[u8]) -> bool {
+pub fn looks_like_text(sample: &[u8]) -> bool {
     if sample.starts_with(&[0xFF, 0xFE]) || sample.starts_with(&[0xFE, 0xFF]) {
         return true;
     }
@@ -290,7 +290,7 @@ fn same_family(left: &PreviewContent, right: &PreviewContent) -> bool {
 /// handed to a media or image decoder and binary data is never shown as text. Visual
 /// families survive only when the bytes carry their signature, or for XML-based images
 /// such as SVG whose source is legitimately text.
-pub(crate) fn reconcile_with_sample(
+pub fn reconcile_with_sample(
     content_type: &mut String,
     content: &mut PreviewContent,
     sample: &[u8],
@@ -338,25 +338,25 @@ pub(crate) fn reconcile_with_sample(
     }
 }
 
-pub(crate) fn supports_remote_video(name: &OsStr) -> bool {
+pub fn supports_remote_video(name: &OsStr) -> bool {
     Path::new(name)
         .extension()
         .and_then(OsStr::to_str)
         .is_some_and(|extension| matches!(extension.to_ascii_lowercase().as_str(), "mov" | "mp4"))
 }
 
-pub(crate) fn is_model(name: &OsStr) -> bool {
+pub fn is_model(name: &OsStr) -> bool {
     super::ModelFormat::for_name(name).is_some()
 }
 
-pub(crate) fn has_plain_text_extension(name: &OsStr) -> bool {
+pub fn has_plain_text_extension(name: &OsStr) -> bool {
     Path::new(name)
         .extension()
         .and_then(OsStr::to_str)
         .is_some_and(|extension| matches!(extension.to_ascii_lowercase().as_str(), "conf" | "ini"))
 }
 
-pub(crate) fn normalize_preview_text(text: &str) -> Cow<'_, str> {
+pub fn normalize_preview_text(text: &str) -> Cow<'_, str> {
     if text.contains('\0') {
         Cow::Owned(text.replace('\0', "\u{FFFD}"))
     } else {
@@ -364,19 +364,19 @@ pub(crate) fn normalize_preview_text(text: &str) -> Cow<'_, str> {
     }
 }
 
-pub(crate) fn is_extensionless_dotfile(name: &OsStr) -> bool {
+pub fn is_extensionless_dotfile(name: &OsStr) -> bool {
     let bytes = name.as_encoded_bytes();
     bytes.len() > 1 && bytes.starts_with(b".") && Path::new(name).extension().is_none()
 }
 
-pub(crate) fn is_non_executable_extensionless_dotfile(
+pub fn is_non_executable_extensionless_dotfile(
     name: &OsStr,
     unix_mode: Option<u32>,
 ) -> bool {
     is_extensionless_dotfile(name) && unix_mode.is_some_and(|mode| mode & 0o111 == 0)
 }
 
-pub(crate) fn content_family(content_type: &str) -> PreviewContent {
+pub fn content_family(content_type: &str) -> PreviewContent {
     if content_type == "application/pdf" {
         PreviewContent::Pdf {
             png: Vec::new(),
@@ -462,7 +462,7 @@ pub struct ArchivePreviewTree {
 
 /// Keep dots and backslashes literal; collapse empty slash components for virtual navigation.
 /// The listing budget must use the same split to bound synthesized directory nodes.
-pub(crate) fn split_archive_name(name: &str) -> Vec<&str> {
+pub fn split_archive_name(name: &str) -> Vec<&str> {
     name.split('/')
         .filter(|segment| !segment.is_empty())
         .collect()
@@ -624,7 +624,7 @@ pub fn archive_preview_tree(entries: Vec<ArchiveFileEntry>) -> ArchivePreviewTre
     }
 }
 
-pub(crate) fn archive_preview_format(name: &OsStr) -> Option<ArchiveFormat> {
+pub fn archive_preview_format(name: &OsStr) -> Option<ArchiveFormat> {
     match ArchiveFormat::from_extension(&name.to_string_lossy()) {
         Some(
             format @ (ArchiveFormat::Zip

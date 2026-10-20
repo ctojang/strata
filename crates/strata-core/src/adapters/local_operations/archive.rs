@@ -12,8 +12,8 @@ mod extraction;
 mod listing;
 
 #[cfg(test)]
-pub(crate) use listing::ArchiveListing;
-pub(crate) use listing::{
+pub use listing::ArchiveListing;
+pub use listing::{
     ARCHIVE_PREVIEW_FAILED_MESSAGE, ARCHIVE_TOO_LARGE_MESSAGE, ARCHIVE_UNSUPPORTED_MESSAGE,
     ArchiveListingStatus, INVALID_ARCHIVE, MAX_ARCHIVE_PASSWORD_BYTES, archive_payload_valid,
     decode_archive_listing, encode_archive_result, list_archive_entries_direct,
@@ -22,7 +22,7 @@ pub(crate) use listing::{
 #[cfg(test)]
 mod fixtures;
 #[cfg(test)]
-pub(crate) use fixtures::write_compression_fixture;
+pub use fixtures::write_compression_fixture;
 #[cfg(test)]
 mod tests;
 
@@ -397,9 +397,9 @@ pub(super) fn extract(request: ExtractRequest, emit: Rc<dyn Fn(OperationEvent)>)
     })
 }
 
-pub(crate) const PASSWORD_REQUIRED: &str = "A password is required to extract this archive.";
+pub const PASSWORD_REQUIRED: &str = "A password is required to extract this archive.";
 /// 7z/RAR and failed decryption checks cannot always distinguish damage from a bad password.
-pub(crate) const MAYBE_BAD_PASSWORD: &str = "The password may be incorrect.";
+pub const MAYBE_BAD_PASSWORD: &str = "The password may be incorrect.";
 
 /// Byte size of the reusable read/write buffer used by [`copy_with_big_buf`].
 const COPY_BUF: usize = 1 << 20;

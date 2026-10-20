@@ -17,7 +17,7 @@ use crate::{
 
 use super::*;
 
-pub(crate) const MAX_WORKERS: usize = 4;
+pub const MAX_WORKERS: usize = 4;
 const QUEUED_PACKETS: usize = 3;
 static ACTIVE_WORKERS: AtomicUsize = AtomicUsize::new(0);
 
@@ -44,13 +44,13 @@ impl Drop for WorkerSlot {
     }
 }
 
-pub(crate) enum Event {
+pub enum Event {
     Prepared(Header),
     Packet(Packet),
     Failed(String),
 }
 
-pub(crate) struct Session {
+pub struct Session {
     cancellation: Cancellation,
     receiver: mpsc::Receiver<Event>,
     worker: thread::JoinHandle<()>,
@@ -242,7 +242,7 @@ fn consume(
     }
 }
 
-pub(crate) enum PeaksEvent {
+pub enum PeaksEvent {
     Levels { start: u32, levels: Vec<u8> },
     Finished,
     Failed,
@@ -270,7 +270,7 @@ impl Drop for BackgroundSlot {
 }
 
 /// A background waveform-overview decode. Dropping it cancels the sandbox.
-pub(crate) struct PeaksSession {
+pub struct PeaksSession {
     cancellation: Cancellation,
     receiver: mpsc::Receiver<PeaksEvent>,
 }
@@ -369,7 +369,7 @@ fn consume_peaks(
     Ok(())
 }
 
-pub(crate) enum StoryboardEvent {
+pub enum StoryboardEvent {
     Sheet(crate::media::storyboard::Sheet),
     Cell { index: u32, pixels: Vec<u8> },
     Finished,
@@ -377,7 +377,7 @@ pub(crate) enum StoryboardEvent {
 }
 
 /// A background keyframe storyboard decode. Dropping it cancels the sandbox.
-pub(crate) struct StoryboardSession {
+pub struct StoryboardSession {
     cancellation: Cancellation,
     receiver: mpsc::Receiver<StoryboardEvent>,
 }
@@ -485,4 +485,4 @@ fn consume_storyboard(
 }
 
 #[cfg(test)]
-pub(crate) mod tests;
+pub mod tests;

@@ -22,7 +22,7 @@ thread_local! {
     static ACTIVE: RefCell<HashMap<String, Vec<Weak<Completion>>>> = RefCell::new(HashMap::new());
 }
 
-pub(crate) struct PreviewTurn {
+pub struct PreviewTurn {
     root: String,
     completion: Rc<Completion>,
 }
@@ -56,7 +56,7 @@ fn root_uri(uri: &str) -> String {
     file.uri().to_string()
 }
 
-pub(crate) fn begin(uri: &str) -> PreviewTurn {
+pub fn begin(uri: &str) -> PreviewTurn {
     let root = root_uri(uri);
     let completion = Rc::new(RefCell::new(Vec::new()));
     ACTIVE.with(|active| {
@@ -69,7 +69,7 @@ pub(crate) fn begin(uri: &str) -> PreviewTurn {
     PreviewTurn { root, completion }
 }
 
-pub(crate) async fn yield_after_batch(location: &Location) {
+pub async fn yield_after_batch(location: &Location) {
     let Some(uri) = location
         .uri_value()
         .filter(|_| location.backend_name() == "gphoto2")

@@ -2,7 +2,7 @@
 
 #![cfg(test)]
 
-pub(crate) mod operations;
+pub mod operations;
 
 use std::{
     io::Write,
@@ -11,14 +11,14 @@ use std::{
 
 use tracing_subscriber::fmt::MakeWriter;
 
-pub(crate) struct TestMutex(Mutex<()>);
+pub struct TestMutex(Mutex<()>);
 
 impl TestMutex {
-    pub(crate) const fn new() -> Self {
+    pub const fn new() -> Self {
         Self(Mutex::new(()))
     }
 
-    pub(crate) fn lock(&self) -> LockResult<MutexGuard<'_, ()>> {
+    pub fn lock(&self) -> LockResult<MutexGuard<'_, ()>> {
         match self.0.lock() {
             Ok(guard) => Ok(guard),
             Err(error) => {
@@ -35,12 +35,12 @@ impl TestMutex {
 /// separate locks each covering only their own module's tests do not prevent a test in one
 /// module from racing a test in another, since neither knows about the other's lock. Poisoning is
 /// cleared because the mutex protects no state and should not turn one failure into a cascade.
-pub(crate) static ASYNC_MAIN_CONTEXT_DEFAULT: TestMutex = TestMutex::new();
+pub static ASYNC_MAIN_CONTEXT_DEFAULT: TestMutex = TestMutex::new();
 
 #[derive(Clone, Default)]
-pub(crate) struct LogWriter(Arc<Mutex<Vec<u8>>>);
+pub struct LogWriter(Arc<Mutex<Vec<u8>>>);
 
-pub(crate) struct LogWriterGuard<'a>(MutexGuard<'a, Vec<u8>>);
+pub struct LogWriterGuard<'a>(MutexGuard<'a, Vec<u8>>);
 
 impl Write for LogWriterGuard<'_> {
     fn write(&mut self, buffer: &[u8]) -> std::io::Result<usize> {
@@ -83,7 +83,7 @@ fn install_global_sink() {
     });
 }
 
-pub(crate) fn capture_logs(action: impl FnOnce()) -> String {
+pub fn capture_logs(action: impl FnOnce()) -> String {
     install_global_sink();
     let _guard = LOG_CAPTURE.lock();
     let writer = LogWriter::default();
@@ -97,14 +97,14 @@ pub(crate) fn capture_logs(action: impl FnOnce()) -> String {
     writer.output()
 }
 
-pub(crate) fn captured_event<'a>(output: &'a str, message: &str) -> &'a str {
+pub fn captured_event<'a>(output: &'a str, message: &str) -> &'a str {
     output
         .lines()
         .find(|line| line.contains(message))
         .unwrap_or_else(|| panic!("missing {message:?} event in:\n{output}"))
 }
 
-pub(crate) fn texture_has_visible_pixels(texture: &gtk::gdk::Texture) -> bool {
+pub fn texture_has_visible_pixels(texture: &gtk::gdk::Texture) -> bool {
     use gtk::prelude::*;
     let stride = texture.width() as usize * 4;
     let mut pixels = vec![0; stride * texture.height() as usize];
@@ -124,7 +124,7 @@ fn in_isolated_child(name: &str) -> bool {
 
 /// GLib caches XDG directories and owns one default main context per process, so each test runs
 /// in its own process.
-pub(crate) fn main_context_test(name: &str, run: impl FnOnce()) {
+pub fn main_context_test(name: &str, run: impl FnOnce()) {
     if in_isolated_child(name) {
         let context = glib::MainContext::default();
         let _owner = context.acquire().expect("default main context");
@@ -135,11 +135,11 @@ pub(crate) fn main_context_test(name: &str, run: impl FnOnce()) {
 }
 
 /// GTK initialization is thread-affine; each UI test gets a process and disposable preferences.
-pub(crate) fn gtk_test(name: &str, run: impl FnOnce()) {
+pub fn gtk_test(name: &str, run: impl FnOnce()) {
     gtk_test_with_env(name, std::iter::empty::<(&str, &std::ffi::OsStr)>(), run);
 }
 
-pub(crate) fn gtk_test_with_env(
+pub fn gtk_test_with_env(
     name: &str,
     extra_env: impl IntoIterator<Item = (impl AsRef<std::ffi::OsStr>, impl AsRef<std::ffi::OsStr>)>,
     run: impl FnOnce(),
@@ -189,7 +189,7 @@ fn run_isolated(name: &str, extra_env: Vec<(std::ffi::OsString, std::ffi::OsStri
     assert!(status.success(), "{name} failed");
 }
 
-pub(crate) fn distinct_device_dirs(name: &str) -> Option<(tempfile::TempDir, tempfile::TempDir)> {
+pub fn distinct_device_dirs(name: &str) -> Option<(tempfile::TempDir, tempfile::TempDir)> {
     use std::os::unix::fs::MetadataExt;
     let dirs = (|| {
         let first = tempfile::tempdir().ok()?;

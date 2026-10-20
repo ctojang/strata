@@ -129,7 +129,7 @@ pub(super) fn compression_stage_mode(destination: &Path) -> Result<u32, Box<dyn 
     Ok(fs::metadata(destination.join(name))?.permissions().mode() & 0o777)
 }
 
-pub(crate) fn write_compression_fixture(
+pub fn write_compression_fixture(
     path: &Path,
     entries: &[PathBuf],
     format: ArchiveFormat,

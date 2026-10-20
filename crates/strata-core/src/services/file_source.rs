@@ -122,7 +122,7 @@ impl LocationValidationError {
 
 /// Localized text for an I/O failure. An unrecognized OS error gets a generic reason and its
 /// system text is logged; errors built by Strata or a library keep their own message.
-pub(crate) fn io_error_message(error: &std::io::Error) -> String {
+pub fn io_error_message(error: &std::io::Error) -> String {
     if let Some(link) = error
         .get_ref()
         .and_then(|inner| inner.downcast_ref::<crate::storage::DestinationError>())
@@ -141,15 +141,15 @@ pub(crate) fn io_error_message(error: &std::io::Error) -> String {
 
 const UNEXPECTED_SYSTEM_ERROR: &str = "An unexpected system error occurred";
 
-pub(crate) const INVALID_NAME_REASON: &str = "The name isn\u{2019}t valid at this location";
+pub const INVALID_NAME_REASON: &str = "The name isn\u{2019}t valid at this location";
 
 /// [`io_error_message`] for the `%{error}` slot after a colon; see [`error_detail`].
-pub(crate) fn io_error_detail(error: &std::io::Error) -> String {
+pub fn io_error_detail(error: &std::io::Error) -> String {
     error_detail(io_error_message(error))
 }
 
 /// The English catalog message for a recognized I/O failure.
-pub(crate) fn io_error_reason(error: &std::io::Error) -> Option<&'static str> {
+pub fn io_error_reason(error: &std::io::Error) -> Option<&'static str> {
     use std::io::ErrorKind;
     // These errnos have no stable `ErrorKind`.
     match error.raw_os_error() {
@@ -187,7 +187,7 @@ pub(crate) fn io_error_reason(error: &std::io::Error) -> Option<&'static str> {
 }
 
 /// System text without the errno suffix or a tempfile path, which can name internal staging files.
-pub(crate) fn system_error_text(error: &std::io::Error) -> String {
+pub fn system_error_text(error: &std::io::Error) -> String {
     let text = error.to_string();
     let text = match error.get_ref() {
         Some(_) => text
@@ -202,7 +202,7 @@ pub(crate) fn system_error_text(error: &std::io::Error) -> String {
 }
 
 /// Localized text for common GIO failures; other errors keep GIO's description.
-pub(crate) fn gio_error_message(error: &glib::Error) -> String {
+pub fn gio_error_message(error: &glib::Error) -> String {
     use gio::IOErrorEnum;
     let message = match error.kind::<IOErrorEnum>() {
         Some(IOErrorEnum::NotFound) => "No such file or folder",
@@ -229,14 +229,14 @@ pub(crate) fn gio_error_message(error: &glib::Error) -> String {
 }
 
 /// [`gio_error_message`] for the `%{error}` slot after a colon; see [`error_detail`].
-pub(crate) fn gio_error_detail(error: &glib::Error) -> String {
+pub fn gio_error_detail(error: &glib::Error) -> String {
     error_detail(gio_error_message(error))
 }
 
 /// Adapts a standalone, capitalized error reason for a `…: %{error}` slot. French, Spanish,
 /// Italian, Portuguese, Russian and Vietnamese continue in lower case after a colon; German
 /// capitalizes nouns, and English and CJK keep the text as is.
-pub(crate) fn error_detail(text: String) -> String {
+pub fn error_detail(text: String) -> String {
     error_detail_in(&rust_i18n::locale(), text)
 }
 
@@ -344,7 +344,7 @@ pub fn sanitize_uri_credentials(
 }
 
 /// Removes URI user-info, query and fragment from backend failure text before display or logging.
-pub(crate) fn sanitize_failure_message(message: &str) -> String {
+pub fn sanitize_failure_message(message: &str) -> String {
     message
         .split_inclusive(char::is_whitespace)
         .map(|token| {

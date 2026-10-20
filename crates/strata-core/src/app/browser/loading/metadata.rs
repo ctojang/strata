@@ -14,7 +14,7 @@ use super::super::{Browser, BrowserEvent, SortFill};
 mod tests;
 
 impl Browser {
-    pub(crate) fn apply_thumbnail_metadata(
+    pub fn apply_thumbnail_metadata(
         &self,
         depth: usize,
         position: usize,

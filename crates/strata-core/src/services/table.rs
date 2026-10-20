@@ -9,18 +9,18 @@ use crate::sandbox::Cancellation;
 
 use super::document::{Document, DocumentBlock, DocumentTableCell, ParsedDocument};
 
-pub(crate) const WORKBOOK_BYTE_LIMIT: u64 = 20 * 1024 * 1024;
+pub const WORKBOOK_BYTE_LIMIT: u64 = 20 * 1024 * 1024;
 const TABLE_TEXT_LIMIT: usize = 4 * 1024 * 1024;
 const TABLE_VALUE_LIMIT: usize = 100_000;
-pub(crate) const TABLE_COLUMN_LIMIT: usize = 256;
+pub const TABLE_COLUMN_LIMIT: usize = 256;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct TableData {
+pub struct TableData {
     pub rows: Vec<Vec<String>>,
     pub truncated: bool,
 }
 
-pub(crate) fn is_workbook(content_type: &str, name: &OsStr) -> bool {
+pub fn is_workbook(content_type: &str, name: &OsStr) -> bool {
     if Path::new(name)
         .extension()
         .and_then(OsStr::to_str)
@@ -40,7 +40,7 @@ pub(crate) fn is_workbook(content_type: &str, name: &OsStr) -> bool {
 }
 
 impl TableData {
-    pub(crate) fn into_document(self) -> ParsedDocument {
+    pub fn into_document(self) -> ParsedDocument {
         let warnings = if self.truncated {
             vec!["Table preview reached its text, column, or value budget; open the file to see all data.".into()]
         } else {
@@ -67,7 +67,7 @@ impl TableData {
         }
     }
 
-    pub(crate) fn from_json(bytes: &[u8]) -> Result<Self, String> {
+    pub fn from_json(bytes: &[u8]) -> Result<Self, String> {
         let data: Self = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
         let mut values = 0usize;
         let mut text = 0usize;
@@ -87,7 +87,7 @@ impl TableData {
     }
 }
 
-pub(crate) fn parse_delimited(
+pub fn parse_delimited(
     source: &str,
     delimiter: u8,
     cancellation: &Cancellation,
@@ -155,7 +155,7 @@ fn push_row(
 
 // Called only by the resource-limited sandbox helper: obtaining a calamine range
 // may decompress and allocate the entire worksheet before output budgets apply.
-pub(crate) fn read_workbook(path: &Path) -> Result<TableData, String> {
+pub fn read_workbook(path: &Path) -> Result<TableData, String> {
     if std::fs::metadata(path).map_err(|e| e.to_string())?.len() > WORKBOOK_BYTE_LIMIT {
         return Err("Workbook is too large to preview safely".into());
     }

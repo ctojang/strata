@@ -20,7 +20,7 @@ use super::{
     path_match::{self, Frecency, PathMatcher, PathQuery, TextScore},
 };
 
-pub(crate) const RESULT_LIMIT: usize = 100;
+pub const RESULT_LIMIT: usize = 100;
 const PUBLISH_INTERVAL: Duration = Duration::from_millis(50);
 /// The shortest gap between the starts of two rescans of one index for outside changes.
 const MIN_REFRESH_INTERVAL: Duration = Duration::from_secs(1);
@@ -122,7 +122,7 @@ pub struct SearchItem {
 
 impl SearchItem {
     #[cfg(test)]
-    pub(crate) fn for_test(path: PathBuf, is_directory: bool) -> Self {
+    pub fn for_test(path: PathBuf, is_directory: bool) -> Self {
         Self::new(
             path.clone(),
             path.parent().unwrap_or(Path::new("/")),
@@ -432,22 +432,22 @@ impl SharedIndex {
 }
 
 mod directory;
-pub(crate) mod exclusions;
+pub mod exclusions;
 mod pattern;
 
-pub(crate) use exclusions::SearchExclusions;
-pub(crate) use pattern::{filter_name_matches, filter_query_allows_typos};
+pub use exclusions::SearchExclusions;
+pub use pattern::{filter_name_matches, filter_query_allows_typos};
 
 type NameScorer = fn(&SearchItem, &str) -> Option<i64>;
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub(crate) struct RefusedFolders {
-    pub(crate) trees: Vec<PathBuf>,
-    pub(crate) folder: Option<PathBuf>,
+pub struct RefusedFolders {
+    pub trees: Vec<PathBuf>,
+    pub folder: Option<PathBuf>,
 }
 
 impl RefusedFolders {
-    pub(crate) fn refuses(&self, path: &Path) -> bool {
+    pub fn refuses(&self, path: &Path) -> bool {
         self.folder.as_deref() == Some(path) || self.trees.iter().any(|tree| path.starts_with(tree))
     }
 }
@@ -552,7 +552,7 @@ impl SearchHandle {
         self.query_candidates(query, RESULT_LIMIT);
     }
 
-    pub(crate) fn query_candidates(&self, query: &str, limit: usize) {
+    pub fn query_candidates(&self, query: &str, limit: usize) {
         let _sent = self.commands.send(SearchCommand::Query(
             query.trim().to_owned(),
             limit.clamp(1, MAX_INDEX_ENTRIES),
@@ -562,7 +562,7 @@ impl SearchHandle {
 
 impl SearchHandle {
     #[cfg(test)]
-    pub(crate) fn shares_index_with(&self, other: &Self) -> bool {
+    pub fn shares_index_with(&self, other: &Self) -> bool {
         Arc::ptr_eq(&self.index, &other.index)
     }
 }
@@ -713,12 +713,12 @@ fn index_scoped(
     start_search_session(index, scorer)
 }
 
-pub(crate) fn refresh_search_indexes_for_rename(from: &Path, to: &Path) {
+pub fn refresh_search_indexes_for_rename(from: &Path, to: &Path) {
     rebase_search_indexes(from, to, RenameScope::Related);
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum RenameScope {
+pub enum RenameScope {
     /// Every index with a root at, above or below either path.
     Related,
     /// Only indexes with a root at or below `from`, which move to `to`. Callers rescan
@@ -726,7 +726,7 @@ pub(crate) enum RenameScope {
     Moved,
 }
 
-pub(crate) fn rebase_search_indexes(from: &Path, to: &Path, scope: RenameScope) {
+pub fn rebase_search_indexes(from: &Path, to: &Path, scope: RenameScope) {
     let Some(registry) = SHARED_INDEXES.get() else {
         return;
     };
@@ -773,7 +773,7 @@ pub(crate) fn rebase_search_indexes(from: &Path, to: &Path, scope: RenameScope) 
 }
 
 /// Rescans, coalescing, every live index whose walk lists the entries of `directory`.
-pub(crate) fn refresh_search_indexes_for_directory(directory: &Path) {
+pub fn refresh_search_indexes_for_directory(directory: &Path) {
     let Some(registry) = SHARED_INDEXES.get() else {
         return;
     };
@@ -1060,7 +1060,7 @@ fn index_trees_with_scheduler_budget_and_exclusions(
 }
 
 #[cfg(test)]
-pub(crate) fn index_trees_with_budget_and_exclusions(
+pub fn index_trees_with_budget_and_exclusions(
     roots: Vec<PathBuf>,
     show_hidden: bool,
     max_entries: usize,

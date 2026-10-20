@@ -317,7 +317,7 @@ fn info_mode(info: &gio::FileInfo) -> MetadataValue<u32> {
     }
 }
 
-pub(crate) async fn query_file_entry(location: Location) -> Result<FileEntry, glib::Error> {
+pub async fn query_file_entry(location: Location) -> Result<FileEntry, glib::Error> {
     let info = gio_file_for_location(&location)
         .query_info_future(
             FULL_ATTRIBUTES,
@@ -1018,12 +1018,12 @@ impl RecentRemovalBackend for GioRecentRemovalBackend {
 }
 
 #[derive(Clone, Default)]
-pub(crate) struct RecentRemovalState {
+pub struct RecentRemovalState {
     in_flight: Rc<RefCell<HashSet<String>>>,
 }
 
 impl RecentRemovalState {
-    pub(crate) fn new() -> Self {
+    pub fn new() -> Self {
         Self::default()
     }
 }
@@ -1060,7 +1060,7 @@ fn recent_remove_entries_with_backend(
     }
 }
 
-pub(crate) fn recent_remove_entries(
+pub fn recent_remove_entries(
     state: &RecentRemovalState,
     uris: impl IntoIterator<Item = String>,
 ) {

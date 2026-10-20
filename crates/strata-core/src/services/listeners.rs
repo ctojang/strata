@@ -13,7 +13,7 @@ struct ListenerEntry<T> {
     callback: T,
 }
 
-pub(crate) struct Listeners<T> {
+pub struct Listeners<T> {
     entries: RefCell<Vec<ListenerEntry<T>>>,
     next_id: Cell<u64>,
 }
@@ -28,11 +28,11 @@ impl<T> Default for Listeners<T> {
 }
 
 impl<T> Listeners<T> {
-    pub(crate) fn new() -> Self {
+    pub fn new() -> Self {
         Self::default()
     }
 
-    pub(crate) fn add(self: &Rc<Self>, callback: T) -> ListenerGuard<T> {
+    pub fn add(self: &Rc<Self>, callback: T) -> ListenerGuard<T> {
         let id = self.next_id.get().wrapping_add(1);
         self.next_id.set(id);
         self.entries
@@ -45,12 +45,12 @@ impl<T> Listeners<T> {
     }
 
     #[cfg(test)]
-    pub(crate) fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> bool {
         self.entries.borrow().is_empty()
     }
 
     // Callbacks may unsubscribe themselves; release the borrow before dispatch.
-    pub(crate) fn notify(&self, run: impl Fn(&T))
+    pub fn notify(&self, run: impl Fn(&T))
     where
         T: Clone,
     {
@@ -66,7 +66,7 @@ impl<T> Listeners<T> {
     }
 }
 
-pub(crate) struct ListenerGuard<T> {
+pub struct ListenerGuard<T> {
     id: u64,
     listeners: Weak<Listeners<T>>,
 }

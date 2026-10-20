@@ -23,11 +23,11 @@ const GDK_PIXBUF_MODULE_FILE_VARIABLE: &str = "STRATA_SANDBOX_GDK_PIXBUF_MODULE_
 const ALLOWED_RUNTIME_ROOTS: &[&str] = &["/usr", "/nix/store", "/gnu/store"];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct Runtime {
-    pub(crate) path: String,
-    pub(crate) root: String,
-    pub(crate) prlimit: String,
-    pub(crate) gdk_pixbuf_module_file: Option<String>,
+pub struct Runtime {
+    pub path: String,
+    pub root: String,
+    pub prlimit: String,
+    pub gdk_pixbuf_module_file: Option<String>,
 }
 
 impl Runtime {
@@ -47,7 +47,7 @@ impl Runtime {
         }
     }
 
-    pub(crate) fn tool_directories(&self) -> impl Iterator<Item = &Path> {
+    pub fn tool_directories(&self) -> impl Iterator<Item = &Path> {
         self.path
             .split(':')
             .filter(|directory| !directory.is_empty())
@@ -55,7 +55,7 @@ impl Runtime {
     }
 }
 
-pub(crate) fn current() -> &'static Runtime {
+pub fn current() -> &'static Runtime {
     static RUNTIME: OnceLock<Runtime> = OnceLock::new();
     RUNTIME.get_or_init(|| resolve(|name| std::env::var_os(name)))
 }

@@ -11,12 +11,12 @@ use rustix::fs::{Mode, OFlags, ResolveFlags, openat2};
 use super::DocumentMedia;
 use crate::sandbox::{self, Cancellation, MediaPreviewBackend, ParseOperation};
 
-pub(crate) const IMAGE_INPUT_LIMIT: u64 = 8 * 1024 * 1024;
-pub(crate) const DIAGRAM_INPUT_LIMIT: usize = 16 * 1024;
-pub(crate) const MATH_INPUT_LIMIT: usize = 4096;
-pub(crate) const DOCUMENT_MEDIA_LIMIT: usize = 16;
+pub const IMAGE_INPUT_LIMIT: u64 = 8 * 1024 * 1024;
+pub const DIAGRAM_INPUT_LIMIT: usize = 16 * 1024;
+pub const MATH_INPUT_LIMIT: usize = 4096;
+pub const DOCUMENT_MEDIA_LIMIT: usize = 16;
 
-pub(crate) fn render(
+pub fn render(
     source: &DocumentMedia,
     document_path: Option<&Path>,
     cancellation: &Cancellation,

@@ -642,7 +642,7 @@ impl JobService {
             .map(Job::snapshot)
     }
 
-    pub(crate) fn observe(&self, callback: Rc<dyn Fn()>) -> ListenerGuard<Rc<dyn Fn()>> {
+    pub fn observe(&self, callback: Rc<dyn Fn()>) -> ListenerGuard<Rc<dyn Fn()>> {
         self.listeners.add(callback)
     }
 

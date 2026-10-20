@@ -138,8 +138,8 @@ mod typed_names;
 mod work_queue;
 
 #[cfg(test)]
-pub(crate) use archive::ArchiveListing;
-pub(crate) use archive::{
+pub use archive::ArchiveListing;
+pub use archive::{
     ARCHIVE_PREVIEW_FAILED_MESSAGE, ARCHIVE_TOO_LARGE_MESSAGE, ARCHIVE_UNSUPPORTED_MESSAGE,
     ArchiveListingStatus, INVALID_ARCHIVE, MAX_ARCHIVE_PASSWORD_BYTES, MAYBE_BAD_PASSWORD,
     PASSWORD_REQUIRED, archive_payload_valid, decode_archive_listing, encode_archive_result,
@@ -147,11 +147,11 @@ pub(crate) use archive::{
 };
 
 #[cfg(test)]
-pub(crate) use archive::write_compression_fixture;
+pub use archive::write_compression_fixture;
 #[cfg(test)]
-pub(crate) use tests::fs_quirks::{FsQuirks, Op as FsOp, Quirks};
-pub(crate) use transfer_targets::transfer_targets;
-pub(crate) use typed_names::refused_in as typed_name_refusal;
+pub use tests::fs_quirks::{FsQuirks, Op as FsOp, Quirks};
+pub use transfer_targets::transfer_targets;
+pub use typed_names::refused_in as typed_name_refusal;
 
 use std::{
     cell::{Cell, RefCell},
@@ -240,13 +240,13 @@ fn left_out(
 }
 
 #[derive(Clone, Debug)]
-pub(crate) struct MountFlushHint {
+pub struct MountFlushHint {
     pub root: PathBuf,
     pub removable: bool,
 }
 
 #[derive(Clone, Copy)]
-pub(crate) enum SyncDestination<'a> {
+pub enum SyncDestination<'a> {
     Local(&'a Path),
     #[cfg_attr(
         not(test),
@@ -278,7 +278,7 @@ fn device_flush_failure(error: &str) -> String {
     .into_owned()
 }
 
-pub(crate) fn sync_filesystem(root: &Path) -> io::Result<()> {
+pub fn sync_filesystem(root: &Path) -> io::Result<()> {
     let handle = fs()
         .open_path(
             root.as_os_str(),
@@ -293,7 +293,7 @@ pub(crate) fn sync_filesystem(root: &Path) -> io::Result<()> {
     Ok(())
 }
 
-pub(crate) fn flush_filesystem(root: &Path) -> io::Result<()> {
+pub fn flush_filesystem(root: &Path) -> io::Result<()> {
     #[cfg(test)]
     if let Some(kind) = sync_probe_before(root) {
         return Err(io::Error::new(kind, "flush failed"));
@@ -328,12 +328,12 @@ mod sync_probe {
     static SYNC_OBSERVER: Mutex<Option<SyncObserver>> = Mutex::new(None);
 
     #[derive(Clone, Debug)]
-    pub(crate) struct SyncObservation {
+    pub struct SyncObservation {
         pub root: PathBuf,
         pub thread_id: thread::ThreadId,
     }
 
-    pub(crate) fn install_sync_probe(fail: Option<io::ErrorKind>, gate: bool) {
+    pub fn install_sync_probe(fail: Option<io::ErrorKind>, gate: bool) {
         let gate = gate.then(|| {
             Arc::new(SyncGate {
                 started: AtomicBool::new(false),
@@ -349,20 +349,20 @@ mod sync_probe {
         });
     }
 
-    pub(crate) fn clear_sync_probe() {
+    pub fn clear_sync_probe() {
         release_sync_probe();
         let mut slot = SYNC_PROBE.lock().unwrap_or_else(|error| error.into_inner());
         *slot = None;
     }
 
-    pub(crate) fn set_sync_observer(observer: Option<SyncObserver>) {
+    pub fn set_sync_observer(observer: Option<SyncObserver>) {
         let mut slot = SYNC_OBSERVER
             .lock()
             .unwrap_or_else(|error| error.into_inner());
         *slot = observer;
     }
 
-    pub(crate) fn release_sync_probe() {
+    pub fn release_sync_probe() {
         let gate = {
             let slot = SYNC_PROBE.lock().unwrap_or_else(|error| error.into_inner());
             slot.as_ref().and_then(|probe| probe.gate.clone())
@@ -378,19 +378,19 @@ mod sync_probe {
         gate.released_cv.notify_all();
     }
 
-    pub(crate) fn sync_probe_is_blocked() -> bool {
+    pub fn sync_probe_is_blocked() -> bool {
         let slot = SYNC_PROBE.lock().unwrap_or_else(|error| error.into_inner());
         slot.as_ref()
             .and_then(|probe| probe.gate.as_ref())
             .is_some_and(|gate| gate.started.load(Ordering::SeqCst))
     }
 
-    pub(crate) fn sync_probe_len() -> usize {
+    pub fn sync_probe_len() -> usize {
         let slot = SYNC_PROBE.lock().unwrap_or_else(|error| error.into_inner());
         slot.as_ref().map(|probe| probe.calls.len()).unwrap_or(0)
     }
 
-    pub(crate) fn sync_probe_observations() -> Vec<SyncObservation> {
+    pub fn sync_probe_observations() -> Vec<SyncObservation> {
         let slot = SYNC_PROBE.lock().unwrap_or_else(|error| error.into_inner());
         slot.as_ref()
             .map(|probe| probe.calls.clone())
@@ -434,7 +434,7 @@ mod sync_probe {
 #[cfg(test)]
 use sync_probe::sync_probe_before;
 #[cfg(test)]
-pub(crate) use sync_probe::{
+pub use sync_probe::{
     clear_sync_probe, install_sync_probe, release_sync_probe, set_sync_observer,
     sync_probe_is_blocked, sync_probe_len, sync_probe_observations,
 };
@@ -445,7 +445,7 @@ thread_local! {
 }
 
 #[cfg(test)]
-pub(crate) fn set_removable_roots_for_test(roots: Option<Vec<PathBuf>>) {
+pub fn set_removable_roots_for_test(roots: Option<Vec<PathBuf>>) {
     REMOVABLE_ROOTS_FOR_TEST.with(|slot| *slot.borrow_mut() = roots);
 }
 
@@ -464,7 +464,7 @@ fn removable_hints_for_test() -> Option<Vec<MountFlushHint>> {
     })
 }
 
-pub(crate) fn removable_sync_roots(
+pub fn removable_sync_roots(
     destinations: &[SyncDestination<'_>],
     hints: &[MountFlushHint],
 ) -> Vec<PathBuf> {
@@ -972,7 +972,7 @@ fn target_is_within_source(source: &gio::File, target: &gio::File) -> Option<boo
     Some(false)
 }
 
-pub(crate) fn transfer_source_name(source: &gio::File) -> Option<OsString> {
+pub fn transfer_source_name(source: &gio::File) -> Option<OsString> {
     crate::model::transfer_file_name(source)
 }
 

@@ -27,20 +27,20 @@ use crate::{
 };
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) struct TransferTarget {
+pub struct TransferTarget {
     pub name: Option<ShownName>,
     pub collision: Option<Collision>,
     pub fixes_inside: bool,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) struct Collision {
+pub struct Collision {
     pub mergeable: bool,
 }
 
 /// Nothing collides with a link the paste leaves out, as the destination is known not to hold
 /// links.
-pub(crate) async fn transfer_targets(
+pub async fn transfer_targets(
     destination: &Location,
     sources: &[Location],
     move_sources: bool,

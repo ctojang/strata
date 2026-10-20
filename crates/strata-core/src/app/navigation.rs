@@ -40,7 +40,7 @@ pub struct EntrySplice {
     pub entries: Vec<FileEntry>,
 }
 
-pub(crate) type EntrySpliceApplication = Option<(Vec<EntrySplice>, Option<usize>)>;
+pub type EntrySpliceApplication = Option<(Vec<EntrySplice>, Option<usize>)>;
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct ColumnEntryCounts {
@@ -2679,7 +2679,7 @@ fn merge_entries(
     (merged, insertions)
 }
 
-pub(crate) fn sort_entries(
+pub fn sort_entries(
     entries: Vec<FileEntry>,
     preferences: ViewPreferences,
 ) -> Vec<FileEntry> {
@@ -2939,7 +2939,7 @@ fn compare_entry_type_values(
     }
 }
 
-pub(crate) fn compare_display_names(left: &str, right: &str) -> Ordering {
+pub fn compare_display_names(left: &str, right: &str) -> Ordering {
     let left_folded = FoldedName::new(left);
     let right_folded = FoldedName::new(right);
     compare_with_folded(&left_folded, left, &right_folded, right)

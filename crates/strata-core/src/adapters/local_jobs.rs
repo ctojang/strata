@@ -55,19 +55,19 @@ const ENV_ACTION_ID: &str = "STRATA_ACTION_ID";
 const PYTHON_HELPER: &str = include_str!("../../data/actions/strata_actions.py");
 const PYTHON_HELPER_FILE: &str = "strata_actions.py";
 
-pub(crate) struct LocalActionRunner {
+pub struct LocalActionRunner {
     runtime_root: PathBuf,
 }
 
 impl LocalActionRunner {
-    pub(crate) fn new() -> Rc<Self> {
+    pub fn new() -> Rc<Self> {
         Rc::new(Self {
             runtime_root: runtime_root(),
         })
     }
 
     #[cfg(test)]
-    pub(crate) fn at(runtime_root: PathBuf) -> Rc<Self> {
+    pub fn at(runtime_root: PathBuf) -> Rc<Self> {
         Rc::new(Self { runtime_root })
     }
 }

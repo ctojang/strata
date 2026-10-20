@@ -13,7 +13,7 @@ use crate::model::EntryKind;
 
 const MAX_HIDDEN_FILE_BYTES: u64 = 1024 * 1024;
 
-pub(crate) fn native_kind(file_type: fs::FileType, path: &Path) -> EntryKind {
+pub fn native_kind(file_type: fs::FileType, path: &Path) -> EntryKind {
     if file_type.is_dir() {
         return EntryKind::Directory;
     }
@@ -26,7 +26,7 @@ pub(crate) fn native_kind(file_type: fs::FileType, path: &Path) -> EntryKind {
     symlink_kind(path)
 }
 
-pub(crate) fn symlink_kind(path: &Path) -> EntryKind {
+pub fn symlink_kind(path: &Path) -> EntryKind {
     match fs::metadata(path) {
         Ok(metadata) if metadata.is_dir() => EntryKind::DirectorySymbolicLink,
         Ok(metadata) if metadata.is_file() => EntryKind::FileSymbolicLink,
@@ -35,12 +35,12 @@ pub(crate) fn symlink_kind(path: &Path) -> EntryKind {
     }
 }
 
-pub(crate) fn is_hidden_name(native_name: &OsStr, hidden_names: &HashSet<OsString>) -> bool {
+pub fn is_hidden_name(native_name: &OsStr, hidden_names: &HashSet<OsString>) -> bool {
     native_name.as_encoded_bytes().first().copied() == Some(b'.')
         || hidden_names.contains(native_name)
 }
 
-pub(crate) fn native_hidden_names(path: &Path) -> HashSet<OsString> {
+pub fn native_hidden_names(path: &Path) -> HashSet<OsString> {
     let Some(bytes) = read_hidden_bounded(&path.join(".hidden")) else {
         return HashSet::new();
     };

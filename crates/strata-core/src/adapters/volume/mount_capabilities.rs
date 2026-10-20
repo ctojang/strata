@@ -10,7 +10,7 @@ use std::{collections::BTreeMap, ffi::OsStr, sync::Mutex, time::Duration};
 use super::{CoarseTimes, Family, FuseFormat, MountNames, Strictness};
 
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub(crate) enum MountKey {
+pub enum MountKey {
     Unique(u64),
     Mount {
         id: u64,
@@ -24,7 +24,7 @@ pub(crate) enum MountKey {
 }
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-pub(crate) struct MountCapabilities {
+pub struct MountCapabilities {
     pub no_replace: Option<bool>,
     pub exchange: Option<bool>,
     pub hard_links: Option<bool>,
@@ -50,7 +50,7 @@ pub(crate) struct MountCapabilities {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum XattrNamespace {
+pub enum XattrNamespace {
     User,
     Acl,
     Security,
@@ -59,7 +59,7 @@ pub(crate) enum XattrNamespace {
 }
 
 impl XattrNamespace {
-    pub(crate) fn of(name: &OsStr) -> Self {
+    pub fn of(name: &OsStr) -> Self {
         let name = name.as_encoded_bytes();
         if name.starts_with(b"user.") {
             Self::User
@@ -80,14 +80,14 @@ impl XattrNamespace {
 }
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-pub(crate) struct XattrNamespaces(u8);
+pub struct XattrNamespaces(u8);
 
 impl XattrNamespaces {
-    pub(crate) fn contains(self, namespace: XattrNamespace) -> bool {
+    pub fn contains(self, namespace: XattrNamespace) -> bool {
         self.0 & namespace.bit() != 0
     }
 
-    pub(crate) fn insert(&mut self, namespace: XattrNamespace) {
+    pub fn insert(&mut self, namespace: XattrNamespace) {
         self.0 |= namespace.bit();
     }
 }
@@ -100,15 +100,15 @@ fn capabilities() -> std::sync::MutexGuard<'static, BTreeMap<MountKey, MountCapa
         .unwrap_or_else(|error| error.into_inner())
 }
 
-pub(crate) fn mount_capabilities(key: MountKey) -> MountCapabilities {
+pub fn mount_capabilities(key: MountKey) -> MountCapabilities {
     capabilities().get(&key).copied().unwrap_or_default()
 }
 
-pub(crate) fn learn_mount_capability(key: MountKey, learn: impl FnOnce(&mut MountCapabilities)) {
+pub fn learn_mount_capability(key: MountKey, learn: impl FnOnce(&mut MountCapabilities)) {
     learn(capabilities().entry(key).or_default());
 }
 
-pub(crate) fn teach_mount_capability(
+pub fn teach_mount_capability(
     mount: MountKey,
     key: MountKey,
     learn: impl FnOnce(&mut MountCapabilities),
@@ -124,7 +124,7 @@ pub(crate) fn teach_mount_capability(
 
 /// Mount ids can be reused once a mount goes away, so a mount change drops
 /// everything learned from real mounts.
-pub(crate) fn forget_mount_capabilities() {
+pub fn forget_mount_capabilities() {
     capabilities().retain(|key, _| is_test_key(key));
 }
 
@@ -139,6 +139,6 @@ fn is_test_key(_: &MountKey) -> bool {
 }
 
 #[cfg(test)]
-pub(crate) fn forget_test_mount_capabilities(id: u64) {
+pub fn forget_test_mount_capabilities(id: u64) {
     capabilities().remove(&MountKey::Test(id));
 }

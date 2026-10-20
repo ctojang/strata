@@ -10,13 +10,13 @@ use gio::{glib, prelude::*};
 use crate::{adapters::gio_file_for_location, model::Location};
 
 type BookmarkCallback = dyn Fn(&Result<(), glib::Error>) -> bool;
-pub(crate) type BookmarkWatch = Rc<BookmarkCallback>;
+pub type BookmarkWatch = Rc<BookmarkCallback>;
 
 thread_local! {
     static WATCHERS: RefCell<Vec<Weak<BookmarkCallback>>> = const { RefCell::new(Vec::new()) };
 }
 
-pub(crate) fn watch_changes(
+pub fn watch_changes(
     callback: impl Fn(&Result<(), glib::Error>) -> bool + 'static,
 ) -> BookmarkWatch {
     let callback: BookmarkWatch = Rc::new(callback);
@@ -27,7 +27,7 @@ pub(crate) fn watch_changes(
     callback
 }
 
-pub(crate) fn pinned_places_path() -> std::path::PathBuf {
+pub fn pinned_places_path() -> std::path::PathBuf {
     glib::user_config_dir().join("gtk-3.0/bookmarks")
 }
 

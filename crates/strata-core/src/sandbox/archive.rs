@@ -20,13 +20,13 @@ const RAR_CPU_TIME_LIMIT_SECS: u64 = 120;
 // Limit stalls, not the total time spent extracting a large archive.
 const READ_INACTIVITY_TIMEOUT: Duration = Duration::from_secs(30);
 
-pub(crate) enum Member<'a> {
+pub enum Member<'a> {
     Directory,
     File { size: u64, body: &'a mut dyn Read },
 }
 
 /// Callback errors lose their kind; only decoder failures retain it across the wire.
-pub(crate) fn stream_rar(
+pub fn stream_rar(
     archive_path: &Path,
     password: Option<&str>,
     cancelled: &AtomicBool,

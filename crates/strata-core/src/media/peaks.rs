@@ -6,18 +6,18 @@ use std::io::{self, Read, Write};
 
 use super::{MAX_DURATION_US, invalid, u32_at, u64_at};
 
-pub(crate) const BUCKETS: u32 = 1024;
-pub(crate) const SAMPLE_RATE: u32 = 8_000;
+pub const BUCKETS: u32 = 1024;
+pub const SAMPLE_RATE: u32 = 8_000;
 const MAGIC: &[u8; 8] = b"STRPEAK1";
 const MAX_RUN: u32 = 256;
 
-pub(crate) fn write_header(writer: &mut impl Write, duration_us: u64) -> io::Result<()> {
+pub fn write_header(writer: &mut impl Write, duration_us: u64) -> io::Result<()> {
     writer.write_all(MAGIC)?;
     writer.write_all(&BUCKETS.to_le_bytes())?;
     writer.write_all(&duration_us.to_le_bytes())
 }
 
-pub(crate) fn read_header(reader: &mut impl Read) -> io::Result<u64> {
+pub fn read_header(reader: &mut impl Read) -> io::Result<u64> {
     let mut bytes = [0; 20];
     reader.read_exact(&mut bytes)?;
     let duration_us = u64_at(&bytes, 12);
@@ -38,16 +38,16 @@ fn write_run(writer: &mut impl Write, start: u32, levels: &[u8]) -> io::Result<(
 }
 
 /// Bucket level: RMS with square-root companding so quiet passages keep detail.
-pub(crate) fn level(rms: f64) -> u8 {
+pub fn level(rms: f64) -> u8 {
     (rms.clamp(0.0, 1.0).sqrt() * 255.0).round() as u8
 }
 
-pub(crate) fn rms(level: u8) -> f32 {
+pub fn rms(level: u8) -> f32 {
     (f32::from(level) / 255.0).powi(2)
 }
 
 /// Accepts 16-bit little-endian mono PCM at `SAMPLE_RATE`.
-pub(crate) struct Accumulator {
+pub struct Accumulator {
     samples_per_bucket: f64,
     consumed: u64,
     bucket: u32,
@@ -58,7 +58,7 @@ pub(crate) struct Accumulator {
 }
 
 impl Accumulator {
-    pub(crate) fn new(duration_us: u64) -> Self {
+    pub fn new(duration_us: u64) -> Self {
         let samples = duration_us as f64 * f64::from(SAMPLE_RATE) / 1_000_000.0;
         Self {
             samples_per_bucket: (samples / f64::from(BUCKETS)).max(1.0),
@@ -71,7 +71,7 @@ impl Accumulator {
         }
     }
 
-    pub(crate) fn push(&mut self, pcm: &[u8], writer: &mut impl Write) -> io::Result<()> {
+    pub fn push(&mut self, pcm: &[u8], writer: &mut impl Write) -> io::Result<()> {
         for sample in pcm.as_chunks::<2>().0 {
             let value = f64::from(i16::from_le_bytes([sample[0], sample[1]])) / 32_768.0;
             let bucket = ((self.consumed as f64 / self.samples_per_bucket) as u32).min(BUCKETS - 1);
@@ -109,7 +109,7 @@ impl Accumulator {
         writer.flush()
     }
 
-    pub(crate) fn finish(mut self, writer: &mut impl Write) -> io::Result<()> {
+    pub fn finish(mut self, writer: &mut impl Write) -> io::Result<()> {
         if self.count > 0 {
             self.close_bucket();
         }
@@ -119,13 +119,13 @@ impl Accumulator {
 }
 
 #[derive(Default)]
-pub(crate) struct RunReader {
+pub struct RunReader {
     next: u32,
     ended: bool,
 }
 
 impl RunReader {
-    pub(crate) fn read(&mut self, reader: &mut impl Read) -> io::Result<Option<(u32, Vec<u8>)>> {
+    pub fn read(&mut self, reader: &mut impl Read) -> io::Result<Option<(u32, Vec<u8>)>> {
         if self.ended {
             return Err(invalid("Waveform data after its end"));
         }

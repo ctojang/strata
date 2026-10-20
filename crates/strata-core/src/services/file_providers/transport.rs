@@ -18,7 +18,7 @@ use std::{
 const DEADLINE: Duration = Duration::from_secs(8);
 const UPDATE_LIMIT: usize = 32;
 
-pub(crate) enum Update {
+pub enum Update {
     Reply(Box<Reply>),
     Offline {
         unsent: Vec<u64>,
@@ -26,7 +26,7 @@ pub(crate) enum Update {
     },
 }
 
-pub(crate) struct Requests {
+pub struct Requests {
     refresh: SyncSender<Request>,
     activate: SyncSender<Request>,
     closed: Arc<AtomicBool>,
@@ -39,7 +39,7 @@ impl Drop for Requests {
 }
 
 impl Requests {
-    pub(crate) fn try_send(&self, request: Request) -> Result<(), TrySendError<Request>> {
+    pub fn try_send(&self, request: Request) -> Result<(), TrySendError<Request>> {
         if !request.valid() || !super::selection_fits(&request.paths) {
             return Err(TrySendError::Full(request));
         }
@@ -94,13 +94,13 @@ impl UpdateState {
 }
 
 #[derive(Default)]
-pub(crate) struct Updates {
+pub struct Updates {
     state: Mutex<UpdateState>,
     changed: Condvar,
 }
 
 impl Updates {
-    pub(crate) fn drain(&self) -> (Vec<Update>, bool) {
+    pub fn drain(&self) -> (Vec<Update>, bool) {
         let mut state = self.state.lock().expect("provider update queue");
         state.flush_events();
         state.reply_count = 0;
@@ -108,7 +108,7 @@ impl Updates {
     }
 
     #[cfg(test)]
-    pub(crate) fn try_recv(&self) -> Result<Update, TryRecvError> {
+    pub fn try_recv(&self) -> Result<Update, TryRecvError> {
         let mut state = self.state.lock().expect("provider update queue");
         if state.replies.is_empty() {
             state.flush_events();
@@ -125,7 +125,7 @@ impl Updates {
     }
 
     #[cfg(test)]
-    pub(crate) fn recv_timeout(&self, timeout: Duration) -> Result<Update, mpsc::RecvTimeoutError> {
+    pub fn recv_timeout(&self, timeout: Duration) -> Result<Update, mpsc::RecvTimeoutError> {
         let deadline = Instant::now() + timeout;
         loop {
             match self.try_recv() {
@@ -221,7 +221,7 @@ impl Updates {
     }
 }
 
-pub(crate) struct Client {
+pub struct Client {
     pub requests: Requests,
     pub updates: Arc<Updates>,
 }
@@ -255,7 +255,7 @@ impl Incoming {
     }
 }
 
-pub(crate) fn start(registration: Registration) -> Client {
+pub fn start(registration: Registration) -> Client {
     let (refresh, rx) = mpsc::sync_channel(16);
     let (activate, actions) = mpsc::sync_channel(8);
     let updates = Arc::new(Updates::default());

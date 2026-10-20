@@ -20,13 +20,13 @@ const EXACT_PATH_BONUS: i64 = NAME_TERM_TIER / 2;
 const ANCESTOR_DECAY: f64 = 0.5;
 
 #[derive(Clone, Debug)]
-pub(crate) struct PathQuery {
+pub struct PathQuery {
     terms: Vec<Pattern>,
     exclusions: Vec<Pattern>,
 }
 
 impl PathQuery {
-    pub(crate) fn parse(text: &str) -> Self {
+    pub fn parse(text: &str) -> Self {
         let (exclusions, terms): (Vec<_>, Vec<_>) = Pattern::parse_query(&fold_for_search(text))
             .into_iter()
             .partition(|pattern| pattern.negated);
@@ -41,16 +41,16 @@ impl PathQuery {
 }
 
 #[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
-pub(crate) struct TextScore {
+pub struct TextScore {
     name_terms: u32,
     quality: u32,
 }
 
-pub(crate) fn rank(text: TextScore, frecency_bias: i64) -> i64 {
+pub fn rank(text: TextScore, frecency_bias: i64) -> i64 {
     i64::from(text.name_terms) * NAME_TERM_TIER + i64::from(text.quality) + frecency_bias
 }
 
-pub(crate) fn exact_bonus(path: &str, name_start: usize, query: &str) -> i64 {
+pub fn exact_bonus(path: &str, name_start: usize, query: &str) -> i64 {
     if path == query {
         EXACT_PATH_BONUS
     } else if &path[name_start..] == query {
@@ -62,13 +62,13 @@ pub(crate) fn exact_bonus(path: &str, name_start: usize, query: &str) -> i64 {
 
 /// Reuse across candidates to retain matcher scratch space.
 #[derive(Clone, Debug)]
-pub(crate) struct PathMatcher {
+pub struct PathMatcher {
     terms: Vec<Matcher>,
     exclusions: Vec<Matcher>,
 }
 
 impl PathMatcher {
-    pub(crate) fn new(query: &PathQuery) -> Self {
+    pub fn new(query: &PathQuery) -> Self {
         // Queries and haystacks are both folded, so case never needs ignoring.
         let config = Config::default().casing(CaseMatching::Respect);
         let compile = |patterns: &[Pattern]| {
@@ -84,7 +84,7 @@ impl PathMatcher {
     }
 
     /// `path` must be folded; `name_start` is a byte boundary.
-    pub(crate) fn score(&mut self, path: &str, name_start: usize) -> Option<TextScore> {
+    pub fn score(&mut self, path: &str, name_start: usize) -> Option<TextScore> {
         if self.terms.is_empty() && self.exclusions.is_empty() {
             return None;
         }
@@ -109,7 +109,7 @@ impl PathMatcher {
     }
 
     /// Returns non-overlapping byte ranges in the original, unfolded text.
-    pub(crate) fn highlight(&mut self, path: &str, name_start: usize) -> Vec<Range<usize>> {
+    pub fn highlight(&mut self, path: &str, name_start: usize) -> Vec<Range<usize>> {
         let (folded, spans) = fold_with_spans(path);
         let folded_name_start = spans.partition_point(|span| span.start < name_start);
         let name = &folded[folded_name_start..];
@@ -141,7 +141,7 @@ impl PathMatcher {
         merged
     }
 
-    pub(crate) fn name_highlight(&mut self, root: &Path, path: &Path) -> Vec<Range<usize>> {
+    pub fn name_highlight(&mut self, root: &Path, path: &Path) -> Vec<Range<usize>> {
         let relative = path.strip_prefix(root).unwrap_or(path).to_string_lossy();
         let name_len = path
             .file_name()
@@ -171,14 +171,14 @@ fn fold_with_spans(text: &str) -> (String, Vec<Range<usize>>) {
 
 /// Snapshot for search workers, which cannot access the UI-owned history.
 #[derive(Debug, Default)]
-pub(crate) struct Frecency {
+pub struct Frecency {
     root_len: usize,
     folders: HashMap<PathBuf, f64>,
 }
 
 impl Frecency {
     // The root and its ancestors would bias every result equally.
-    pub(crate) fn within(root: &Path, folders: impl IntoIterator<Item = (PathBuf, f64)>) -> Self {
+    pub fn within(root: &Path, folders: impl IntoIterator<Item = (PathBuf, f64)>) -> Self {
         Self {
             root_len: root.as_os_str().len(),
             folders: folders
@@ -191,7 +191,7 @@ impl Frecency {
     }
 
     // Prefer the nearest visited ancestor, not the most frequently visited one.
-    pub(crate) fn bias(&self, path: &Path, is_directory: bool) -> i64 {
+    pub fn bias(&self, path: &Path, is_directory: bool) -> i64 {
         if self.folders.is_empty() {
             return 0;
         }

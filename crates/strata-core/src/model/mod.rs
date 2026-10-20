@@ -31,13 +31,13 @@ pub struct Location {
     kind: LocationKind,
 }
 
-pub(crate) fn uri_contains_credentials(uri: &gio::glib::Uri) -> bool {
+pub fn uri_contains_credentials(uri: &gio::glib::Uri) -> bool {
     uri.password().is_some()
         || uri.auth_params().is_some()
         || uri.user().is_some_and(|user| user.contains([':', ';']))
 }
 
-pub(crate) fn transfer_file_name(file: &gio::File) -> Option<OsString> {
+pub fn transfer_file_name(file: &gio::File) -> Option<OsString> {
     let basename = file.basename()?.into_os_string();
     if !file
         .parent()
@@ -80,14 +80,14 @@ pub(crate) fn transfer_file_name(file: &gio::File) -> Option<OsString> {
 
 /// GIO hands out percent-encoded URIs; keep path, query and fragment encoded so names that are
 /// not valid UTF-8 parse, while userinfo is still decoded for credential detection.
-pub(crate) const GIO_URI_PARSE_FLAGS: gio::glib::UriFlags = gio::glib::UriFlags::HAS_PASSWORD
+pub const GIO_URI_PARSE_FLAGS: gio::glib::UriFlags = gio::glib::UriFlags::HAS_PASSWORD
     .union(gio::glib::UriFlags::HAS_AUTH_PARAMS)
     .union(gio::glib::UriFlags::ENCODED_PATH)
     .union(gio::glib::UriFlags::ENCODED_QUERY)
     .union(gio::glib::UriFlags::ENCODED_FRAGMENT);
 
 /// Build flags matching `GIO_URI_PARSE_FLAGS`, so already-encoded components are not re-escaped.
-pub(crate) const GIO_URI_BUILD_FLAGS: gio::glib::UriFlags = gio::glib::UriFlags::ENCODED_PATH
+pub const GIO_URI_BUILD_FLAGS: gio::glib::UriFlags = gio::glib::UriFlags::ENCODED_PATH
     .union(gio::glib::UriFlags::ENCODED_QUERY)
     .union(gio::glib::UriFlags::ENCODED_FRAGMENT);
 
@@ -115,7 +115,7 @@ fn path_has_encoded_slash(path: &str) -> bool {
     })
 }
 
-pub(crate) fn rebase_path(path: &Path, from: &Path, to: &Path) -> Option<PathBuf> {
+pub fn rebase_path(path: &Path, from: &Path, to: &Path) -> Option<PathBuf> {
     let suffix = path.strip_prefix(from).ok()?;
     Some(if suffix.as_os_str().is_empty() {
         to.to_path_buf()
@@ -130,7 +130,7 @@ fn uri_scheme_eq(uri: &str, scheme: &str) -> bool {
 
 /// Resolves `.` and `..` as text like GIO, without consulting the filesystem;
 /// `..` stops at the root. Callers pass absolute paths.
-pub(crate) fn lexically_normalized(path: &Path) -> PathBuf {
+pub fn lexically_normalized(path: &Path) -> PathBuf {
     let mut normalized = PathBuf::new();
     for component in path.components() {
         match component {
@@ -462,7 +462,7 @@ pub enum SortKey {
 }
 
 impl SortKey {
-    pub(crate) fn from_stored(value: &str) -> Option<Self> {
+    pub fn from_stored(value: &str) -> Option<Self> {
         match value {
             "name" => Some(Self::Name),
             "size" => Some(Self::Size),
@@ -472,7 +472,7 @@ impl SortKey {
         }
     }
 
-    pub(crate) fn stored_name(self) -> Option<&'static str> {
+    pub fn stored_name(self) -> Option<&'static str> {
         match self {
             Self::Name => Some("name"),
             Self::Size => Some("size"),
@@ -490,7 +490,7 @@ pub enum SortDirection {
 }
 
 impl SortDirection {
-    pub(crate) fn from_stored(value: &str) -> Option<Self> {
+    pub fn from_stored(value: &str) -> Option<Self> {
         match value {
             "ascending" => Some(Self::Ascending),
             "descending" => Some(Self::Descending),
@@ -498,7 +498,7 @@ impl SortDirection {
         }
     }
 
-    pub(crate) fn stored_name(self) -> &'static str {
+    pub fn stored_name(self) -> &'static str {
         match self {
             Self::Ascending => "ascending",
             Self::Descending => "descending",

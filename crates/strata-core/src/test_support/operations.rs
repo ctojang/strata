@@ -10,7 +10,7 @@ use crate::services::*;
 
 type Callback = Rc<dyn Fn(OperationEvent)>;
 
-pub(crate) fn entry(location: crate::model::Location) -> crate::model::FileEntry {
+pub fn entry(location: crate::model::Location) -> crate::model::FileEntry {
     use crate::model::{EntryKind, FileEntry, MetadataValue};
     let name = location.display_name();
     FileEntry {
@@ -31,7 +31,7 @@ pub(crate) fn entry(location: crate::model::Location) -> crate::model::FileEntry
     }
 }
 
-pub(crate) fn operation_event(event: &crate::app::BrowserEvent) -> &crate::app::BrowserEvent {
+pub fn operation_event(event: &crate::app::BrowserEvent) -> &crate::app::BrowserEvent {
     match event {
         crate::app::BrowserEvent::BackgroundOperation { event, .. } => event,
         event => event,
@@ -41,16 +41,16 @@ pub(crate) fn operation_event(event: &crate::app::BrowserEvent) -> &crate::app::
 type BeforeReturn = Rc<dyn Fn(OperationRequestId)>;
 
 #[derive(Default)]
-pub(crate) struct HeldOperations {
+pub struct HeldOperations {
     callbacks: RefCell<HashMap<OperationRequestId, Callback>>,
     cancelled: Rc<RefCell<HashSet<OperationRequestId>>>,
-    pub(crate) before_return: RefCell<Option<BeforeReturn>>,
+    pub before_return: RefCell<Option<BeforeReturn>>,
     /// Every held delete as `(id, permanent, entry count)`, in request order.
-    pub(crate) delete_requests: RefCell<Vec<(OperationRequestId, bool, usize)>>,
+    pub delete_requests: RefCell<Vec<(OperationRequestId, bool, usize)>>,
 }
 
 impl HeldOperations {
-    pub(crate) fn emit(&self, request_id: OperationRequestId, event: OperationEvent) {
+    pub fn emit(&self, request_id: OperationRequestId, event: OperationEvent) {
         let callback = self
             .callbacks
             .borrow()
@@ -59,7 +59,7 @@ impl HeldOperations {
             .expect("held operation");
         callback(event);
     }
-    pub(crate) fn cancelled(&self, request_id: OperationRequestId) -> bool {
+    pub fn cancelled(&self, request_id: OperationRequestId) -> bool {
         self.cancelled.borrow().contains(&request_id)
     }
     fn hold(&self, id: OperationRequestId, callback: Callback) -> LoadHandle {

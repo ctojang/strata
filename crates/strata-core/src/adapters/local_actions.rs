@@ -18,30 +18,30 @@ use crate::services::actions::{
 #[cfg(test)]
 mod tests;
 
-pub(crate) const MANIFEST_FILE: &str = "action.toml";
+pub const MANIFEST_FILE: &str = "action.toml";
 const MAX_MANIFEST_BYTES: u64 = 64 * 1024;
 const MAX_SCRIPT_BYTES: u64 = 1024 * 1024;
 const MAX_SHEBANG_PREFIX_BYTES: u64 = 4096;
 
-pub(crate) fn actions_directory() -> PathBuf {
+pub fn actions_directory() -> PathBuf {
     crate::storage::config_directory().join("actions")
 }
 
-pub(crate) struct LocalActionStore {
+pub struct LocalActionStore {
     root: PathBuf,
 }
 
 impl LocalActionStore {
-    pub(crate) fn new() -> Rc<Self> {
+    pub fn new() -> Rc<Self> {
         Self::at(actions_directory())
     }
 
-    pub(crate) fn at(root: PathBuf) -> Rc<Self> {
+    pub fn at(root: PathBuf) -> Rc<Self> {
         Rc::new(Self { root })
     }
 
     #[cfg(test)]
-    pub(crate) fn root(&self) -> &Path {
+    pub fn root(&self) -> &Path {
         &self.root
     }
 
@@ -421,7 +421,7 @@ fn resolve_availability(
 }
 
 /// Unlike sandbox helpers, trusted actions need the user's PATH, including shims.
-pub(crate) fn resolve_executable(program: &str) -> Option<PathBuf> {
+pub fn resolve_executable(program: &str) -> Option<PathBuf> {
     if program.contains('/') {
         if !Path::new(program).is_absolute() {
             return None;

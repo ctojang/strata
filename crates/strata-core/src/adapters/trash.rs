@@ -4,15 +4,15 @@
 
 use gio::prelude::*;
 
-pub(crate) struct EmptyTrashOutcome {
-    pub(crate) deleted: usize,
-    pub(crate) failed: usize,
+pub struct EmptyTrashOutcome {
+    pub deleted: usize,
+    pub failed: usize,
     /// Capped at 8 messages regardless of `failed`.
-    pub(crate) errors: Vec<String>,
+    pub errors: Vec<String>,
 }
 
 /// Deletes one batch at a time, independently of any prior measurement's budget or truncation.
-pub(crate) async fn empty_trash(
+pub async fn empty_trash(
     root: &gio::File,
     mut on_progress: impl FnMut(usize),
 ) -> Result<EmptyTrashOutcome, glib::Error> {

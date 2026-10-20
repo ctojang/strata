@@ -102,7 +102,7 @@ impl ManagedInstall {
     }
 }
 
-pub(crate) fn installed_executable() -> io::Result<PathBuf> {
+pub fn installed_executable() -> io::Result<PathBuf> {
     std::env::current_exe().map(|path| replaced_executable_path(&path))
 }
 

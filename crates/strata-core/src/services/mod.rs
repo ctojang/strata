@@ -1,36 +1,36 @@
 // SPDX-License-Identifier: MIT
 
-pub(crate) mod actions;
-pub(crate) mod camera_preview;
-pub(crate) mod diagnostics;
+pub mod actions;
+pub mod camera_preview;
+pub mod diagnostics;
 mod document;
-pub(crate) mod document_media;
-pub(crate) mod docx;
-pub(crate) mod file_providers;
+pub mod document_media;
+pub mod docx;
+pub mod file_providers;
 mod file_source;
 mod install_source;
-pub(crate) mod integration_catalog;
-pub(crate) mod jobs;
+pub mod integration_catalog;
+pub mod jobs;
 mod listeners;
 mod mime_type;
-pub(crate) mod model_preview;
+pub mod model_preview;
 mod native_fs;
 mod navigation_history;
 mod operations;
-pub(crate) mod package_manager;
+pub mod package_manager;
 mod path_match;
 mod preview;
 mod release_channel;
-pub(crate) mod rtf;
+pub mod rtf;
 mod search;
-pub(crate) mod table;
+pub mod table;
 mod transfer_action;
 
 pub use actions::{
     ActionAvailability, ActionHandle, ActionLoadFailure, ActionProgram, ActionRegistry,
     ActionScript, ActionWriteRequest, MatchedAction,
 };
-pub(crate) use document::{
+pub use document::{
     DocumentLayout, DocumentListChildKind, DocumentMedia, DocumentSpan, DocumentSpanStyle,
     DocumentTableCellLayout, DocumentUnit, DocumentUnitKind, document_kind, has_web_scheme,
     layout_document, parse_document,
@@ -41,26 +41,26 @@ pub use file_source::{
     UriCredentials, backend_unavailable_message, sanitize_uri_credentials,
     validate_uri_credentials,
 };
-pub(crate) use file_source::{
+pub use file_source::{
     INVALID_NAME_REASON, error_detail, gio_error_detail, gio_error_message, io_error_detail,
     io_error_message, sanitize_failure_message,
 };
 pub use install_source::InstallSource;
-pub(crate) use install_source::installed_executable;
+pub use install_source::installed_executable;
 pub use jobs::{
     ActionEventSink, ActionRunEvent, ActionRunRequest, ActionRunner, CancelHandle,
     InvocationSource, JobId, JobRequest, JobService, JobSnapshot, JobStatus, ScriptProgress,
     expand_command_arguments,
 };
-pub(crate) use listeners::ListenerGuard;
+pub use listeners::ListenerGuard;
 pub use mime_type::{
     BROKEN_LINK_TYPE_NAME, EntryType, FOLDER_TYPE_NAME, OTHER_TYPE_NAME, entry_type,
     mime_description_for_name,
 };
-pub(crate) use model_preview::ModelRender;
+pub use model_preview::ModelRender;
 pub use model_preview::{ModelEncoding, ModelFormat, ModelMesh, ModelPalette, ModelView};
-pub(crate) use native_fs::{is_hidden_name, native_hidden_names, native_kind, symlink_kind};
-pub(crate) use navigation_history::NavigationHistory;
+pub use native_fs::{is_hidden_name, native_hidden_names, native_kind, symlink_kind};
+pub use navigation_history::NavigationHistory;
 pub use operations::{
     ArchiveFormat, CancelledOperation, CompressRequest, CreateDirectoryRequest, CreateFileRequest,
     DeleteRequest, ExtractRequest, KeptCause, KeptItem, MoveRecord, NameMode, OperationEvent,
@@ -70,30 +70,30 @@ pub use operations::{
     TransferConflict, TransferReport, TrashedOriginal, UndoCopyRequest, UndoMergeRequest,
     UndoMoveItem, UndoMoveRequest, UndoRenameRequest, validate_basename,
 };
-pub(crate) use path_match::{PathMatcher, PathQuery};
+pub use path_match::{PathMatcher, PathQuery};
 pub use preview::{
     ArchiveDirectory, ArchiveFileEntry, ArchiveNode, ArchivePreviewTree, MediaPreviewSize,
     ModelPreviewStage, PdfTextLayer, Preview, PreviewContent, PreviewEvent, PreviewProvider,
     PreviewRequest, PreviewRequestId, SandboxedMedia, SecretString, archive_preview_tree,
 };
-pub(crate) use preview::{
+pub use preview::{
     INCORRECT_ARCHIVE_PASSWORD, archive_preview_format, bytes_support_named_family, content_family,
     guess_content_type, has_plain_text_extension, is_extensionless_dotfile, is_image_path,
     is_media_path, is_model, is_non_executable_extensionless_dotfile, looks_like_text,
     normalize_preview_text, read_head_sample, reconcile_with_sample, split_archive_name,
     supports_remote_video,
 };
-pub(crate) use release_channel::{BuildKind, Version};
-pub(crate) use search::{
+pub use release_channel::{BuildKind, Version};
+pub use search::{
     RESULT_LIMIT as SEARCH_RESULT_LIMIT, RenameScope, rebase_search_indexes,
     refresh_search_indexes_for_directory, refresh_search_indexes_for_rename,
 };
-pub(crate) use search::{
+pub use search::{
     RefusedFolders, SearchCoverage, SearchEvent, SearchExclusions, SearchHandle, SearchItem,
     SearchLimits, filter_name_matches, filter_query_allows_typos, fold_for_search, index_filter,
     index_folder_paths, index_paths, index_trees_with_exclusions,
 };
-pub(crate) use transfer_action::{
+pub use transfer_action::{
     CrossVolumeDropStrategy, DropActionInput, DropCommit, DropOverride, TransferKind,
     VolumeIdentity, VolumeRelation, drop_commit, transferable_drop_sources, volume_relation,
 };

@@ -33,7 +33,7 @@ use super::super::fs_ops::{Entry, EntryStat, FsOps, FsStat, System, assert_off_m
 use crate::adapters::volume::{MountKey, MountSite, MountType, forget_test_mount_capabilities};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum Op {
+pub enum Op {
     OpenAt,
     OpenPath,
     Dup,
@@ -87,14 +87,14 @@ pub(crate) enum Op {
 }
 
 #[derive(Clone, Copy, Debug, Default)]
-pub(crate) enum Support {
+pub enum Support {
     #[default]
     Supported,
     Rejected(Errno),
 }
 
 #[derive(Clone, Copy, Debug, Default)]
-pub(crate) enum Exchange {
+pub enum Exchange {
     #[default]
     Supported,
     Rejected,
@@ -103,7 +103,7 @@ pub(crate) enum Exchange {
 }
 
 #[derive(Clone, Copy, Debug, Default)]
-pub(crate) enum OverEmptyDirectory {
+pub enum OverEmptyDirectory {
     #[default]
     Supported,
     NotEmpty,
@@ -111,7 +111,7 @@ pub(crate) enum OverEmptyDirectory {
 }
 
 #[derive(Clone, Copy, Debug, Default)]
-pub(crate) enum Trash {
+pub enum Trash {
     #[default]
     Supported,
     Unsupported,
@@ -126,7 +126,7 @@ pub(crate) enum Trash {
 }
 
 #[derive(Clone, Copy, Debug, Default)]
-pub(crate) enum TmpfileLink {
+pub enum TmpfileLink {
     #[default]
     Any,
     /// `AT_EMPTY_PATH` needs privileges, as before Linux 6.10.
@@ -139,7 +139,7 @@ pub(crate) enum TmpfileLink {
 /// is in the way, as the SMB client's one lease per file makes a second
 /// open fail, or a Samba server defer it forever.
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-pub(crate) enum NameOpens {
+pub enum NameOpens {
     #[default]
     Any,
     /// Once another name was opened at all, which pins that a copy never
@@ -149,12 +149,12 @@ pub(crate) enum NameOpens {
     OneAtATime,
 }
 
-pub(crate) type Racer = Box<dyn FnMut() + Send>;
-pub(crate) type Preset = fn() -> Quirks;
+pub type Racer = Box<dyn FnMut() + Send>;
+pub type Preset = fn() -> Quirks;
 
 /// Patterns match a name exactly, or by prefix when they end in `*`.
 #[derive(Default)]
-pub(crate) struct Quirks {
+pub struct Quirks {
     pub rename_flags: Support,
     pub exchange: Exchange,
     pub links: Support,
@@ -278,7 +278,7 @@ pub(crate) struct Quirks {
 }
 
 impl Quirks {
-    pub(crate) fn without_rename_flags() -> Self {
+    pub fn without_rename_flags() -> Self {
         Self {
             rename_flags: Support::Rejected(Errno::INVAL),
             ..Self::default()
@@ -286,7 +286,7 @@ impl Quirks {
     }
 
     /// No `RENAME_NOREPLACE`, no hard links, and no rename over an empty folder.
-    pub(crate) fn vboxsf() -> Self {
+    pub fn vboxsf() -> Self {
         Self {
             rename_flags: Support::Rejected(Errno::INVAL),
             links: Support::Rejected(Errno::PERM),
@@ -297,7 +297,7 @@ impl Quirks {
 
     /// Hard links work, so folders never take the reserved-name rung, and
     /// nothing else places a folder without `RENAME_NOREPLACE`.
-    pub(crate) fn without_folder_placement() -> Self {
+    pub fn without_folder_placement() -> Self {
         Self {
             rename_over_empty_dir: OverEmptyDirectory::NotEmpty,
             ..Self::without_rename_flags()
@@ -307,14 +307,14 @@ impl Quirks {
     /// No rung that cannot replace: no `RENAME_NOREPLACE` or rename over an
     /// empty folder, and links fail with an errno that says nothing about the
     /// mount, so the reserved-name rung stays unconfirmed.
-    pub(crate) fn without_placement() -> Self {
+    pub fn without_placement() -> Self {
         Self {
             links: Support::Rejected(Errno::MLINK),
             ..Self::without_folder_placement()
         }
     }
 
-    pub(crate) fn ext4() -> Self {
+    pub fn ext4() -> Self {
         Self {
             mount_type: Some(("ext4", "rw")),
             fs_type: Some(0xEF53),
@@ -324,7 +324,7 @@ impl Quirks {
 
     /// NOREPLACE fails with `EINVAL`, and a write delegation sets the
     /// times of a written file when it is closed.
-    pub(crate) fn nfs42() -> Self {
+    pub fn nfs42() -> Self {
         Self {
             mount_type: Some(("nfs4", "rw,vers=4.2")),
             fs_type: Some(0x6969),
@@ -334,7 +334,7 @@ impl Quirks {
         }
     }
 
-    pub(crate) fn nfs3() -> Self {
+    pub fn nfs3() -> Self {
         Self {
             mount_type: Some(("nfs", "rw,vers=3")),
             times_reset_at_close: false,
@@ -347,7 +347,7 @@ impl Quirks {
     /// No hard links, symbolic links, named pipes or xattrs, and names
     /// compared without case. This and the presets after it carry the
     /// mountinfo line of a lab mount, and refuse and store names as it did.
-    pub(crate) fn vfat() -> Self {
+    pub fn vfat() -> Self {
         Self {
             mount_type: Some(("vfat", VFAT_OPTIONS)),
             fs_type: Some(0x4d44),
@@ -363,7 +363,7 @@ impl Quirks {
         }
     }
 
-    pub(crate) fn exfat() -> Self {
+    pub fn exfat() -> Self {
         Self {
             mount_type: Some(("exfat", EXFAT_OPTIONS)),
             fs_type: Some(0x2011_bab0),
@@ -373,7 +373,7 @@ impl Quirks {
         }
     }
 
-    pub(crate) fn exfat_fuse() -> Self {
+    pub fn exfat_fuse() -> Self {
         Self {
             mount_type: Some(("fuseblk", FUSEBLK_OPTIONS)),
             device_format: Some("exfat"),
@@ -388,7 +388,7 @@ impl Quirks {
         }
     }
 
-    pub(crate) fn ntfs3() -> Self {
+    pub fn ntfs3() -> Self {
         Self {
             mount_type: Some(("ntfs3", NTFS3_OPTIONS)),
             fs_type: Some(0x7366_746e),
@@ -398,7 +398,7 @@ impl Quirks {
         }
     }
 
-    pub(crate) fn ntfs3_windows_names() -> Self {
+    pub fn ntfs3_windows_names() -> Self {
         Self {
             mount_type: Some(("ntfs3", NTFS3_WINDOWS_NAMES_OPTIONS)),
             invalid_name: Some(windows_names_refuses),
@@ -407,7 +407,7 @@ impl Quirks {
     }
 
     /// udisks passes `windows_names`, which mountinfo does not show.
-    pub(crate) fn ntfs_3g() -> Self {
+    pub fn ntfs_3g() -> Self {
         Self {
             mount_type: Some(("fuseblk", FUSEBLK_OPTIONS)),
             device_format: Some("ntfs"),
@@ -422,7 +422,7 @@ impl Quirks {
 
     /// Samba with the client's default `mapposix`, which stores characters
     /// Windows refuses as private-use ones.
-    pub(crate) fn cifs() -> Self {
+    pub fn cifs() -> Self {
         Self {
             mount_type: Some(("cifs", CIFS_OPTIONS)),
             fs_type: Some(0xfe53_4d42),
@@ -437,7 +437,7 @@ impl Quirks {
         }
     }
 
-    pub(crate) fn cifs_nocase() -> Self {
+    pub fn cifs_nocase() -> Self {
         Self {
             mount_type: Some(("cifs", CIFS_NOCASE_OPTIONS)),
             invalid_name: Some(cifs_nocase_refuses),
@@ -445,7 +445,7 @@ impl Quirks {
         }
     }
 
-    pub(crate) fn cifs_posix() -> Self {
+    pub fn cifs_posix() -> Self {
         Self {
             mount_type: Some(("cifs", CIFS_POSIX_OPTIONS)),
             invalid_name: None,
@@ -456,7 +456,7 @@ impl Quirks {
         }
     }
 
-    pub(crate) fn sshfs() -> Self {
+    pub fn sshfs() -> Self {
         Self {
             mount_type: Some(("fuse.sshfs", "rw,user_id=0,group_id=0,allow_other")),
             fs_type: Some(FUSE_SUPER_MAGIC),
@@ -708,7 +708,7 @@ fn question_marks(name: &OsStr) -> Option<OsString> {
 }
 
 #[derive(Clone, Debug)]
-pub(crate) struct Call {
+pub struct Call {
     pub op: Op,
     pub names: Vec<OsString>,
     /// A stat that forced revalidation.
@@ -758,12 +758,12 @@ fn scopes() -> MutexGuard<'static, Vec<Arc<Scope>>> {
     SCOPES.lock().unwrap_or_else(|error| error.into_inner())
 }
 
-pub(crate) struct FsQuirks {
+pub struct FsQuirks {
     scope: Arc<Scope>,
 }
 
 impl FsQuirks {
-    pub(crate) fn install(root: &Path, quirks: Quirks) -> Self {
+    pub fn install(root: &Path, quirks: Quirks) -> Self {
         let scope = Arc::new(Scope {
             id: NEXT_SCOPE.fetch_add(1, Ordering::Relaxed),
             root: root.canonicalize().unwrap_or_else(|_| root.to_path_buf()),
@@ -792,28 +792,28 @@ impl FsQuirks {
         Self { scope }
     }
 
-    pub(crate) fn key(&self) -> MountKey {
+    pub fn key(&self) -> MountKey {
         MountKey::Test(self.scope.id)
     }
 
     /// Loses a writeback in this scope, from a racer: as errseq does,
     /// `syncfs` reports it once through each folder opened before, and
     /// never through one opened after.
-    pub(crate) fn writeback_loser(&self) -> impl Fn() + Send + Sync + 'static {
+    pub fn writeback_loser(&self) -> impl Fn() + Send + Sync + 'static {
         let scope = self.scope.clone();
         move || scope.state().writebacks_lost += 1
     }
 
-    pub(crate) fn calls(&self) -> Vec<Call> {
+    pub fn calls(&self) -> Vec<Call> {
         self.scope.state().calls.clone()
     }
 
-    pub(crate) fn reader(&self) -> impl Fn() -> Vec<Call> + Send + Sync + 'static {
+    pub fn reader(&self) -> impl Fn() -> Vec<Call> + Send + Sync + 'static {
         let scope = self.scope.clone();
         move || scope.state().calls.clone()
     }
 
-    pub(crate) fn count(&self, op: Op) -> usize {
+    pub fn count(&self, op: Op) -> usize {
         self.scope
             .state()
             .calls
@@ -822,11 +822,11 @@ impl FsQuirks {
             .count()
     }
 
-    pub(crate) fn clear_calls(&self) {
+    pub fn clear_calls(&self) {
         self.scope.state().calls.clear();
     }
 
-    pub(crate) fn used_name(&self, pattern: &str) -> bool {
+    pub fn used_name(&self, pattern: &str) -> bool {
         self.scope.state().calls.iter().any(|call| {
             let names: Vec<&OsStr> = call.names.iter().map(OsString::as_os_str).collect();
             matches(pattern, &names)
@@ -1515,7 +1515,7 @@ fn own_device(path: &Path) -> Option<u64> {
         .map(|scope| u64::from(u32::MAX) - scope.id)
 }
 
-pub(crate) fn gio_device(file: &gio::File, device: Option<u64>) -> Option<u64> {
+pub fn gio_device(file: &gio::File, device: Option<u64>) -> Option<u64> {
     file.path()
         .and_then(|path| own_device(&path.canonicalize().unwrap_or(path)))
         .or(device)
@@ -1530,7 +1530,7 @@ fn scope_for_path(path: &Path) -> Option<Arc<Scope>> {
         .cloned()
 }
 
-pub(crate) fn recreated(path: &Path) {
+pub fn recreated(path: &Path) {
     let (Some(scope), Some(name)) = (scope_for_path(path), path.file_name()) else {
         return;
     };
@@ -1542,7 +1542,7 @@ pub(crate) fn recreated(path: &Path) {
 /// Whether a row that sends the malformed `name` as it is to the filesystem holding `root` is
 /// skipped there: a FUSE daemon gets what a preset over it passes on, and exfat-fuse writes an
 /// overlong `/` into its volume as a real one.
-pub(crate) fn skips_malformed_name_on_fuse(root: &Path, name: &OsStr) -> bool {
+pub fn skips_malformed_name_on_fuse(root: &Path, name: &OsStr) -> bool {
     let skipped = name.to_str().is_none()
         && rustix::fs::statfs(root).is_ok_and(|stat| stat.f_type == FUSE_SUPER_MAGIC);
     if skipped {
@@ -1554,7 +1554,7 @@ pub(crate) fn skips_malformed_name_on_fuse(root: &Path, name: &OsStr) -> bool {
 /// Makes whatever is at `path` report another inode number until it is
 /// unlinked, as libfuse without `use_ino` and cifs without server inode
 /// numbers do once the kernel evicts an entry.
-pub(crate) fn renumbered(path: &Path) {
+pub fn renumbered(path: &Path) {
     let (Some(scope), Some(name)) = (scope_for_path(path), path.file_name()) else {
         return;
     };
@@ -1571,9 +1571,9 @@ fn same_scope(left: &Option<Arc<Scope>>, right: &Option<Arc<Scope>>) -> bool {
     }
 }
 
-pub(crate) struct Scoped;
+pub struct Scoped;
 
-pub(crate) static SCOPED: Scoped = Scoped;
+pub static SCOPED: Scoped = Scoped;
 
 impl FsEnvironment for Scoped {
     fn can_trash(&self, path: &Path) -> bool {

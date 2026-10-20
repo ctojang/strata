@@ -49,13 +49,13 @@ struct StoredEntry {
     last_accessed: u64,
 }
 
-pub(crate) struct NavigationHistory {
+pub struct NavigationHistory {
     path: PathBuf,
     entries: RefCell<Vec<HistoryEntry>>,
 }
 
 impl NavigationHistory {
-    pub(crate) fn shared() -> Rc<Self> {
+    pub fn shared() -> Rc<Self> {
         SHARED_HISTORY.with(|shared| {
             if let Some(history) = shared.borrow().upgrade() {
                 return history;
@@ -66,7 +66,7 @@ impl NavigationHistory {
         })
     }
 
-    pub(crate) fn open(path: PathBuf) -> Self {
+    pub fn open(path: PathBuf) -> Self {
         let entries = match std::fs::read(&path) {
             Ok(contents) => load_entries(&contents),
             Err(error) if error.kind() == std::io::ErrorKind::NotFound => Vec::new(),
@@ -81,11 +81,11 @@ impl NavigationHistory {
         }
     }
 
-    pub(crate) fn record(&self, path: &Path) {
+    pub fn record(&self, path: &Path) {
         self.record_at(path, unix_time());
     }
 
-    pub(crate) fn record_at(&self, path: &Path, now: u64) {
+    pub fn record_at(&self, path: &Path, now: u64) {
         if !path.is_absolute() {
             return;
         }
@@ -107,7 +107,7 @@ impl NavigationHistory {
         }
     }
 
-    pub(crate) fn frecency_within(&self, root: &Path) -> Frecency {
+    pub fn frecency_within(&self, root: &Path) -> Frecency {
         self.frecency_within_at(root, unix_time())
     }
 
@@ -121,11 +121,11 @@ impl NavigationHistory {
         )
     }
 
-    pub(crate) fn search(&self, query: &str) -> Vec<SearchItem> {
+    pub fn search(&self, query: &str) -> Vec<SearchItem> {
         self.search_at(query, unix_time())
     }
 
-    pub(crate) fn search_excluding(&self, query: &str, excluded: Option<&Path>) -> Vec<SearchItem> {
+    pub fn search_excluding(&self, query: &str, excluded: Option<&Path>) -> Vec<SearchItem> {
         self.search_at_excluding(query, unix_time(), excluded)
     }
 
@@ -180,7 +180,7 @@ impl NavigationHistory {
             .collect()
     }
 
-    pub(crate) fn recent_excluding(&self, query: &str, excluded: Option<&Path>) -> Vec<SearchItem> {
+    pub fn recent_excluding(&self, query: &str, excluded: Option<&Path>) -> Vec<SearchItem> {
         let mut matcher = HistoryMatcher::new(query);
         let mut matches = self
             .entries

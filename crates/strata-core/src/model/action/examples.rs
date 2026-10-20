@@ -4,7 +4,7 @@ use super::{ActionRuntime, ExecutionMode};
 
 const CONTEXT_API: &str = include_str!("../../../data/actions/context-api.txt");
 
-pub(crate) struct ActionExample {
+pub struct ActionExample {
     pub name: &'static str,
     pub category: &'static str,
     pub description: &'static str,
@@ -48,7 +48,7 @@ impl ActionExample {
     }
 }
 
-pub(crate) const ACTION_EXAMPLES: &[ActionExample] = &[
+pub const ACTION_EXAMPLES: &[ActionExample] = &[
     ActionExample {
         name: "Log selected paths",
         category: "Files",

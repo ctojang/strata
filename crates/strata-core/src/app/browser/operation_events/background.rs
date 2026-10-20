@@ -16,10 +16,10 @@ use super::{
     replaced_archive_undo,
 };
 
-pub(crate) struct BackgroundOperation {
-    pub(crate) load: RefCell<Option<LoadHandle>>,
-    pub(crate) cancel_pending: Cell<bool>,
-    pub(crate) cancel_requested: Cell<bool>,
+pub struct BackgroundOperation {
+    pub load: RefCell<Option<LoadHandle>>,
+    pub cancel_pending: Cell<bool>,
+    pub cancel_requested: Cell<bool>,
     copying: bool,
     deleting: bool,
     deletion_permanent: bool,
@@ -31,7 +31,7 @@ pub(crate) struct BackgroundOperation {
 }
 
 impl Browser {
-    pub(crate) fn backgroundable_operation(&self) -> Option<OperationRequestId> {
+    pub fn backgroundable_operation(&self) -> Option<OperationRequestId> {
         self.current_operation.get().filter(|_| {
             self.operation_backgroundable.get()
                 && self.undo_claim.borrow().is_none()
@@ -39,15 +39,15 @@ impl Browser {
         })
     }
 
-    pub(crate) fn operation_description(&self) -> String {
+    pub fn operation_description(&self) -> String {
         self.operation_description.borrow().clone()
     }
 
-    pub(crate) fn operation_destination_description(&self) -> String {
+    pub fn operation_destination_description(&self) -> String {
         self.operation_destination_description.borrow().clone()
     }
 
-    pub(crate) fn background_file_operation(
+    pub fn background_file_operation(
         self: &Rc<Self>,
         request_id: OperationRequestId,
     ) -> bool {
@@ -80,15 +80,15 @@ impl Browser {
         true
     }
 
-    pub(crate) fn has_foreground_operation(&self) -> bool {
+    pub fn has_foreground_operation(&self) -> bool {
         self.current_operation.get().is_some()
     }
 
-    pub(crate) fn has_background_operations(&self) -> bool {
+    pub fn has_background_operations(&self) -> bool {
         !self.background_operations.borrow().is_empty()
     }
 
-    pub(crate) fn cancel_background_operations(&self) {
+    pub fn cancel_background_operations(&self) {
         let ids: Vec<_> = self
             .background_operations
             .borrow()
@@ -100,7 +100,7 @@ impl Browser {
         }
     }
 
-    pub(crate) fn cancel_operation(&self, request_id: OperationRequestId) {
+    pub fn cancel_operation(&self, request_id: OperationRequestId) {
         let job = self
             .background_operations
             .borrow()

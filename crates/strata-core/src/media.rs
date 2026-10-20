@@ -8,28 +8,28 @@ use std::{
 
 use crate::{sandbox::Cancellation, services::MediaPreviewSize};
 
-pub(crate) const FPS: u32 = 30;
+pub const FPS: u32 = 30;
 // The terminal tick must fit the wire format; this also denotes unknown duration.
-pub(crate) const MAX_DURATION_US: u64 = u32::MAX as u64 * 1_000_000 / FPS as u64;
-pub(crate) const SAMPLE_RATE: u64 = 48_000;
-pub(crate) const AUDIO_BYTES: usize = 6_400;
+pub const MAX_DURATION_US: u64 = u32::MAX as u64 * 1_000_000 / FPS as u64;
+pub const SAMPLE_RATE: u64 = 48_000;
+pub const AUDIO_BYTES: usize = 6_400;
 // Audio runs this many ticks ahead of video inside the records, so a sink's
 // buffer and device delay are covered by PCM rather than by pinned frames.
-pub(crate) const AUDIO_LEAD_TICKS: u32 = 60;
-pub(crate) const STARTUP_TIMEOUT: Duration = Duration::from_secs(22);
-pub(crate) const FRAME_TIMEOUT: Duration = Duration::from_secs(8);
-pub(crate) const HEADER_BYTES: usize = 40;
+pub const AUDIO_LEAD_TICKS: u32 = 60;
+pub const STARTUP_TIMEOUT: Duration = Duration::from_secs(22);
+pub const FRAME_TIMEOUT: Duration = Duration::from_secs(8);
+pub const HEADER_BYTES: usize = 40;
 const MAGIC: &[u8; 8] = b"STRRAW01";
 
-pub(crate) mod peaks;
-pub(crate) mod storyboard;
+pub mod peaks;
+pub mod storyboard;
 
-pub(crate) fn timestamp(tick: u32) -> u64 {
+pub fn timestamp(tick: u32) -> u64 {
     u64::from(tick) * 1_000_000 / u64::from(FPS)
 }
 
 /// PCM bytes a frame record carries; the first record also holds the lead.
-pub(crate) fn audio_bytes(header: Header, tick: u32) -> usize {
+pub fn audio_bytes(header: Header, tick: u32) -> usize {
     if !header.audio {
         0
     } else if tick == header.start_tick {
@@ -39,7 +39,7 @@ pub(crate) fn audio_bytes(header: Header, tick: u32) -> usize {
     }
 }
 
-pub(crate) fn seek_tick(time_us: u64, duration_us: u64) -> u32 {
+pub fn seek_tick(time_us: u64, duration_us: u64) -> u32 {
     (time_us
         .min(duration_us.saturating_sub(1))
         .min(MAX_DURATION_US - 1)
@@ -48,7 +48,7 @@ pub(crate) fn seek_tick(time_us: u64, duration_us: u64) -> u32 {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) struct Header {
+pub struct Header {
     pub width: u32,
     pub height: u32,
     pub audio: bool,
@@ -123,7 +123,7 @@ impl Header {
 }
 
 #[derive(Debug)]
-pub(crate) struct Frame {
+pub struct Frame {
     pub tick: u32,
     pub pixels: Vec<u8>,
     pub samples: Vec<u8>,
@@ -144,7 +144,7 @@ impl Frame {
     }
 }
 
-pub(crate) fn write_end(writer: &mut impl Write, tick: u32, duration_us: u64) -> io::Result<()> {
+pub fn write_end(writer: &mut impl Write, tick: u32, duration_us: u64) -> io::Result<()> {
     write_record(writer, 0, tick, duration_us, 0, 0)
 }
 
@@ -163,13 +163,13 @@ fn write_record(
     writer.write_all(&(audio as u32).to_le_bytes())
 }
 
-pub(crate) struct Decoder {
+pub struct Decoder {
     pub header: Header,
     next_tick: u32,
     ended: bool,
 }
 
-pub(crate) enum Packet {
+pub enum Packet {
     Frame(Frame),
     End(u64),
 }
@@ -246,11 +246,11 @@ fn u64_at(bytes: &[u8], offset: usize) -> u64 {
     )
 }
 
-pub(crate) fn invalid(message: &str) -> io::Error {
+pub fn invalid(message: &str) -> io::Error {
     io::Error::new(io::ErrorKind::InvalidData, message)
 }
 
-pub(crate) struct TimedReader<'a, F> {
+pub struct TimedReader<'a, F> {
     pub fd: &'a F,
     pub deadline: Instant,
     pub cancellation: &'a Cancellation,

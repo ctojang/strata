@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 /// Inputs must be Unicode-folded.
-pub(crate) fn filter_name_matches(name: &str, query: &str) -> bool {
+pub fn filter_name_matches(name: &str, query: &str) -> bool {
     let Some((prefix, rest)) = query.split_once('*') else {
         return name.contains(query) || typo_matches_word(name, query);
     };
@@ -23,7 +23,7 @@ pub(crate) fn filter_name_matches(name: &str, query: &str) -> bool {
     true
 }
 
-pub(crate) fn filter_query_allows_typos(query: &str) -> bool {
+pub fn filter_query_allows_typos(query: &str) -> bool {
     query.chars().take(4).count() == 4 && query.chars().all(char::is_alphanumeric)
 }
 

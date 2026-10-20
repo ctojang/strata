@@ -8,7 +8,7 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
-pub(crate) mod examples;
+pub mod examples;
 
 pub const ACTION_SCHEMA_VERSION: u32 = 1;
 

@@ -23,7 +23,7 @@ use super::volume::{MountTable, TrashMountKey as MountKey, is_fuse_fs_type};
 use crate::services::TrashedOriginal;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum TrashFailure {
+pub enum TrashFailure {
     /// The location cannot hold a Trash; a confirmed permanent delete is the alternative.
     Unsupported(UnsupportedReason),
     Cancelled,
@@ -34,7 +34,7 @@ pub(crate) enum TrashFailure {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum UnsupportedReason {
+pub enum UnsupportedReason {
     /// GIO itself returned `NOT_SUPPORTED`.
     Reported,
     /// A FUSE mount refused a step of the freedesktop trash protocol.
@@ -42,14 +42,14 @@ pub(crate) enum UnsupportedReason {
 }
 
 #[derive(Debug)]
-pub(crate) struct TrashError {
-    pub(crate) failure: TrashFailure,
-    pub(crate) error: glib::Error,
+pub struct TrashError {
+    pub failure: TrashFailure,
+    pub error: glib::Error,
 }
 
 impl TrashError {
     /// A failed permanent delete has no Trash fallback to offer.
-    pub(crate) fn permanent(error: glib::Error) -> Self {
+    pub fn permanent(error: glib::Error) -> Self {
         let failure = if error.matches(gio::IOErrorEnum::Cancelled) {
             TrashFailure::Cancelled
         } else {
@@ -58,7 +58,7 @@ impl TrashError {
         Self { failure, error }
     }
 
-    pub(crate) fn is_unsupported(&self) -> bool {
+    pub fn is_unsupported(&self) -> bool {
         matches!(self.failure, TrashFailure::Unsupported(_))
     }
 }
@@ -73,7 +73,7 @@ impl From<glib::Error> for TrashError {
     }
 }
 
-pub(crate) trait TrashEnvironment {
+pub trait TrashEnvironment {
     fn mounts(&self) -> MountTable;
     /// Only stat-ed off the main thread.
     fn home(&self) -> PathBuf;
@@ -84,7 +84,7 @@ pub(crate) trait TrashEnvironment {
     ) -> Pin<Box<dyn Future<Output = Result<Option<TrashedOriginal>, glib::Error>>>>;
 }
 
-pub(crate) struct SystemTrash;
+pub struct SystemTrash;
 
 impl TrashEnvironment for SystemTrash {
     fn mounts(&self) -> MountTable {
@@ -110,14 +110,14 @@ impl TrashEnvironment for SystemTrash {
 
 /// Trashes one item, records a mount that turned out to lack Trash, and
 /// removes the empty trash folders a failed attempt left behind.
-pub(crate) async fn trash_with_cleanup(
+pub async fn trash_with_cleanup(
     file: &gio::File,
     cancellable: &gio::Cancellable,
 ) -> Result<Option<TrashedOriginal>, TrashError> {
     trash_with_cleanup_in(&SystemTrash, file, cancellable).await
 }
 
-pub(crate) async fn trash_with_cleanup_in(
+pub async fn trash_with_cleanup_in(
     environment: &dyn TrashEnvironment,
     file: &gio::File,
     cancellable: &gio::Cancellable,
@@ -132,7 +132,7 @@ pub(crate) async fn trash_with_cleanup_in(
 }
 
 /// Trashes and classifies without cleanup; batch callers own one [`LeftoverWatch`].
-pub(crate) async fn attempt(
+pub async fn attempt(
     environment: &dyn TrashEnvironment,
     file: &gio::File,
     cancellable: &gio::Cancellable,
@@ -149,7 +149,7 @@ pub(crate) async fn attempt(
 }
 
 /// Blocking counterpart of [`trash_with_cleanup`] for worker threads.
-pub(crate) fn verified_with_cleanup(
+pub fn verified_with_cleanup(
     path: &Path,
     attempt: impl FnOnce() -> Result<(), glib::Error>,
 ) -> Result<(), TrashError> {
@@ -359,14 +359,14 @@ fn unsupported_mounts() -> MutexGuard<'static, HashMap<MountKey, UnsupportedReas
 }
 
 /// Only FUSE mounts are recorded; GIO's own probe is accurate elsewhere.
-pub(crate) fn record_unsupported(mount: MountKey, reason: UnsupportedReason) {
+pub fn record_unsupported(mount: MountKey, reason: UnsupportedReason) {
     if is_fuse_fs_type(&mount.fs_type) {
         unsupported_mounts().insert(mount, reason);
     }
 }
 
 /// Lexical, so it never touches the mount; an alias through a symlink misses.
-pub(crate) fn unsupported_reason_for(path: &Path) -> Option<(MountKey, UnsupportedReason)> {
+pub fn unsupported_reason_for(path: &Path) -> Option<(MountKey, UnsupportedReason)> {
     if unsupported_mounts().is_empty() {
         return None;
     }
@@ -374,7 +374,7 @@ pub(crate) fn unsupported_reason_for(path: &Path) -> Option<(MountKey, Unsupport
 }
 
 /// Blocking: resolves symlinks first, for worker threads already reading `directory`.
-pub(crate) fn unsupported_reason_for_directory(directory: &Path) -> Option<UnsupportedReason> {
+pub fn unsupported_reason_for_directory(directory: &Path) -> Option<UnsupportedReason> {
     if unsupported_mounts().is_empty() {
         return None;
     }
@@ -393,13 +393,13 @@ pub(super) fn unsupported_reason_in(
 
 /// Lets Reload retry Trash on mounts the user may have fixed. Clears every
 /// mount so it never has to resolve a possibly hung folder first.
-pub(crate) fn forget_all() {
+pub fn forget_all() {
     unsupported_mounts().clear();
 }
 
 /// Watches the FUSE mounts a batch trashes on and, when every attempt on a
 /// mount was unsupported, removes the trash folders that weren't there before.
-pub(crate) struct LeftoverWatch {
+pub struct LeftoverWatch {
     parents: HashMap<PathBuf, MountKey>,
     watched: HashMap<MountKey, WatchedMount>,
 }
@@ -411,7 +411,7 @@ struct WatchedMount {
 }
 
 impl LeftoverWatch {
-    pub(crate) async fn observe(
+    pub async fn observe(
         environment: &dyn TrashEnvironment,
         paths: impl IntoIterator<Item = PathBuf>,
     ) -> Self {
@@ -466,7 +466,7 @@ impl LeftoverWatch {
     }
 
     /// `failure` is `None` for a successful trash.
-    pub(crate) fn note(&mut self, path: &Path, failure: Option<TrashFailure>) {
+    pub fn note(&mut self, path: &Path, failure: Option<TrashFailure>) {
         let Some(watched) = path
             .parent()
             .and_then(|parent| self.parents.get(parent))
@@ -481,7 +481,7 @@ impl LeftoverWatch {
         }
     }
 
-    pub(crate) async fn clean_up(self) {
+    pub async fn clean_up(self) {
         let snapshots: Vec<_> = self
             .watched
             .into_values()
