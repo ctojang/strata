@@ -47,7 +47,7 @@ one is deleted.
 Every local operation that puts an item at a new name — move, rename, undo, restore from Trash,
 publishing a staged copy, setting an original aside for Replace or Merge and putting it back,
 archive extraction and creation — goes through one routine, `placement::place` in
-`src/adapters/local_operations/placement.rs`. It tries these steps in order and stops at the first
+`crates/strata-core/src/adapters/local_operations/placement.rs`. It tries these steps in order and stops at the first
 that applies:
 
 | Step | Applies to | Operation | Why it cannot replace |
@@ -186,7 +186,7 @@ Replace and Merge without Trash, would still be refused on these mounts.
 ## What a mount supports
 
 Strata learns capabilities per mount instead of trusting the filesystem type. The cache lives in
-`src/adapters/volume/mount_capabilities.rs`. It is keyed by the mount id from `statx`:
+`crates/strata-core/src/adapters/volume/mount_capabilities.rs`. It is keyed by the mount id from `statx`:
 `STATX_MNT_ID_UNIQUE`, which is never reused, on Linux 6.8 and later, otherwise `STATX_MNT_ID` with
 the device number. Entries are dropped whenever Strata's mount monitor reports a change.
 
@@ -251,7 +251,7 @@ aside where Replace would. How the incoming items are placed is described under
 ## Copying
 
 Every copy between two native paths goes through one engine, `copy_engine` in
-`src/adapters/local_operations/copy_engine.rs`: pastes, Duplicate and Keep Both, moves across
+`crates/strata-core/src/adapters/local_operations/copy_engine.rs`: pastes, Duplicate and Keep Both, moves across
 filesystems, Replace's staging copy, merges, and restores from Trash where nothing can be placed.
 It runs on worker threads, opens every entry through a descriptor beneath a pinned folder
 (`openat2` with `RESOLVE_BENEATH` and no symlinks), and makes every call through the `FsOps` seam.
@@ -1094,7 +1094,7 @@ Archive extraction never sets a symbolic link's time on FUSE, where sshfs applie
 ### Unit tests
 
 Unit tests inject each quirk deterministically through the syscall seam in
-`src/adapters/local_operations/fs_ops.rs`. A test installs a scope over its temporary directory:
+`crates/strata-core/src/adapters/local_operations/fs_ops.rs`. A test installs a scope over its temporary directory:
 
 ```rust
 let _quirks = FsQuirks::install(root.path(), Quirks::without_rename_flags());

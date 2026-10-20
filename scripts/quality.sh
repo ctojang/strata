@@ -53,7 +53,8 @@ exec "$engine" run "${options[@]}" \
     mkdir -p "$HOME" "$CARGO_HOME"
     rustc --version
     case "$1" in all|fmt) cargo fmt --all --check ;; esac
-    case "$1" in all|clippy) cargo clippy --locked --all-targets --all-features --workspace -- -D warnings ;; esac
+    case "$1" in all|clippy) cargo clippy --locked --all-targets --all-features --workspace -- -D warnings
+                   cargo clippy --locked --workspace --lib --bins -- -D warnings ;; esac
     case "$1" in all|test)
       case "${STRATA_QUALITY_TASK:-test}" in
         build) python3 scripts/quality_ci.py build ;;
