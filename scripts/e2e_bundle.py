@@ -24,6 +24,8 @@ IMAGE_INPUTS = (
     "tests/e2e/gtk/gtk-4.22-accessible-bounds.patch",
 )
 
+MANIFESTS = ("Cargo.toml", "Cargo.lock", "crates/strata-core/Cargo.toml")
+
 
 def image_key(repository=REPOSITORY):
     return hashlib.sha256(
@@ -33,13 +35,13 @@ def image_key(repository=REPOSITORY):
 
 def dependency_key(repository=REPOSITORY):
     inputs = [image_key(repository)] + [digest(repository / name)
-                                       for name in ("Cargo.toml", "Cargo.lock", ".dockerignore")]
+                                       for name in MANIFESTS + (".dockerignore",)]
     return hashlib.sha256("".join(inputs).encode()).hexdigest()
 
 
 def source_key(repository=REPOSITORY):
-    files = [repository / name for name in ("Cargo.toml", "Cargo.lock", "build.rs")]
-    for directory in ("src", "data"):
+    files = [repository / name for name in MANIFESTS]
+    for directory in ("src", "crates", "data"):
         files.extend(path for path in (repository / directory).rglob("*") if path.is_file())
     inputs = [(str(path.relative_to(repository)), digest(path)) for path in sorted(files)]
     return hashlib.sha256(json.dumps(inputs).encode()).hexdigest()

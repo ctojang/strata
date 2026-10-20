@@ -41,7 +41,7 @@ checks. Renew consent if the authorized scope changes, or run the required tests
 
 For native Rust selection, `scripts/test-headless.py` starts the private display
 and session buses, then appends its arguments to the fixed
-`cargo test --all-targets --all-features` command. Use module/name filters:
+`cargo test --all-targets --all-features --workspace` command. Use module/name filters:
 
 ```bash
 ./scripts/test-headless.py services::operations::tests
@@ -204,7 +204,7 @@ their existing runners rather than downloading a large GUI image unnecessarily.
 ### Rust quality shards
 
 CI's **Quality build and lint** job runs formatting and Clippy, then compiles
-`cargo test --locked --all-targets --all-features --no-run` once. It exports only
+`cargo test --locked --all-targets --all-features --workspace --no-run` once. It exports only
 test executables and a plan, not Cargo caches. `scripts/quality_ci.py` collects
 each libtest inventory, including the explicitly ignored tests, and assigns every
 entry to one of four shards. Timing hints in `scripts/quality-durations.json`

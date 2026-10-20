@@ -62,5 +62,5 @@ exec cargo watch \
   --watch src \
   --watch data \
   --watch Cargo.toml \
-  --watch build.rs \
+  --watch crates \
   --exec run

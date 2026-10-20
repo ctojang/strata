@@ -88,9 +88,9 @@ The always-available checks are:
 
 ```bash
 cargo fmt --all --check
-cargo check --all-targets --all-features
-cargo clippy --all-targets --all-features -- -D warnings
-cargo test --all-targets --all-features
+cargo check --all-targets --all-features --workspace
+cargo clippy --all-targets --all-features --workspace -- -D warnings
+cargo test --all-targets --all-features --workspace
 ```
 
 CI additionally runs:

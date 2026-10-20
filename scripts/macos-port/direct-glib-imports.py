@@ -5,13 +5,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CORE = [
-    "src/model", "src/services", "src/adapters", "src/app", "src/util",
-    "src/storage.rs", "src/i18n.rs", "src/build_info.rs", "src/logging.rs",
-    "src/metrics.rs", "src/trusted_command.rs", "src/rar_extraction.rs",
-    "src/media.rs", "src/media", "src/sandbox.rs", "src/sandbox",
-    "src/sandbox_helper.rs", "src/sandbox_helper",
-]
+CORE = ["crates/strata-core/src"]
 DIRECT = {"glib", "gio", "gdk_pixbuf"}
 REWRITABLE = DIRECT | {"pango", "prelude"}
 

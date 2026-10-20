@@ -47,7 +47,7 @@ def main() -> int:
         if tmpdir:
             environment["TMPDIR"] = tmpdir
         child = subprocess.Popen(
-            ["cargo", "test", "--all-targets", "--all-features", *sys.argv[1:]],
+            ["cargo", "test", "--all-targets", "--all-features", "--workspace", *sys.argv[1:]],
             cwd=REPOSITORY,
             env=environment,
             start_new_session=True,

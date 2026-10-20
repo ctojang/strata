@@ -164,7 +164,8 @@ class BundleTests(unittest.TestCase):
     def test_bundle_is_bound_to_revision_image_inputs_and_file_contents(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            for name in ("Cargo.toml", "Cargo.lock", "build.rs"):
+            for name in ("Cargo.toml", "Cargo.lock", "crates/strata-core/Cargo.toml"):
+                (root / name).parent.mkdir(parents=True, exist_ok=True)
                 (root / name).write_text("source")
             suite = root / "tests/e2e"
             suite.mkdir(parents=True)
@@ -186,10 +187,10 @@ class BundleTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "checksum"):
                     verify(bundle, "revision", root)
                 (bundle / name).write_bytes(original)
-            (root / "build.rs").write_text("local edit")
+            (root / "crates/strata-core/Cargo.toml").write_text("local edit")
             with self.assertRaisesRegex(ValueError, "source differs"):
                 verify(bundle, "revision", root)
-            (root / "build.rs").write_text("source")
+            (root / "crates/strata-core/Cargo.toml").write_text("source")
             for path in (root / name for name in IMAGE_INPUTS):
                 with self.subTest(image_input=path.name):
                     original = path.read_bytes()
