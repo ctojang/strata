@@ -187,11 +187,8 @@ pub(super) fn release_controllers_on_close(
 }
 
 pub(in crate::ui) struct ChooserPolicy {
-    pub(in crate::ui) multiple: bool,
     pub(in crate::ui) confirm: Rc<dyn Fn(crate::model::FileEntry)>,
     pub(in crate::ui) cancel: Rc<dyn Fn()>,
-    pub(in crate::ui) save: Option<Rc<dyn Fn()>>,
-    pub(in crate::ui) edit_name: Option<Rc<dyn Fn()>>,
 }
 
 pub(in crate::ui) struct ChooserKeys {
@@ -910,10 +907,7 @@ impl Dispatcher {
         if let Some(result) = self.tenxer_chord(browser, press) {
             return Some(result);
         }
-        if let Some(result) = self
-            .chooser_refusal(press)
-            .or_else(|| self.chooser_save(press))
-        {
+        if let Some(result) = self.chooser_refusal(press) {
             return Some(result);
         }
         if press.is(CLOSE_WINDOW) {

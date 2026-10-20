@@ -740,7 +740,7 @@ thread and at most two FFmpeg decoding processes. A fifth request reports busy
 instead of interrupting another player. The slot is retained through buffered
 playback, so a fifth player cannot steal it between GIF loops. A short 250-ms
 acquisition grace allows
-an obsolete worker to finish cancellation. Separate application/portal processes
+an obsolete worker to finish cancellation. Separate application processes
 have separate limits, not a machine-global scheduler.
 
 | State | Bound / behavior |

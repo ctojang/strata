@@ -29,18 +29,7 @@ impl ReferenceScope {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) struct ChooserScope {
-    pub request: ChooserRequest,
-    pub multiple: bool,
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum ChooserRequest {
-    Files,
-    Folders,
-    SaveFile,
-    SaveFiles,
-}
+pub(crate) struct ChooserScope;
 
 /// Lowercase, with the `−` and the `–` of digit ranges that labels show read
 /// as a typed `-`.
@@ -207,8 +196,6 @@ pub(crate) enum ContextHint {
     HiddenFiles,
 }
 
-/// Only the 10xer map honors `scope.chooser`: portal choosers show the footer
-/// and dispatch F1 only in 10xer mode, so the default map has no chooser view.
 pub(crate) fn reference_sections(scope: ReferenceScope) -> Vec<ReferenceSection> {
     if super::tenxer_mode::chrome_suppressed() {
         tenxer_sections(scope.mode, scope.chooser)
@@ -263,10 +250,10 @@ fn tenxer_sections(mode: BrowserMode, chooser: Option<ChooserScope>) -> Vec<Refe
         title: navigation_title(mode),
         rows: tenxer_navigation(mode, chooser.is_some()),
     }];
-    if let Some(chooser) = chooser {
+    if chooser.is_some() {
         sections.push(ReferenceSection {
             title: "File chooser",
-            rows: chooser_requests(chooser),
+            rows: chooser_requests(),
         });
     }
     sections.extend([
@@ -276,7 +263,7 @@ fn tenxer_sections(mode: BrowserMode, chooser: Option<ChooserScope>) -> Vec<Refe
         },
         ReferenceSection {
             title: "Files and selection",
-            rows: chooser.map_or_else(|| TENXER_FILES.to_vec(), chooser_files),
+            rows: chooser.map_or_else(|| TENXER_FILES.to_vec(), |_| chooser_files()),
         },
         ReferenceSection {
             title: "Preview",
@@ -786,60 +773,23 @@ const COPY_PATH_OR_NAME: Keys = Mixed(&[
     Chord(&[COPY_AS, COPY_AS_NAME]),
 ]);
 
-fn chooser_requests(chooser: ChooserScope) -> Vec<Shortcut> {
-    let mut shortcuts = match chooser.request {
-        ChooserRequest::Files => vec![
-            within(
-                "%{keys} on a file",
-                Any(&[ENTER, OPEN]),
-                if chooser.multiple {
-                    "Choose the filled items, or the file"
-                } else {
-                    "Choose the file"
-                },
-            ),
-            within(
-                "%{keys} on a folder",
-                Any(&[ENTER, OPEN]),
-                "Open the folder",
-            ),
-        ],
-        ChooserRequest::Folders => vec![
-            within(
-                "%{keys} on a folder",
-                Any(&[ENTER, OPEN]),
-                "Open the folder",
-            ),
-            row(One(CHOOSE_FOLDER), "Choose a folder, as Accept does"),
-        ],
-        ChooserRequest::SaveFile => vec![
-            row(One(ENTER), "Save the name in the current folder"),
-            within(
-                "%{keys} on a file",
-                One(OPEN),
-                "Save over that file after confirming",
-            ),
-            within("%{keys} on a folder", One(OPEN), "Open the folder"),
-            row(
-                Any(&[TENXER_RENAME, RENAME]),
-                "Edit the name; %{keys} returns to the files",
-            )
-            .mentioning(Mention::Keys(One(ESCAPE))),
-        ],
-        ChooserRequest::SaveFiles => vec![
-            row(One(ENTER), "Save the files in the current folder"),
-            within("%{keys} on a folder", One(OPEN), "Open the folder"),
-        ],
-    };
-    shortcuts.push(row(
-        One(ESCAPE),
-        "Dismiss one interaction, then cancel the request",
-    ));
-    shortcuts
+fn chooser_requests() -> Vec<Shortcut> {
+    vec![
+        within(
+            "%{keys} on a folder",
+            Any(&[ENTER, OPEN]),
+            "Open the folder",
+        ),
+        row(One(CHOOSE_FOLDER), "Choose a folder, as Accept does"),
+        row(
+            One(ESCAPE),
+            "Dismiss one interaction, then cancel the request",
+        ),
+    ]
 }
 
-fn chooser_files(chooser: ChooserScope) -> Vec<Shortcut> {
-    let mut shortcuts = vec![
+fn chooser_files() -> Vec<Shortcut> {
+    vec![
         TRASH_AFTER_CONFIRMING,
         row(
             Any(&[TENXER_DELETE_PERMANENTLY, DELETE_PERMANENTLY]),
@@ -847,33 +797,17 @@ fn chooser_files(chooser: ChooserScope) -> Vec<Shortcut> {
         ),
         row(One(CREATE), "Create a file; end with / for a folder"),
         row(COPY_PATH_OR_NAME, "Copy path / name"),
-    ];
-    if chooser.request != ChooserRequest::SaveFile {
-        shortcuts.push(row(
+        row(
             Any(&[TENXER_RENAME, RENAME]),
             "Rename the focused item in the footer",
-        ));
-    }
-    shortcuts.push(row(One(NEW_FOLDER), "Create a folder"));
-    if chooser.multiple {
-        shortcuts.extend_from_slice(&[
-            row(One(SPACE), "Toggle the focused item and move down"),
-            row(
-                Any(&[VISUAL_SELECT, VISUAL_UNSET]),
-                "Visual select / visual unset",
-            ),
-            row(One(SELECT_ALL), "Select all items in the focused pane"),
-            row(One(INVERT_SELECTION), "Invert the selection"),
-        ]);
-    }
-    shortcuts.extend_from_slice(&[
+        ),
+        row(One(NEW_FOLDER), "Create a folder"),
         row(One(PROPERTIES), "Show item properties"),
         row(
             Any(&[CONTEXT_MENU, CONTEXT_MENU_F10]),
             "Open the context menu",
         ),
-    ]);
-    shortcuts
+    ]
 }
 
 /// 10xer rows that a default row already describes with other keys or context.
@@ -1199,19 +1133,7 @@ pub(in crate::ui) fn reference_rows(tenxer: bool) -> Vec<Vec<Keys>> {
             continue;
         }
         sections.extend(tenxer_sections(mode, None));
-        for request in [
-            ChooserRequest::Files,
-            ChooserRequest::Folders,
-            ChooserRequest::SaveFile,
-            ChooserRequest::SaveFiles,
-        ] {
-            for multiple in [false, true] {
-                sections.extend(tenxer_sections(
-                    mode,
-                    Some(ChooserScope { request, multiple }),
-                ));
-            }
-        }
+        sections.extend(tenxer_sections(mode, Some(ChooserScope)));
     }
     let mut rows: Vec<Shortcut> = Vec::new();
     for shortcut in sections.into_iter().flat_map(|section| section.rows) {

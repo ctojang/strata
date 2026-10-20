@@ -389,7 +389,6 @@ fn title(id: CheckId) -> &'static str {
         CheckId::Drives => "Removable drives",
         CheckId::FolderMonitoring => "Folder change monitoring",
         CheckId::Terminal => "Terminal",
-        CheckId::Portal => "Desktop portal",
         CheckId::SecretService => "Password storage",
         CheckId::CustomActions => "Custom actions",
     }
@@ -482,9 +481,6 @@ fn message(check: &Check) -> String {
         }
         Finding::TerminalMissing => crate::ui::terminal::no_terminal_message(),
         Finding::ServiceAvailable => tr("The service is available."),
-        Finding::PortalMissing => tr(
-            "xdg-desktop-portal isn't available, so Strata can't provide file dialogs to other apps.",
-        ),
         Finding::SecretServiceMissing => tr(
             "No Secret Service provider, such as GNOME Keyring or KWallet, is available, so passwords for encrypted drives can't be remembered.",
         ),

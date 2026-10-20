@@ -583,12 +583,6 @@ impl ModeViews {
         }
     }
 
-    pub fn refresh_source_filter(&self) {
-        for pane in self.visible_panes() {
-            pane.search.refresh_source_filter(&self.browser);
-        }
-    }
-
     pub fn prune_stale_search_results(&self) {
         if let Some(pane) = self.single_pane() {
             pane.search.prune_missing();

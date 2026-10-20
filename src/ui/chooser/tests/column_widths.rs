@@ -6,21 +6,15 @@ use crate::ui::{
     browser_modes::BrowserMode,
     preferences::{ListColumnId, ListColumns},
 };
-use acceptance::{request, wait_until};
+use acceptance::wait_until;
 use std::{
     rc::Rc,
-    sync::{Arc, atomic::AtomicBool},
     time::{Duration, Instant},
 };
 
 fn open_browser(root: &Path, chooser: bool) -> gtk::Window {
     let (window, browser) = if chooser {
-        let state = build_chooser(
-            request(root.to_path_buf()),
-            Arc::new(AtomicBool::new(false)),
-            |_| {},
-        )
-        .expect("chooser");
+        let state = build_chooser(destination(root.to_path_buf()), |_| {});
         (state.window.clone(), state.view.browser())
     } else {
         let view = crate::ui::browser::BrowserView::new(
@@ -224,13 +218,13 @@ fn resize_column(window: &gtk::Window, offset: f64) {
 
 fn fixture_root() -> tempfile::TempDir {
     let root = tempfile::tempdir().expect("fixture");
-    std::fs::write(root.path().join("report.pdf"), "report").expect("fixture file");
+    std::fs::create_dir(root.path().join("report")).expect("fixture folder");
     root
 }
 
 fn long_name_fixture_root() -> tempfile::TempDir {
     let root = fixture_root();
-    std::fs::write(root.path().join("x".repeat(216)), "long").expect("long-name fixture file");
+    std::fs::create_dir(root.path().join("x".repeat(216))).expect("long-name fixture folder");
     root
 }
 
@@ -280,7 +274,7 @@ fn list_resizes_persist_across_windows_without_changing_the_other_scope() {
         "ui::chooser::tests::column_widths::list_resizes_persist_across_windows_without_changing_the_other_scope",
         || {
             seed_settings("list", 26);
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let preferences = PreferenceManager::shared();
             let root = fixture_root();
             for chooser in [true, false] {
@@ -339,7 +333,7 @@ fn miller_resizes_persist_across_windows_without_changing_the_other_scope() {
         "ui::chooser::tests::column_widths::miller_resizes_persist_across_windows_without_changing_the_other_scope",
         || {
             seed_settings("columns", 16);
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let preferences = PreferenceManager::shared();
             let root = fixture_root();
             for chooser in [true, false] {
@@ -381,7 +375,7 @@ fn miller_autofit_saves_a_width_within_the_visible_browser_area() {
         "ui::chooser::tests::column_widths::miller_autofit_saves_a_width_within_the_visible_browser_area",
         || {
             seed_settings("columns", 16);
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let root = long_name_fixture_root();
             for chooser in [true, false] {
                 let other = saved_column(!chooser);
@@ -407,7 +401,7 @@ fn miller_drag_cannot_exceed_the_visible_browser_area() {
         "ui::chooser::tests::column_widths::miller_drag_cannot_exceed_the_visible_browser_area",
         || {
             seed_settings("columns", 16);
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let root = fixture_root();
             for chooser in [true, false] {
                 let other = saved_column(!chooser);
@@ -456,7 +450,7 @@ fn failed_chooser_saves_are_only_logged() {
         "ui::chooser::tests::column_widths::failed_chooser_saves_are_only_logged",
         || {
             seed_settings("list", 26);
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let root = fixture_root();
             let window = open_browser(root.path(), true);
             wait_until(|| window.is_active());
@@ -490,7 +484,7 @@ fn list_column_customizations_update_live_across_windows() {
         "ui::chooser::tests::column_widths::list_column_customizations_update_live_across_windows",
         || {
             seed_settings("list", 16);
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let root = fixture_root();
             let first = open_browser(root.path(), false);
             let second = open_browser(root.path(), false);

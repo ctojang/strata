@@ -45,7 +45,7 @@ fn live_transfer_updates_the_visible_dialog_and_device_flush() {
             use gtk::prelude::*;
             use std::rc::Rc;
 
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let view = crate::ui::browser::BrowserView::new(
                 Rc::new(crate::adapters::LocalFileSource),
                 crate::ui::browser::PeekBehavior::default(),
@@ -107,7 +107,7 @@ fn completion_callbacks_wait_for_the_progress_modal_to_leave() {
             use gtk::prelude::*;
             use std::{cell::RefCell, rc::Rc, time::Duration};
 
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let view = crate::ui::browser::BrowserView::new(
                 Rc::new(crate::adapters::LocalFileSource),
                 crate::ui::browser::PeekBehavior::default(),
@@ -163,7 +163,7 @@ fn stalled_cancellation_keeps_the_dock_cancellable_only_once() {
             use gtk::prelude::*;
             use std::{cell::Cell, rc::Rc};
 
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let view = crate::ui::browser::BrowserView::new(
                 Rc::new(crate::adapters::LocalFileSource),
                 crate::ui::browser::PeekBehavior::default(),
@@ -270,7 +270,7 @@ fn progress_modal_returns_focus_to_the_listing_when_dismissed() {
             use gtk::prelude::*;
             use std::rc::Rc;
 
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let view = crate::ui::browser::BrowserView::new(
                 Rc::new(crate::adapters::LocalFileSource),
                 crate::ui::browser::PeekBehavior::default(),
@@ -313,7 +313,7 @@ fn a_dialog_opened_after_progress_keeps_focus_in_columns() {
             use gtk::prelude::*;
             use std::rc::Rc;
 
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             let directory = tempfile::tempdir().expect("progress folder");
             for name in ["a.txt", "b.txt"] {
                 std::fs::write(directory.path().join(name), b"progress").expect("fixture file");

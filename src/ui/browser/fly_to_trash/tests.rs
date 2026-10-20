@@ -10,7 +10,7 @@ fn prepared_flights_stay_hidden_until_play_and_survive_row_removal() {
             use gtk::prelude::*;
             use std::{cell::Cell, rc::Rc, time::Duration};
 
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             crate::ui::motion::set_reduce_motion(false);
             if let Some(settings) = gtk::Settings::default() {
                 settings.set_gtk_enable_animations(true);
@@ -92,7 +92,7 @@ fn outbound_restore_keeps_the_pre_restore_listing_frozen_until_landing() {
             use gtk::prelude::*;
             use std::{cell::Cell, rc::Rc, time::Duration};
 
-            crate::ui::prepare_portal_ui();
+            crate::ui::prepare_test_ui();
             crate::ui::motion::set_reduce_motion(false);
             if let Some(settings) = gtk::Settings::default() {
                 settings.set_gtk_enable_animations(true);

@@ -131,12 +131,7 @@ such as "Could not open “%{path}”: %{error}", use `services::io_error_detail
 `services::gio_error_detail`, or `services::error_detail` for an already
 localized reason: they lower-case the first letter in French, Spanish, Italian,
 Brazilian Portuguese, Russian and Vietnamese, and leave acronyms such as "HTTP"
-alone. Network failures go through `NetworkError`
-(`src/services/network_error.rs`), which reduces a `ureq` error to
-language-neutral data: an HTTP status, an English catalog reason, or
-untranslatable library text. Store that value, not a formatted sentence, in
-caches or anywhere else it may be shown later, and localize it with `message()`
-or `detail()` when it is displayed. When an error type's `Display` is used in logs
+alone. When an error type's `Display` is used in logs
 or tests, add a localized `user_message()` for the UI rather than changing
 `Display`.
 

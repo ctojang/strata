@@ -42,12 +42,6 @@ def test_settings_text_size_keeps_switches_inside_the_page(strata, request):
                 ArtifactCollector(test_name=f"settings-text-size-{pixels}").directory
                 / "general.png"
             )
-        _reveal_page_control(strata, "Complete setup")
-        if request.config.getoption("--keep-artifacts"):
-            strata.screenshot(
-                ArtifactCollector(test_name=f"settings-text-size-{pixels}").directory
-                / "desktop-integration.png"
-            )
         theme = strata.window.find(role="button", name="Appearance settings")
         assert theme is not None and theme.activate()
         control = strata.wait(

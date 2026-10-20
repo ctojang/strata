@@ -29,7 +29,10 @@ fn install_fixture(replies: &[&[u8]], delay: Duration, timeout: Duration) -> (bo
 fn lua_centering_rule_is_named_and_matches_only_chooser_windows() {
     let (installed, received) = install_fixture(&[b"ok"], Duration::ZERO, Duration::from_secs(2));
     assert!(installed);
-    assert_ne!(crate::portal::CHOOSER_APPLICATION_ID, crate::APPLICATION_ID);
+    assert_ne!(
+        crate::ui::chooser::request::CHOOSER_APPLICATION_ID,
+        crate::APPLICATION_ID
+    );
     assert_eq!(
         received,
         vec![

@@ -609,30 +609,6 @@ pub(super) fn set_column_busy(column: &ColumnView, busy: bool) {
         .update_state(&[gtk::accessible::State::Busy(busy)]);
 }
 
-pub(super) fn refresh_source_filter(column: &ColumnView, browser: &crate::app::Browser) -> bool {
-    if !column.search_session.is_active() {
-        return false;
-    }
-    let items = column
-        .search_results
-        .borrow()
-        .iter()
-        .filter(|item| browser.allows_entry(&super::search_result_entry(item)))
-        .cloned()
-        .collect();
-    let changed = search::update_results(
-        &column.search_model,
-        &column.search_results,
-        &column.selection,
-        &column.syncing_selection,
-        items,
-    );
-    column
-        .search_session
-        .query(column.filter_entry.text().trim());
-    changed
-}
-
 pub(super) fn prune_missing_search_results(column: &ColumnView) -> bool {
     if !column.search_session.is_active() {
         return false;

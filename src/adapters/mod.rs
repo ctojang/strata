@@ -3,7 +3,6 @@
 pub(crate) mod bookmarks;
 pub(crate) mod directory_summary;
 pub(crate) mod directory_validation;
-mod file_manager1;
 mod gio_location;
 mod local_actions;
 mod local_files;
@@ -15,7 +14,6 @@ pub(crate) mod trash_restore;
 pub(crate) mod trash_support;
 mod volume;
 
-pub(crate) use file_manager1::{RevealRequest, export_file_manager};
 pub(crate) use gio_location::{gio_file_for_location, location_for_file, reveal_target_for_file};
 pub(crate) use local_actions::{LocalActionStore, resolve_executable as resolve_action_executable};
 pub use local_files::LocalFileSource;

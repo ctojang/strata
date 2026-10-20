@@ -143,7 +143,7 @@ layout-dependent selection before disconnecting the frame handler.
 
 ### Collection behavior and lifetime boundaries
 
-The browser and open/save chooser use the same collection behavior, not a universal widget:
+The browser and the folder chooser use the same collection behavior, not a universal widget:
 
 | Owner | Responsibility and intentional differences |
 | --- | --- |
@@ -404,7 +404,7 @@ workers, remote coalescing, and operation callbacks are separate responsibilitie
 
 `ui/window.rs::present_target` owns the startup sequence: prepare theme/styles, compose
 and bind the window, arm first-paint work and destruction cleanup, present, then schedule
-initial navigation, portal integration, and the due update check. Reveal selection is
+initial navigation and the due update check. Reveal selection is
 queued before navigation. Sidebar discovery remains deferred until after the first paint.
 
 `ui/window/composition.rs` coordinates the window's components. Its private `layout`

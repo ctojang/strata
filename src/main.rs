@@ -16,8 +16,6 @@ mod logging;
 mod media;
 mod metrics;
 mod model;
-mod portal;
-mod portal_setup;
 #[cfg(feature = "rar")]
 mod rar_extraction;
 mod sandbox;
@@ -50,14 +48,7 @@ enum LaunchMode {
     PreviewHelper,
     BrowserWorker,
     GvfsProbe,
-    Portal,
-    InstallPortal,
-    DismissPortalPrompt,
-    UninstallPortal,
     Version,
-    UdiskieHook,
-    InstallUdiskie,
-    UninstallUdiskie,
     Application,
 }
 
@@ -68,14 +59,7 @@ fn launch_mode(arguments: &[OsString]) -> LaunchMode {
         Some("--preview-helper") => LaunchMode::PreviewHelper,
         Some("--browser-worker") => LaunchMode::BrowserWorker,
         Some(GVFS_PROBE_ARGUMENT) => LaunchMode::GvfsProbe,
-        Some("--portal") => LaunchMode::Portal,
-        Some("--install-portal") => LaunchMode::InstallPortal,
-        Some("--dismiss-portal-prompt") => LaunchMode::DismissPortalPrompt,
-        Some("--uninstall-portal") => LaunchMode::UninstallPortal,
         Some("--version") => LaunchMode::Version,
-        Some("--udiskie-hook") => LaunchMode::UdiskieHook,
-        Some("--install-udiskie-unlock") => LaunchMode::InstallUdiskie,
-        Some("--uninstall-udiskie-unlock") => LaunchMode::UninstallUdiskie,
         _ => LaunchMode::Application,
     }
 }
@@ -125,44 +109,6 @@ fn version_line() -> String {
     )
 }
 
-fn classify_udiskie_hook(arguments: &[OsString]) -> Option<&str> {
-    let [event, id_usage, device_file, id_uuid, ..] = arguments else {
-        return None;
-    };
-    let event = event.to_str()?;
-    let id_usage = id_usage.to_str()?;
-    let device_file = device_file.to_str()?;
-    let id_uuid = id_uuid.to_str()?;
-    if event != "device_added" || id_usage != "crypto" {
-        tracing::debug!(event, id_usage, "udiskie hook rejected");
-        return None;
-    }
-    if !device_file.is_empty() {
-        return Some(device_file);
-    }
-    if !id_uuid.is_empty() {
-        return Some(id_uuid);
-    }
-    tracing::debug!(event, id_usage, "udiskie hook rejected");
-    None
-}
-
-fn run_udiskie_hook(arguments: &[OsString]) -> gtk::glib::ExitCode {
-    let Some(operand) = classify_udiskie_hook(arguments) else {
-        return gtk::glib::ExitCode::SUCCESS;
-    };
-    let Ok(executable) = std::env::current_exe() else {
-        eprintln!("Unable to locate the Strata executable");
-        return gtk::glib::ExitCode::FAILURE;
-    };
-    let error = std::process::Command::new(executable)
-        .arg("--unlock-volume")
-        .arg(operand)
-        .exec();
-    eprintln!("Unable to start --unlock-volume: {error}");
-    gtk::glib::ExitCode::FAILURE
-}
-
 fn main() -> gtk::glib::ExitCode {
     let arguments: Vec<OsString> = std::env::args_os().collect();
     match launch_mode(&arguments) {
@@ -187,28 +133,9 @@ fn main() -> gtk::glib::ExitCode {
             let _volumes = gio::VolumeMonitor::get();
             return gtk::glib::ExitCode::SUCCESS;
         }
-        LaunchMode::Portal => {
-            if has_desktop_theme_override() {
-                return restart_for_gtk_environment(&arguments, false);
-            }
-            restart_with_local_vfs_if_gvfs_is_unresponsive();
-            return portal::run();
-        }
-        LaunchMode::InstallPortal => return finish_portal_setup(portal_setup::install()),
-        LaunchMode::DismissPortalPrompt => {
-            return finish_portal_setup(portal_setup::dismiss_prompt());
-        }
-        LaunchMode::UninstallPortal => return finish_portal_setup(portal_setup::uninstall()),
         LaunchMode::Version => {
             println!("{}", version_line());
             return gtk::glib::ExitCode::SUCCESS;
-        }
-        LaunchMode::UdiskieHook => return run_udiskie_hook(&arguments[2..]),
-        LaunchMode::InstallUdiskie => {
-            return finish_portal_setup(portal_setup::udiskie::install());
-        }
-        LaunchMode::UninstallUdiskie => {
-            return finish_portal_setup(portal_setup::udiskie::uninstall());
         }
         LaunchMode::Application => {}
     }
@@ -222,10 +149,6 @@ fn main() -> gtk::glib::ExitCode {
     );
     if select_cairo || has_desktop_theme_override() {
         return restart_for_gtk_environment(&arguments, select_cairo);
-    }
-
-    if let Err(error) = portal_setup::refresh_stale_portal() {
-        tracing::warn!(%error, "could not refresh the stale Strata portal");
     }
 
     // Timed from here so `window presented` covers the whole launch, the way
@@ -262,7 +185,6 @@ fn main() -> gtk::glib::ExitCode {
     );
     application.connect_handle_local_options(|_, _| ControlFlow::Continue(()));
     application.connect_startup(|_| install_x11_program_class());
-    application.connect_startup(export_file_manager_interface);
     application.connect_shutdown(|_| ui::preferences::flush_pending_folder_views());
     application.connect_activate(|application| {
         if let Err(error) = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
@@ -398,34 +320,6 @@ fn run_preview_helper(arguments: &[OsString]) -> Result<(), String> {
         })
         .collect::<Result<Vec<_>, _>>()?;
     sandbox_helper::run(&arguments)
-}
-
-fn finish_portal_setup(result: Result<String, String>) -> gtk::glib::ExitCode {
-    match result {
-        Ok(message) => {
-            println!("{message}");
-            gtk::glib::ExitCode::SUCCESS
-        }
-        Err(error) => {
-            eprintln!("{error}");
-            gtk::glib::ExitCode::FAILURE
-        }
-    }
-}
-
-/// Answers "Open file location" from browsers and other desktop apps, which
-/// call `org.freedesktop.FileManager1` instead of the `inode/directory`
-/// handler.
-fn export_file_manager_interface(application: &gtk::Application) {
-    let Some(connection) = application.dbus_connection() else {
-        return;
-    };
-    let target = application.clone();
-    if let Err(error) = adapters::export_file_manager(&connection, move |request| {
-        ui::present_reveal(&target, request);
-    }) {
-        tracing::warn!(%error, "unable to export the file manager interface");
-    }
 }
 
 fn restart_with_local_vfs_if_gvfs_is_unresponsive() {
