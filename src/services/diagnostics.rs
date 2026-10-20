@@ -594,13 +594,7 @@ fn appimage_icons(found: bool) -> Check {
     }
 }
 
-/// GTK thread only: the language manager is a GObject singleton.
-pub(crate) fn syntax_highlighting() -> Check {
-    let languages = sourceview5::LanguageManager::default().language_ids().len();
-    syntax_highlighting_for(languages)
-}
-
-fn syntax_highlighting_for(languages: usize) -> Check {
+pub(crate) fn syntax_highlighting(languages: usize) -> Check {
     if languages == 0 {
         Check::warning(CheckId::SyntaxHighlighting, Finding::LanguagesMissing)
             .fixed_by(packages::GTKSOURCEVIEW)

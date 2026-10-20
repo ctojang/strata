@@ -729,7 +729,7 @@ impl LocalPreviewProvider {
                 }));
                 if let Some((path, mtime, png)) = thumbnail_to_store {
                     let _ = gio::spawn_blocking(move || {
-                        crate::ui::thumbnail_cache::store(&path, mtime, &png);
+                        crate::adapters::thumbnail_cache::store(&path, mtime, &png);
                     })
                     .await;
                 }

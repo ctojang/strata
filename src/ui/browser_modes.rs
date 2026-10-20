@@ -5648,7 +5648,7 @@ fn update_bound_list_metadata(pane: &Pane, updates: &[(usize, FileEntry)]) {
             };
             mode.set_label(&entry_mode(entry));
             size.set_label(&entry_size(entry));
-            crate::util::set_modified_date(&modified, Some(entry), "—");
+            crate::ui::modified_date::set_modified_date(&modified, Some(entry), "—");
             true
         });
     }

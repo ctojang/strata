@@ -425,7 +425,7 @@ fn a_refused_trash_is_retryable_and_remembered_only_on_fuse() -> Result<(), Box<
 
 #[test]
 fn provider_cleans_only_confirmed_pins_on_failure_and_cancellation() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_operations::tests::deletion::provider_cleans_only_confirmed_pins_on_failure_and_cancellation",
         || {
             for cancel_after_first in [false, true] {
@@ -637,7 +637,7 @@ fn a_cancelled_delete_counts_only_what_it_left_whole_as_not_attempted() -> Resul
 
 #[test]
 fn deleting_browser_can_drop_after_a_confirmed_deletion_without_losing_pin_cleanup() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_operations::tests::deletion::deleting_browser_can_drop_after_a_confirmed_deletion_without_losing_pin_cleanup",
         || {
             let directory = tempfile::tempdir().expect("fixture");
@@ -699,7 +699,7 @@ fn deleting_browser_can_drop_after_a_confirmed_deletion_without_losing_pin_clean
 
 #[test]
 fn bookmark_cleanup_failure_preserves_the_successful_deletion_outcome() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_operations::tests::deletion::bookmark_cleanup_failure_preserves_the_successful_deletion_outcome",
         || {
             let directory = tempfile::tempdir().expect("fixture");
@@ -1006,7 +1006,7 @@ fn an_already_cancelled_recursive_delete_preserves_the_root() -> Result<(), Box<
 
 #[test]
 fn trashing_reports_each_items_identity_and_a_permanent_delete_reports_none() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_operations::tests::deletion::trashing_reports_each_items_identity_and_a_permanent_delete_reports_none",
         || {
             for permanent in [false, true] {
@@ -1052,7 +1052,7 @@ fn trashing_reports_each_items_identity_and_a_permanent_delete_reports_none() {
 #[test]
 fn verified_trash_learns_fuse_refusals_and_cleans_leftovers_on_both_worker_routes() {
     const NAME: &str = "adapters::local_operations::tests::deletion::verified_trash_learns_fuse_refusals_and_cleans_leftovers_on_both_worker_routes";
-    crate::test_support::gtk_test(NAME, || {
+    crate::test_support::main_context_test(NAME, || {
         use crate::adapters::trash_support::{self, TrashFailure, UnsupportedReason};
         let Some((_home, volume)) = crate::test_support::distinct_device_dirs(NAME) else {
             return;
@@ -1141,7 +1141,7 @@ fn verified_trash_learns_fuse_refusals_and_cleans_leftovers_on_both_worker_route
 
 #[test]
 fn a_trash_that_moves_nothing_is_retryable_and_records_no_undo() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_operations::tests::deletion::a_trash_that_moves_nothing_is_retryable_and_records_no_undo",
         || {
             for trash in [Trash::FalseWithoutError, Trash::SucceedsWithoutMoving] {

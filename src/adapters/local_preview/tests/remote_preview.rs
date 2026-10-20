@@ -37,7 +37,7 @@ fn request(path: &Path, name: &str) -> PreviewRequest {
 
 #[test]
 fn uri_video_retains_one_private_input_through_player_clones_and_worker_exit() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_preview::tests::remote_preview::uri_video_retains_one_private_input_through_player_clones_and_worker_exit",
         || {
             use std::os::unix::fs::PermissionsExt;
@@ -111,7 +111,7 @@ fn uri_video_retains_one_private_input_through_player_clones_and_worker_exit() {
                     fs::read(&original).expect("original unchanged"),
                     b"remote video"
                 );
-                assert!(crate::ui::thumbnail_cache::lookup(&staged, 1).is_none());
+                assert!(crate::adapters::thumbnail_cache::lookup(&staged, 1).is_none());
             }
             let original = fixture.path().join("oversized.mov");
             let mut request = request(&original, "oversized.mov");
@@ -137,7 +137,7 @@ fn uri_video_retains_one_private_input_through_player_clones_and_worker_exit() {
 
 #[test]
 fn uri_images_stage_private_inputs_and_remove_them_after_rendering() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_preview::tests::remote_preview::uri_images_stage_private_inputs_and_remove_them_after_rendering",
         || {
             use std::{
@@ -216,7 +216,7 @@ fn uri_images_stage_private_inputs_and_remove_them_after_rendering() {
                         !path.exists(),
                         "staged original removed after renderer exits"
                     );
-                    assert!(crate::ui::thumbnail_cache::lookup(&path, 1).is_none());
+                    assert!(crate::adapters::thumbnail_cache::lookup(&path, 1).is_none());
                     assert!(
                         PREVIEW_CACHE.with(|cache| cache
                             .borrow()
@@ -233,7 +233,7 @@ fn uri_images_stage_private_inputs_and_remove_them_after_rendering() {
 
 #[test]
 fn cancelling_remote_image_render_retains_input_until_decoder_exits() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_preview::tests::remote_preview::cancelling_remote_image_render_retains_input_until_decoder_exits",
         || {
             let fixture = tempfile::tempdir().expect("fixture directory");
@@ -284,7 +284,7 @@ fn cancelling_remote_image_render_retains_input_until_decoder_exits() {
 
 #[test]
 fn unsupported_and_oversized_remote_inputs_fail_before_transfer_or_render() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_preview::tests::remote_preview::unsupported_and_oversized_remote_inputs_fail_before_transfer_or_render",
         || {
             let context = glib::MainContext::default();

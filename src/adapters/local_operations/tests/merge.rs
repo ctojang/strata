@@ -1651,7 +1651,7 @@ fn merge_undo_uses_recorded_identity_when_trash_dates_collide() -> Result<(), Bo
 
 #[test]
 fn merge_undo_restores_staged_originals_and_removes_created() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_operations::tests::merge::merge_undo_restores_staged_originals_and_removes_created",
         || check_merge_undo_restores_staged_originals_and_removes_created().expect("merge undo"),
     );
@@ -4011,7 +4011,7 @@ impl crate::services::FileSource for Listing {
 
 #[test]
 fn a_merge_undo_drops_from_view_only_what_it_removed() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_operations::tests::merge::a_merge_undo_drops_from_view_only_what_it_removed",
         || {
             check_a_merge_undo_drops_from_view_only_what_it_removed().expect("merge undo view");

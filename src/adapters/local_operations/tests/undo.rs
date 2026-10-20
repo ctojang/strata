@@ -1087,7 +1087,7 @@ fn cancelled_rename_undo_reports_cancellation_without_moving_the_item() -> Resul
 
 #[test]
 fn undoing_a_grouping_reports_the_trashed_group_folder() {
-    crate::test_support::gtk_test(
+    crate::test_support::main_context_test(
         "adapters::local_operations::tests::undo::undoing_a_grouping_reports_the_trashed_group_folder",
         || {
             let root = tempfile::tempdir().expect("root");
