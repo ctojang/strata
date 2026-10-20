@@ -84,6 +84,7 @@ unwrap_used = "warn"
 [package]
 name = "strata"
 version.workspace = true
+publish = false
 edition.workspace = true
 description = "A fast, keyboard-first file manager for Linux"
 authors.workspace = true
