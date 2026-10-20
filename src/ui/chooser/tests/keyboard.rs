@@ -244,7 +244,7 @@ fn chooser_refuses_commands_its_request_does_not_allow() {
         || {
             let chooser = Chooser::open(BrowserMode::List, &["a/", "b/", "sub/"]);
             chooser.focus_files();
-            chooser.move_to("a");
+            chooser.move_to("b");
             let browser = chooser.state.view.browser();
             let origin = browser.active_location();
             for (key, modifiers, feedback) in [
@@ -315,7 +315,7 @@ fn chooser_refuses_commands_its_request_does_not_allow() {
                 assert!(chooser.open_request(), "{key:?} ended the request");
                 assert!(browser.selected_entries().is_empty(), "{key:?} filled");
             }
-            assert_eq!(chooser.cursor_name().as_deref(), Some("a"));
+            assert_eq!(chooser.cursor_name().as_deref(), Some("b"));
 
             chooser.press(Key::g);
             wait_until(|| chooser.chord_panel().iter().any(|label| label == "Recent"));
