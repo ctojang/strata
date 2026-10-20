@@ -685,15 +685,12 @@ fn tenxer_reference_follows_the_active_map() {
 
             let chooser = ShortcutFooter::new(BrowserMode::List);
             chooser.bind_preferences(&manager);
-            chooser.set_chooser(crate::ui::shortcut_reference::ChooserScope {
-                request: crate::ui::shortcut_reference::ChooserRequest::Files,
-                multiple: false,
-            });
+            chooser.set_chooser(crate::ui::shortcut_reference::ChooserScope);
             let refused = reference_labels(&chooser);
             assert!(reference_pairs(
                 &refused,
-                "Enter / o on a file",
-                "Choose the file"
+                "Enter / o on a folder",
+                "Open the folder"
             ));
             assert!(refused.iter().any(|label| label == "Toggle 10xer mode"));
             for unavailable in [

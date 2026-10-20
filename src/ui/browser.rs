@@ -347,8 +347,8 @@ impl BrowserView {
         Self::with_options(source, peek_behavior, true, true)
     }
 
-    pub(super) fn new_chooser(source: Rc<dyn FileSource>, multiple: bool) -> Self {
-        Self::with_options(source, PeekBehavior::default(), multiple, false)
+    pub(super) fn new_chooser(source: Rc<dyn FileSource>) -> Self {
+        Self::with_options(source, PeekBehavior::default(), false, false)
     }
 
     fn with_options(
@@ -931,23 +931,6 @@ impl BrowserView {
         properties: bool,
     ) {
         self.state.reveal_locations(directory, targets, properties);
-    }
-
-    pub(super) fn refresh_source_filter(&self) {
-        if let Some(last) = self.state.browser.active_depth() {
-            for depth in 0..=last {
-                self.state.browser.retry_column(depth);
-            }
-        }
-        let columns = self.state.columns.borrow().clone();
-        let mut changed = false;
-        for column in &columns {
-            changed |= columns::refresh_source_filter(column, &self.state.browser);
-        }
-        if changed {
-            self.state.notify_search_selection_changed();
-        }
-        self.state.mode_views.borrow().refresh_source_filter();
     }
 
     pub fn browser(&self) -> Rc<Browser> {

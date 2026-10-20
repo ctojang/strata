@@ -143,7 +143,7 @@ layout-dependent selection before disconnecting the frame handler.
 
 ### Collection behavior and lifetime boundaries
 
-The browser and open/save chooser use the same collection behavior, not a universal widget:
+The browser and the folder chooser use the same collection behavior, not a universal widget:
 
 | Owner | Responsibility and intentional differences |
 | --- | --- |

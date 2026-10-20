@@ -6,21 +6,15 @@ use crate::ui::{
     browser_modes::BrowserMode,
     preferences::{ListColumnId, ListColumns},
 };
-use acceptance::{request, wait_until};
+use acceptance::wait_until;
 use std::{
     rc::Rc,
-    sync::{Arc, atomic::AtomicBool},
     time::{Duration, Instant},
 };
 
 fn open_browser(root: &Path, chooser: bool) -> gtk::Window {
     let (window, browser) = if chooser {
-        let state = build_chooser(
-            request(root.to_path_buf()),
-            Arc::new(AtomicBool::new(false)),
-            |_| {},
-        )
-        .expect("chooser");
+        let state = build_chooser(destination(root.to_path_buf()), |_| {});
         (state.window.clone(), state.view.browser())
     } else {
         let view = crate::ui::browser::BrowserView::new(
@@ -224,13 +218,13 @@ fn resize_column(window: &gtk::Window, offset: f64) {
 
 fn fixture_root() -> tempfile::TempDir {
     let root = tempfile::tempdir().expect("fixture");
-    std::fs::write(root.path().join("report.pdf"), "report").expect("fixture file");
+    std::fs::create_dir(root.path().join("report")).expect("fixture folder");
     root
 }
 
 fn long_name_fixture_root() -> tempfile::TempDir {
     let root = fixture_root();
-    std::fs::write(root.path().join("x".repeat(216)), "long").expect("long-name fixture file");
+    std::fs::create_dir(root.path().join("x".repeat(216))).expect("long-name fixture folder");
     root
 }
 

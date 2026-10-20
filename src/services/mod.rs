@@ -8,7 +8,6 @@ pub(crate) mod document_media;
 pub(crate) mod docx;
 pub(crate) mod file_providers;
 mod file_source;
-pub(crate) mod image_conversion;
 mod install_source;
 pub(crate) mod integration_catalog;
 pub(crate) mod jobs;
@@ -17,13 +16,11 @@ mod mime_type;
 pub(crate) mod model_preview;
 mod native_fs;
 mod navigation_history;
-mod network_error;
 mod operations;
 pub(crate) mod package_manager;
 mod path_match;
 mod preview;
 mod release_channel;
-mod remote_download;
 pub(crate) mod rtf;
 mod search;
 pub(crate) mod table;
@@ -87,9 +84,6 @@ pub(crate) use preview::{
     supports_remote_video,
 };
 pub(crate) use release_channel::{BuildKind, Version};
-pub(crate) use remote_download::{
-    RemoteDownload, download_remote, remote_file_name, remote_file_url,
-};
 pub(crate) use search::{
     RESULT_LIMIT as SEARCH_RESULT_LIMIT, RenameScope, rebase_search_indexes,
     refresh_search_indexes_for_directory, refresh_search_indexes_for_rename,

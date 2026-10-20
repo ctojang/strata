@@ -144,8 +144,6 @@ pub(crate) enum ParseOperation {
     PreviewCover(CoverFormat),
     PreviewImage,
     PreviewRaw,
-    InspectImage,
-    ConvertImage,
     DocumentImage,
     DocumentMermaid,
     DocumentMath {
@@ -184,8 +182,6 @@ impl ParseOperation {
             Self::PreviewCover(_) => "preview-cover",
             Self::PreviewImage => "preview-image",
             Self::PreviewRaw => "preview-raw",
-            Self::InspectImage => "inspect-image",
-            Self::ConvertImage => "convert-image",
             Self::DocumentImage => "document-image",
             Self::DocumentMermaid => "document-mermaid",
             Self::DocumentMath { display: true } => "document-math",
@@ -238,7 +234,6 @@ impl ParseOperation {
                 | Self::RawMetadata
                 | Self::PreviewWorkbook
                 | Self::PreviewDocument
-                | Self::InspectImage
         ) {
             "result.json"
         } else if self.is_media() {
@@ -260,11 +255,6 @@ impl ParseOperation {
             | Self::ThumbnailModel(_)
             | Self::ThumbnailCover(_) => Some((256, 256, 256 * 256)),
             Self::PreviewCover(_) | Self::AudioCover => Some((800, 800, 800 * 800)),
-            Self::ConvertImage => Some((
-                crate::services::image_conversion::MAX_EDGE,
-                crate::services::image_conversion::MAX_EDGE,
-                crate::services::image_conversion::MAX_PIXELS,
-            )),
             Self::PreviewImage
             | Self::PreviewRaw
             | Self::DocumentImage
@@ -276,7 +266,6 @@ impl ParseOperation {
                 Some((size.width as u32, size.height as u32, 1280 * 1280))
             }
             Self::PreviewMedia(_)
-            | Self::InspectImage
             | Self::PreviewAudio(_)
             | Self::AudioPeaks
             | Self::VideoStoryboard { .. }
@@ -301,9 +290,6 @@ impl ParseOperation {
             Self::PreviewModel(_) | Self::ThumbnailModel(_) => Some(MAX_MODEL_INPUT_BYTES),
             Self::ThumbnailCover(_) | Self::PreviewCover(_) => {
                 Some(crate::sandbox_helper::archive_cover::MAX_INPUT_BYTES)
-            }
-            Self::InspectImage | Self::ConvertImage => {
-                Some(crate::services::image_conversion::MAX_INPUT_BYTES)
             }
             Self::PreviewWorkbook => Some(crate::services::table::WORKBOOK_BYTE_LIMIT),
             Self::PreviewDocument => Some(crate::services::docx::DOCX_BYTE_LIMIT),
@@ -431,22 +417,15 @@ fn parse_sandboxed(
         .input_size_limit()
         .is_some_and(|limit| input_metadata.len() > limit)
     {
-        return Err(
-            if matches!(
-                operation,
-                ParseOperation::InspectImage | ParseOperation::ConvertImage
-            ) {
-                "The image exceeds the 32 MiB conversion limit. Choose a smaller image.".to_owned()
-            } else if matches!(operation, ParseOperation::PreviewModel(_)) {
-                const _: () = assert!(
-                    MAX_MODEL_INPUT_BYTES == 128 * 1024 * 1024,
-                    "update the model size limit message and its catalog entry"
-                );
-                "This model file exceeds the 128 MiB preview limit. Try a smaller or lower-detail version.".to_owned()
-            } else {
-                "Preview input exceeds the supported size limit".to_owned()
-            },
-        );
+        return Err(if matches!(operation, ParseOperation::PreviewModel(_)) {
+            const _: () = assert!(
+                MAX_MODEL_INPUT_BYTES == 128 * 1024 * 1024,
+                "update the model size limit message and its catalog entry"
+            );
+            "This model file exceeds the 128 MiB preview limit. Try a smaller or lower-detail version.".to_owned()
+        } else {
+            "Preview input exceeds the supported size limit".to_owned()
+        });
     }
     if let Some(result) = browser::preview(&input, &operation, cancellation) {
         return result.map(|data| ParseOutput {
@@ -521,12 +500,8 @@ fn parse_sandboxed(
     let status =
         wait_for_renderer_reporting(&mut child, cancellation, timeout, &mut poll_progress)?;
     if !status.success() {
-        if matches!(
-            operation,
-            ParseOperation::PreviewModel(_)
-                | ParseOperation::InspectImage
-                | ParseOperation::ConvertImage
-        ) && let Ok(data) = read_private_output(&output.path().join("result.error"), 512)
+        if matches!(operation, ParseOperation::PreviewModel(_))
+            && let Ok(data) = read_private_output(&output.path().join("result.error"), 512)
             && let Ok(message) = String::from_utf8(data)
         {
             return Err(message);
@@ -535,9 +510,7 @@ fn parse_sandboxed(
     }
 
     let result_path = output.path().join(operation.output_name());
-    let limit = if matches!(operation, ParseOperation::InspectImage) {
-        32
-    } else if matches!(
+    let limit = if matches!(
         operation,
         ParseOperation::MediaMetadata | ParseOperation::AudioTags | ParseOperation::RawMetadata
     ) {
@@ -976,11 +949,6 @@ pub(crate) fn numbered_name(name: &std::ffi::OsStr, prefix: &str) -> bool {
 }
 
 fn valid_output(operation: ParseOperation, data: &[u8]) -> bool {
-    if matches!(operation, ParseOperation::InspectImage) {
-        return data.len() <= 32
-            && serde_json::from_slice::<crate::services::image_conversion::ImageKind>(data)
-                .is_ok();
-    }
     if matches!(operation, ParseOperation::AudioCover) && data == b"null" {
         return true;
     }

@@ -745,8 +745,6 @@ impl PreferenceManager {
         self.changes.observe(observer);
     }
 
-    /// Lets `window` show the notice when changes cannot be saved. Windows that
-    /// never register, such as the portal chooser, leave failures to the log.
     pub(in crate::ui) fn register_save_notice_window(&self, window: &gtk::Window) {
         self.save_notices.register(window);
         self.folder_save_notices.register(window);

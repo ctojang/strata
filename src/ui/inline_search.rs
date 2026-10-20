@@ -372,27 +372,6 @@ impl InlineSearch {
         }
     }
 
-    pub fn refresh_source_filter(&self, browser: &Browser) {
-        let Some(state) = self.state.as_ref() else {
-            return;
-        };
-        if !state.session.is_active() {
-            return;
-        }
-        let handle = &state.session;
-        let items = state
-            .collection
-            .items()
-            .iter()
-            .filter(|item| browser.allows_entry(&super::browser::search_result_entry(item)))
-            .cloned()
-            .collect();
-        update_results(state, items, state.recursive.get());
-        if let Some(entry) = state.entry.upgrade() {
-            handle.query(entry.text().trim());
-        }
-    }
-
     pub fn prune_missing(&self) {
         let Some(state) = self.state.as_ref() else {
             return;
