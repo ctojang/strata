@@ -162,7 +162,7 @@ jobs:
           if [[ "$MODE" != "stable" ]]; then
             # Fail closed when targeting source older than release-channel
             # support; otherwise the archive tag and binary identity diverge.
-            if ! grep -q 'STRATA_RELEASE_TAG' build.rs; then
+            if ! grep -q 'STRATA_RELEASE_TAG' crates/strata-core/build.rs; then
               echo "The selected source does not support prerelease build metadata." >&2
               exit 1
             fi
@@ -198,13 +198,13 @@ jobs:
           lock_path = pathlib.Path("Cargo.lock")
           lock = lock_path.read_text()
           lock, count = re.subn(
-              r'(\[\[package\]\]\nname = "strata"\nversion = ")\d+\.\d+\.\d+("\n)',
+              r'(\[\[package\]\]\nname = "strata(?:-core)?"\nversion = ")\d+\.\d+\.\d+("\n)',
               rf'\g<1>{version}\2',
               lock,
-              count=1,
+              count=2,
           )
-          if count != 1:
-              raise SystemExit("could not update the strata version in Cargo.lock")
+          if count != 2:
+              raise SystemExit("could not update the strata and strata-core versions in Cargo.lock")
           lock_path.write_text(lock)
           PY
 

@@ -41,7 +41,7 @@ checks. Renew consent if the authorized scope changes, or run the required tests
 
 For native Rust selection, `scripts/test-headless.py` starts the private display
 and session buses, then appends its arguments to the fixed
-`cargo test --all-targets --all-features` command. Use module/name filters:
+`cargo test --all-targets --all-features --workspace` command. Use module/name filters:
 
 ```bash
 ./scripts/test-headless.py services::operations::tests
@@ -52,17 +52,17 @@ These select test execution across targets, not compilation to one target.
 Targeted runs can still incur a full test build; Cargo's cache helps subsequent
 iterations. There is no automatic changed-code dependency-to-test mapping.
 
-Controller regressions live under `src/app/browser/tests/`, grouped by navigation,
+Controller regressions live under `crates/strata-core/src/app/browser/tests/`, grouped by navigation,
 location input, selection, monitor updates, preferences, operations, undo, metadata,
 staging, event dispatch, and archive activation. Add cases to the matching owner
-rather than to `src/app/browser/tests.rs`, which holds shared source/provider
+rather than to `crates/strata-core/src/app/browser/tests.rs`, which holds shared source/provider
 fixtures. Existing adjacent feature test modules retain their ownership. For
 example, `./scripts/test-headless.py app::browser::tests::undo::` selects undo
 history/claim regressions; `app::browser::tests::metadata::` selects metadata-fill
 and sort-terminal regressions. Keep distinct input routes and lifecycle cases
 separate even when they share fixtures.
 
-Local-operation regressions have owners under `src/adapters/local_operations/tests/`
+Local-operation regressions have owners under `crates/strata-core/src/adapters/local_operations/tests/`
 for path resolution, copying, moving, replacement, conflicts, progress, naming,
 paste results, undo, deletion, and restore safety. Shared fixtures and the manual
 deletion benchmarks remain in the parent `tests.rs`; keep the benchmark names
@@ -204,7 +204,7 @@ their existing runners rather than downloading a large GUI image unnecessarily.
 ### Rust quality shards
 
 CI's **Quality build and lint** job runs formatting and Clippy, then compiles
-`cargo test --locked --all-targets --all-features --no-run` once. It exports only
+`cargo test --locked --all-targets --all-features --workspace --no-run` once. It exports only
 test executables and a plan, not Cargo caches. `scripts/quality_ci.py` collects
 each libtest inventory, including the explicitly ignored tests, and assigns every
 entry to one of four shards. Timing hints in `scripts/quality-durations.json`
@@ -834,7 +834,7 @@ nightly-only, or changed-files-only suite.
 
 | Removed/reduced coverage | Retained owner |
 | --- | --- |
-| Six invalid strings × mode × kind × new/existing × completion, reduced to `bad/name` (120 cases removed) | `src/services/operations/tests.rs::basenames_reject_empty_reserved_nested_absolute_and_nul_names` (no GTK/display requirement); GUI keeps one Enter and one real click-away |
+| Six invalid strings × mode × kind × new/existing × completion, reduced to `bad/name` (120 cases removed) | `crates/strata-core/src/services/operations/tests.rs::basenames_reject_empty_reserved_nested_absolute_and_nul_names` (no GTK/display requirement); GUI keeps one Enter and one real click-away |
 | Four invalid names in correction/reopen workflow, reduced to one (9) | Same validation tests; correction/reopen still runs in all three views |
 | Four accepted-name variants in inside-field click workflow, reduced to ` padded ` (18) | `basenames_accept_single_native_and_unicode_components`; GUI still checks exact untrimmed names for files and folders |
 | Standalone new-folder Escape and existing-file cancellation tests (4) | `test_inline_renaming.py::test_escape_preserves_the_original_name`, covering both lifecycles and kinds |

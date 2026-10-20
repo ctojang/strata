@@ -72,21 +72,26 @@ FROM toolchain AS dependencies
 WORKDIR /build
 ENV CARGO_PROFILE_DEV_DEBUG=0 CARGO_INCREMENTAL=0
 COPY Cargo.toml Cargo.lock ./
-RUN mkdir src && printf 'fn main() {}\n' > src/main.rs \
-    && printf 'fn main() {}\n' > build.rs \
+COPY crates/strata-core/Cargo.toml crates/strata-core/
+RUN mkdir -p src crates/strata-core/src && printf 'fn main() {}\n' > src/main.rs \
+    && : > crates/strata-core/src/lib.rs \
+    && printf 'fn main() {}\n' > crates/strata-core/build.rs \
     && cargo build --locked --bin strata \
-    && rm -rf src build.rs target/debug/strata target/debug/deps/strata* \
+    && rm -rf src crates/strata-core/src crates/strata-core/build.rs target/debug/strata \
+        target/debug/deps/strata* target/debug/deps/libstrata_core* \
         target/debug/.fingerprint/strata-* target/debug/build/strata-*
 
 FROM ${E2E_RUNTIME_IMAGE} AS ci-runtime
 
 FROM ${E2E_DEPENDENCIES_IMAGE} AS application
 COPY Cargo.toml Cargo.lock /tmp/strata-e2e-manifests/
+COPY crates/strata-core/Cargo.toml /tmp/strata-e2e-manifests/strata-core.toml
 RUN cmp Cargo.toml /tmp/strata-e2e-manifests/Cargo.toml \
-    && cmp Cargo.lock /tmp/strata-e2e-manifests/Cargo.lock
+    && cmp Cargo.lock /tmp/strata-e2e-manifests/Cargo.lock \
+    && cmp crates/strata-core/Cargo.toml /tmp/strata-e2e-manifests/strata-core.toml
 COPY src ./src
+COPY crates ./crates
 COPY data ./data
-COPY build.rs ./
 ARG STRATA_BUILD_COMMIT
 RUN cargo build --locked --bin strata
 COPY tests/e2e ./tests/e2e

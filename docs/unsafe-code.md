@@ -51,7 +51,7 @@ If a maintained safe API gains this capability, this exception should be removed
 
 ### Verified Trash result
 
-Location: `src/adapters/local_operations/environment.rs::System::trash`
+Location: `crates/strata-core/src/adapters/local_operations/environment.rs::System::trash`
 
 Reason: GLib can return FALSE from `g_file_trash` without setting an error
 (GLib #4060). gio-rs asserts in debug builds that FALSE always carries an
@@ -67,7 +67,7 @@ nothing is caught too.
 
 ### Checked descriptor close
 
-Location: `src/adapters/local_operations/fs_ops.rs::System::close`
+Location: `crates/strata-core/src/adapters/local_operations/fs_ops.rs::System::close`
 
 Reason: `OwnedFd` and rustix discard close errors, but NFS, SMB and FUSE can report
 failed writes only at close. The safe wrapper consumes the owned descriptor and
@@ -78,7 +78,7 @@ to fail without deleting originals.
 
 ### Browser sandbox fork boundary
 
-Location: `src/sandbox/browser/process.rs::{fork,namespaces}`
+Location: `crates/strata-core/src/sandbox/browser/process.rs::{fork,namespaces}`
 
 Reason: reusing a codec-free supervisor's process image avoids per-file helper
 exec and namespace-tool startup while keeping native decoders disposable and

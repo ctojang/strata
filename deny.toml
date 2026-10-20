@@ -46,6 +46,7 @@ allow = ["BSD-2-Clause"]
 [bans]
 multiple-versions = "warn"
 wildcards = "deny"
+allow-wildcard-paths = true
 highlight = "simplest-path"
 
 [sources]

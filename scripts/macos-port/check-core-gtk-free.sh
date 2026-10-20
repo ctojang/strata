@@ -2,19 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 
-CORE=(
-  src/model src/services src/adapters src/app src/util
-  src/storage.rs src/i18n.rs src/build_info.rs src/logging.rs src/metrics.rs
-  src/trusted_command.rs src/rar_extraction.rs
-  src/media.rs src/media src/sandbox.rs src/sandbox
-  src/sandbox_helper.rs src/sandbox_helper
-)
 PATTERNS=(gtk:: gdk:: gsk:: sourceview5:: gdk4_x11 gdk4_wayland crate::ui gtk_test)
-
-existing=()
-for path in "${CORE[@]}"; do
-  [[ -e $path ]] && existing+=("$path")
-done
 
 violations=0
 for pattern in "${PATTERNS[@]}"; do
@@ -22,7 +10,14 @@ for pattern in "${PATTERNS[@]}"; do
     [[ -z $hit ]] && continue
     echo "VIOLATION [$pattern] $hit" >&2
     violations=1
-  done < <(grep -rnF --include='*.rs' -e "$pattern" "${existing[@]}" || [[ $? -eq 1 ]])
+  done < <(grep -rnF --include='*.rs' -e "$pattern" crates/strata-core/src || [[ $? -eq 1 ]])
 done
+
+while IFS= read -r crate; do
+  [[ -z $crate ]] && continue
+  echo "VIOLATION [cargo tree] $crate" >&2
+  violations=1
+done < <(cargo tree -p strata-core -e normal --all-features --locked --prefix none \
+  | grep -E '^(gtk4|gdk4|gsk4|sourceview5|gdk4-x11|gdk4-wayland) ' || [[ $? -eq 1 ]])
 
 exit "$violations"

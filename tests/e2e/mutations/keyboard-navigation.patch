@@ -1,7 +1,7 @@
-diff --git a/src/app/browser.rs b/src/app/browser.rs
+diff --git a/crates/strata-core/src/app/browser.rs b/crates/strata-core/src/app/browser.rs
 index e9dc9aa..d85b346 100644
---- a/src/app/browser.rs
-+++ b/src/app/browser.rs
+--- a/crates/strata-core/src/app/browser.rs
++++ b/crates/strata-core/src/app/browser.rs
 @@ -1880,6 +1880,9 @@ impl Browser {
      }
  
